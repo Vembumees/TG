@@ -1,13 +1,13 @@
 {
 	"Targets": [
 		{
-			"Name": "SpaceGame",
-			"Path": "C:\\Users\\Vemb\\Documents\\Unreal Projects\\SpaceGame\\Source\\SpaceGame.Target.cs",
+			"Name": "SG",
+			"Path": "C:\\Users\\Vemb\\Documents\\Unreal Projects\\SG\\Source\\SG.Target.cs",
 			"Type": "Game"
 		},
 		{
-			"Name": "SpaceGameEditor",
-			"Path": "C:\\Users\\Vemb\\Documents\\Unreal Projects\\SpaceGame\\Source\\SpaceGameEditor.Target.cs",
+			"Name": "SGEditor",
+			"Path": "C:\\Users\\Vemb\\Documents\\Unreal Projects\\SG\\Source\\SGEditor.Target.cs",
 			"Type": "Editor"
 		}
 	]
