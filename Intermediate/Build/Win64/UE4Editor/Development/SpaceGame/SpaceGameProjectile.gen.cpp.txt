@@ -1,0 +1,5 @@
+C:\Users\Vemb\Documents\Unreal Projects\SpaceGame\Intermediate\Build\Win64\UE4Editor\Development\SpaceGame\Definitions.SpaceGame.h
+C:\Epic Games\UE_4.24\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
+C:\Epic Games\UE_4.24\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
+C:\Users\Vemb\Documents\Unreal Projects\SpaceGame\Source\SpaceGame/SpaceGameProjectile.h
+c:\users\vemb\documents\unreal projects\spacegame\intermediate\build\win64\ue4editor\inc\spacegame\SpaceGameProjectile.generated.h

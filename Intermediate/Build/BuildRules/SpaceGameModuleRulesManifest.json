@@ -1,0 +1,8 @@
+{
+	"SourceFiles": [
+		"C:\\Users\\Vemb\\Documents\\Unreal Projects\\SpaceGame\\Source\\SpaceGame\\SpaceGame.Build.cs",
+		"C:\\Users\\Vemb\\Documents\\Unreal Projects\\SpaceGame\\Source\\SpaceGame.Target.cs",
+		"C:\\Users\\Vemb\\Documents\\Unreal Projects\\SpaceGame\\Source\\SpaceGameEditor.Target.cs"
+	],
+	"EngineVersion": "4.24.2"
+}

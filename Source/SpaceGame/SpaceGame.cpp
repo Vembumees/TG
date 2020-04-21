@@ -1,0 +1,9 @@
+// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
+
+#include "SpaceGame.h"
+#include "Modules/ModuleManager.h"
+
+IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, SpaceGame, "SpaceGame" );
+
+DEFINE_LOG_CATEGORY(LogSpaceGame)
+ 

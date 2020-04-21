@@ -1,0 +1,7 @@
+C:\Users\Vemb\Documents\Unreal Projects\SpaceGame\Intermediate\Build\Win64\UE4Editor\Development\SpaceGame\Definitions.SpaceGame.h
+c:\users\vemb\documents\unreal projects\spacegame\source\spacegame\SpaceGameProjectile.h
+C:\Users\Vemb\Documents\Unreal Projects\SpaceGame\Intermediate\Build\Win64\UE4Editor\Inc\SpaceGame\SpaceGameProjectile.generated.h
+C:\Epic Games\UE_4.24\Engine\Source\Runtime\Engine\Classes\GameFramework/ProjectileMovementComponent.h
+C:\Epic Games\UE_4.24\Engine\Source\Runtime\Engine\Classes\GameFramework/MovementComponent.h
+C:\Epic Games\UE_4.24\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\MovementComponent.generated.h
+C:\Epic Games\UE_4.24\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\ProjectileMovementComponent.generated.h

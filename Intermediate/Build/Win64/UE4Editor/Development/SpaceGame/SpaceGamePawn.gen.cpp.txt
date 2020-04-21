@@ -1,0 +1,9 @@
+C:\Users\Vemb\Documents\Unreal Projects\SpaceGame\Intermediate\Build\Win64\UE4Editor\Development\SpaceGame\Definitions.SpaceGame.h
+C:\Epic Games\UE_4.24\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
+C:\Epic Games\UE_4.24\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
+C:\Users\Vemb\Documents\Unreal Projects\SpaceGame\Source\SpaceGame/SpaceGamePawn.h
+C:\Epic Games\UE_4.24\Engine\Source\Runtime\Engine\Classes\GameFramework/Character.h
+C:\Epic Games\UE_4.24\Engine\Source\Runtime\Engine\Classes\GameFramework/RootMotionSource.h
+C:\Epic Games\UE_4.24\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\RootMotionSource.generated.h
+C:\Epic Games\UE_4.24\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\Character.generated.h
+c:\users\vemb\documents\unreal projects\spacegame\intermediate\build\win64\ue4editor\inc\spacegame\SpaceGamePawn.generated.h
