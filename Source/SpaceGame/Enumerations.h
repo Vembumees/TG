@@ -13,13 +13,3 @@ enum class EPattern : uint8
 	Diamond					UMETA(DisplayName = "Diamond"),
 	Square					UMETA(DisplayName = "Square"),
 };
-
-UENUM(BlueprintType)
-enum class EGroundTypes : uint8
-{
-	None					UMETA(DisplayName = "None"),
-	Normal					UMETA(DisplayName = "Normal"),
-	Difficult				UMETA(DisplayName = "Difficult"),
-	ReallyDifficult			UMETA(DisplayName = "Really Difficult"),
-	Impossible				UMETA(DisplayName = "Impossible"),
-};

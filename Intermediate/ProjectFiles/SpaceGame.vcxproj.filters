@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="..\..\SpaceGame.uproject" />
     <Filter Include="Source">
-      <UniqueIdentifier>{7998A735-24F0-4A37-B802-D347CA22FA64}</UniqueIdentifier>
+      <UniqueIdentifier>{E14C60C8-3BA5-488A-A4DB-8AB68A10E4A1}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\SpaceGame.Target.cs">
       <Filter>Source</Filter>
@@ -14,7 +14,7 @@
     <None Include="..\..\.gitattributes" />
     <None Include="..\..\.gitignore" />
     <Filter Include="Config">
-      <UniqueIdentifier>{22131311-BE1A-42F2-A8AE-7756AF012F63}</UniqueIdentifier>
+      <UniqueIdentifier>{61667ADD-CC25-4519-A1D5-B69D7122D4A1}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Config\DefaultEditor.ini">
       <Filter>Config</Filter>
@@ -32,7 +32,7 @@
       <Filter>Config</Filter>
     </None>
     <Filter Include="Source\SpaceGame">
-      <UniqueIdentifier>{92D86F8F-B59B-468A-82CA-F60BD3E5AD04}</UniqueIdentifier>
+      <UniqueIdentifier>{3D7C0434-ECC5-43E1-AE1E-DBFB22A376BE}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\SpaceGame\DataTables.h">
       <Filter>Source\SpaceGame</Filter>
@@ -41,6 +41,12 @@
       <Filter>Source\SpaceGame</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SpaceGame\GridGameLibrary.h">
+      <Filter>Source\SpaceGame</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\SpaceGame\SGPlayerController.cpp">
+      <Filter>Source\SpaceGame</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SpaceGame\SGPlayerController.h">
       <Filter>Source\SpaceGame</Filter>
     </ClInclude>
     <None Include="..\..\Source\SpaceGame\SpaceGame.Build.cs">
@@ -58,17 +64,35 @@
     <ClInclude Include="..\..\Source\SpaceGame\SpaceGameGameMode.h">
       <Filter>Source\SpaceGame</Filter>
     </ClInclude>
-    <ClCompile Include="..\..\Source\SpaceGame\SpaceGamePawn.cpp">
-      <Filter>Source\SpaceGame</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\SpaceGame\SpaceGamePawn.h">
-      <Filter>Source\SpaceGame</Filter>
-    </ClInclude>
     <ClCompile Include="..\..\Source\SpaceGame\SpaceGameProjectile.cpp">
       <Filter>Source\SpaceGame</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\SpaceGame\SpaceGameProjectile.h">
       <Filter>Source\SpaceGame</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceGame\Interfaces">
+      <UniqueIdentifier>{FF2EC49D-B410-4AB6-B693-F31A84F31018}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceGame\Interfaces\InteractInterface.cpp">
+      <Filter>Source\SpaceGame\Interfaces</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SpaceGame\Interfaces\InteractInterface.h">
+      <Filter>Source\SpaceGame\Interfaces</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceGame\Pawns">
+      <UniqueIdentifier>{3B30DB4C-4E2D-4910-AA97-031DB0CE6DA9}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceGame\Pawns\SGEnemyPawn.cpp">
+      <Filter>Source\SpaceGame\Pawns</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SpaceGame\Pawns\SGEnemyPawn.h">
+      <Filter>Source\SpaceGame\Pawns</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\SpaceGame\Pawns\SGPlayerPawn.cpp">
+      <Filter>Source\SpaceGame\Pawns</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SpaceGame\Pawns\SGPlayerPawn.h">
+      <Filter>Source\SpaceGame\Pawns</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
