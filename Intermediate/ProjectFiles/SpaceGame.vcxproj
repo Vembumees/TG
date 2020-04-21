@@ -51,7 +51,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{04CBA020-3914-4CF0-B062-D37206585885}</ProjectGuid>
+    <ProjectGuid>{7A768A55-4BC1-4A78-8275-FDA76E376488}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
     <RootNamespace>SpaceGame</RootNamespace>
     <PlatformToolset>v142</PlatformToolset>
@@ -269,11 +269,16 @@
     <None Include="..\..\SpaceGame.uproject" />
     <None Include="..\..\Source\SpaceGame.Target.cs" />
     <None Include="..\..\Source\SpaceGameEditor.Target.cs" />
+    <None Include="..\..\.gitattributes" />
+    <None Include="..\..\.gitignore" />
     <None Include="..\..\Config\DefaultEditor.ini" />
     <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini" />
     <None Include="..\..\Config\DefaultEngine.ini" />
     <None Include="..\..\Config\DefaultGame.ini" />
     <None Include="..\..\Config\DefaultInput.ini" />
+    <ClInclude Include="..\..\Source\SpaceGame\DataTables.h" />
+    <ClInclude Include="..\..\Source\SpaceGame\Enumerations.h" />
+    <ClInclude Include="..\..\Source\SpaceGame\GridGameLibrary.h" />
     <None Include="..\..\Source\SpaceGame\SpaceGame.Build.cs" />
     <ClCompile Include="..\..\Source\SpaceGame\SpaceGame.cpp" />
     <ClInclude Include="..\..\Source\SpaceGame\SpaceGame.h" />

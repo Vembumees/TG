@@ -1,2 +1,0 @@
-C:\Users\Vemb\Documents\Unreal Projects\SpaceGame\Intermediate\Build\Win64\UE4Editor\Development\SpaceGame\Definitions.SpaceGame.h
-c:\users\vemb\documents\unreal projects\spacegame\source\spacegame\SpaceGame.h
