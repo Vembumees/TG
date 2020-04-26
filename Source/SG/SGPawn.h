@@ -103,7 +103,8 @@ public:
 		USoundBase* SFXInteractFail;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		AActor* interactedActor;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class ASGProjectile> BP_SGProjectile;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ACustom - Gameplay")
 		float linetraceDistance;

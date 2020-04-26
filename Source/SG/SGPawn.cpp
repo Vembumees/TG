@@ -78,13 +78,13 @@ void ASGPawn::Attack()
 
 			
 			// Spawn projectile at an offset from this pawn
-			const FVector SpawnLocation = GetActorLocation() + (-GetActorRightVector());
+			const FVector SpawnLocation = GetActorLocation() + GetActorRotation().RotateVector(GunOffset);
 
 			UWorld* const World = GetWorld();
 			if (World != NULL)
 			{
 				// spawn the projectile
-				World->SpawnActor<ASGProjectile>(SpawnLocation, GetActorRotation());
+				World->SpawnActor<ASGProjectile>(BP_SGProjectile, SpawnLocation, UKismetMathLibrary::Conv_VectorToRotator(-GetActorRightVector()));
 			}
 
 			bCanAttack = false;
