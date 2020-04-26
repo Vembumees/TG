@@ -12,20 +12,20 @@
 #include "Engine/StaticMesh.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
+#include "Components/SceneComponent.h"
+#include "DrawDebugHelpers.h"
+#include "Interfaces/InteractInterface.h"
+#include "Kismet/KismetMathLibrary.h"
 
-const FName ASGPawn::MoveForwardBinding("MoveForward");
-const FName ASGPawn::MoveRightBinding("MoveRight");
-const FName ASGPawn::FireForwardBinding("FireForward");
-const FName ASGPawn::FireRightBinding("FireRight");
 
 ASGPawn::ASGPawn()
 {	
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShipMesh(TEXT("/Game/TwinStick/Meshes/TwinStickUFO.TwinStickUFO"));
+	
+
 	// Create the mesh component
 	ShipMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShipMesh"));
-	RootComponent = ShipMeshComponent;
-	ShipMeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
-	ShipMeshComponent->SetStaticMesh(ShipMesh.Object);
+	ShipMeshComponent->SetupAttachment(RootComponent);
+	ShipMeshComponent->AddLocalRotation(FQuat(0, 0, 90, 0));
 	
 	// Cache our sound effect
 	static ConstructorHelpers::FObjectFinder<USoundBase> FireAudio(TEXT("/Game/TwinStick/Audio/TwinStickFire.TwinStickFire"));
@@ -33,7 +33,7 @@ ASGPawn::ASGPawn()
 
 	// Create a camera boom...
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
+	CameraBoom->SetupAttachment(ShipMeshComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when ship does
 	CameraBoom->TargetArmLength = 1200.f;
 	CameraBoom->SetRelativeRotation(FRotator(-80.f, 0.f, 0.f));
@@ -49,76 +49,45 @@ ASGPawn::ASGPawn()
 	// Weapon
 	GunOffset = FVector(90.f, 0.f, 0.f);
 	FireRate = 0.1f;
-	bCanFire = true;
+	bCanAttack = true;
+
+	forwardVec = FVector(1.f, 0.f, 0.f);
+	rightVec = FVector(0.f, 1.f, 0.f);
 }
 
 void ASGPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
 
-	// set up gameplay key bindings
-	PlayerInputComponent->BindAxis(MoveForwardBinding);
-	PlayerInputComponent->BindAxis(MoveRightBinding);
-	PlayerInputComponent->BindAxis(FireForwardBinding);
-	PlayerInputComponent->BindAxis(FireRightBinding);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ASGPawn::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ASGPawn::MoveRight);
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ASGPawn::Attack);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASGPawn::Interact);
 }
 
 void ASGPawn::Tick(float DeltaSeconds)
 {
-	// Find movement direction
-	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
-	const float RightValue = GetInputAxisValue(MoveRightBinding);
-
-	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
-	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
-
-	// Calculate  movement
-	const FVector Movement = MoveDirection * MoveSpeed * DeltaSeconds;
-
-	// If non-zero size, move this actor
-	if (Movement.SizeSquared() > 0.0f)
-	{
-		const FRotator NewRotation = Movement.Rotation();
-		FHitResult Hit(1.f);
-		RootComponent->MoveComponent(Movement, NewRotation, true, &Hit);
-		
-		if (Hit.IsValidBlockingHit())
-		{
-			const FVector Normal2D = Hit.Normal.GetSafeNormal2D();
-			const FVector Deflection = FVector::VectorPlaneProject(Movement, Normal2D) * (1.f - Hit.Time);
-			RootComponent->MoveComponent(Deflection, NewRotation, true);
-		}
-	}
 	
-	// Create fire direction vector
-	const float FireForwardValue = GetInputAxisValue(FireForwardBinding);
-	const float FireRightValue = GetInputAxisValue(FireRightBinding);
-	const FVector FireDirection = FVector(FireForwardValue, FireRightValue, 0.f);
-
-	// Try and fire a shot
-	FireShot(FireDirection);
 }
 
-void ASGPawn::FireShot(FVector FireDirection)
+void ASGPawn::Attack()
 {
 	// If it's ok to fire again
-	if (bCanFire == true)
+	if (bCanAttack == true)
 	{
-		// If we are pressing fire stick in a direction
-		if (FireDirection.SizeSquared() > 0.0f)
-		{
-			const FRotator FireRotation = FireDirection.Rotation();
+
+			
 			// Spawn projectile at an offset from this pawn
-			const FVector SpawnLocation = GetActorLocation() + FireRotation.RotateVector(GunOffset);
+			const FVector SpawnLocation = GetActorLocation() + (-GetActorRightVector());
 
 			UWorld* const World = GetWorld();
 			if (World != NULL)
 			{
 				// spawn the projectile
-				World->SpawnActor<ASGProjectile>(SpawnLocation, FireRotation);
+				World->SpawnActor<ASGProjectile>(SpawnLocation, GetActorRotation());
 			}
 
-			bCanFire = false;
+			bCanAttack = false;
 			World->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ASGPawn::ShotTimerExpired, FireRate);
 
 			// try and play the sound if specified
@@ -127,13 +96,61 @@ void ASGPawn::FireShot(FVector FireDirection)
 				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 			}
 
-			bCanFire = false;
-		}
+			bCanAttack = false;
+	
 	}
 }
 
 void ASGPawn::ShotTimerExpired()
 {
-	bCanFire = true;
+	bCanAttack = true;
 }
 
+void ASGPawn::MoveForward(float iVal)
+{
+	//using this left vector to move this mesh to forward.
+	ShipMeshComponent->AddForce(impulseForce * (ShipMeshComponent->GetRightVector() * -1) * iVal);
+}
+
+void ASGPawn::MoveRight(float iVal)
+{
+	
+	ShipMeshComponent->AddRelativeRotation(FRotator(0, iVal, 0));
+}
+
+void ASGPawn::Interact()
+{
+	AActor* Caller = this;
+	FVector l_loc = GetActorLocation();
+	FRotator l_rot = UKismetMathLibrary::Conv_VectorToRotator(-GetActorRightVector());
+	FVector TraceEnd = (l_loc  + l_rot.Vector() * linetraceDistance);
+	FCollisionQueryParams Queryparams;
+	Queryparams.AddIgnoredActor(this);
+	Queryparams.bTraceComplex = true;
+
+	DrawDebugLine(GetWorld(), GetActorLocation(), TraceEnd, FColor::Green, false, 5.f, ECC_WorldStatic, 1.f);
+
+	FHitResult HitResult;
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, 
+		l_loc,
+		TraceEnd, 
+		ECollisionChannel::ECC_WorldDynamic, 
+		Queryparams))
+	{
+		if (HitResult.GetActor() != nullptr)
+		{
+			if (HitResult.GetActor()->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, SFXInteractSuccess, GetActorLocation());
+				interactedActor = HitResult.GetActor();
+				
+				IInteractInterface::Execute_Interact(HitResult.GetActor(), Caller);
+				IInteractInterface::Execute_GetInteractMessage(HitResult.GetActor());
+			}
+			else
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, SFXInteractFail, GetActorLocation());
+			}
+		}
+	}
+}

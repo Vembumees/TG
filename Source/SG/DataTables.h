@@ -4,17 +4,25 @@
 #include "DataTables.generated.h"
 
 USTRUCT(BlueprintType)
-struct FExample : public FTableRowBase
+struct FObjectStats : public FTableRowBase
 {
 	GENERATED_BODY()
 
 		//defaults
-		FExample()
+		FObjectStats()
 		{
-			example = 3;
+			health = 3;
 		}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 example;									//how many actionpoints ability costs
+		UStaticMeshComponent* staticMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UMaterial* material;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 health;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText interactMessage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FString> loot;
 
 };

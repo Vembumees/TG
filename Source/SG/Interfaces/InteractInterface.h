@@ -23,7 +23,7 @@ class SG_API IInteractInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Custom")
-		void IInteract(AActor* iInteracter);
+		void Interact(AActor* iInteracter);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Custom")
 		FText GetInteractMessage();

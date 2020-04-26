@@ -7,9 +7,12 @@
 #include "SGPawn.generated.h"
 
 UCLASS(Blueprintable)
-class ASGPawn : public APawn
+class ASGPawn : public  APawn
 {
 	GENERATED_BODY()
+
+public:
+
 
 	/* The mesh component */
 	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -34,9 +37,7 @@ public:
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
 	float FireRate;
 
-	/* The speed our ship moves around the level */
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
-	float MoveSpeed;
+
 
 	/** Sound to play each time we fire */
 	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadWrite)
@@ -48,21 +49,15 @@ public:
 	// End Actor Interface
 
 	/* Fire a shot in the specified direction */
-	void FireShot(FVector FireDirection);
+	void Attack();
 
 	/* Handler for the fire timer expiry */
 	void ShotTimerExpired();
 
-	// Static names for axis bindings
-	static const FName MoveForwardBinding;
-	static const FName MoveRightBinding;
-	static const FName FireForwardBinding;
-	static const FName FireRightBinding;
-
 private:
 
 	/* Flag to control firing  */
-	uint32 bCanFire : 1;
+	uint32 bCanAttack : 1;
 
 	/** Handle for efficient management of ShotTimerExpired timer */
 	FTimerHandle TimerHandle_ShotTimerExpired;
@@ -74,5 +69,43 @@ public:
 	FORCEINLINE class UCameraComponent* GetCameraComponent() const { return CameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+
+
+
+
+	/* ###########################################################
+					movement
+ ########################################################### */
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ACustom")
+		FVector Movement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ACustom")
+		float MoveSpeed;
+
+	float forwardVal;
+	float rightVal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ACustom")
+	float impulseForce = 10000;
+	FVector forwardVec;
+	FVector rightVec;
+
+public:
+
+	void MoveForward(float iVal);
+	void MoveRight(float iVal);
+	void Interact();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* SFXInteractSuccess;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USoundBase* SFXInteractFail;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		AActor* interactedActor;
+	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ACustom - Gameplay")
+		float linetraceDistance;
 };
 
