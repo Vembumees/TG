@@ -13,6 +13,27 @@ class ASGGameMode : public AGameModeBase
 
 public:
 	ASGGameMode();
+
+
+public:
+	/* ###########################################################
+				DATA
+########################################################### */
+
+	UPROPERTY()
+		class UDataTable* DTObjectData;
+
+	UPROPERTY()
+		TArray<FName> DTObjectDataRowNames;
+
+
+
+	
+	
+
+protected:
+	virtual void BeginPlay() override;
+	void SetDTObjectDataRowNames();
 };
 
 

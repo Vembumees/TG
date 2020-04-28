@@ -21,7 +21,7 @@
 ASGPawn::ASGPawn()
 {	
 	
-
+	
 	// Create the mesh component
 	ShipMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShipMesh"));
 	ShipMeshComponent->SetupAttachment(RootComponent);
