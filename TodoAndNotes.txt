@@ -1,0 +1,33 @@
+Small game where you fly around space and so some random whatever stuff i decide to implement.
+Nothing fancy here. Just a place to hack some broken code together.
+
+TODO:
+	*some basic card class
+	*card UI stuff
+	*card combat
+	
+	*shop to buy cards
+	*mini dialogue widget
+	
+	
+Notes:
+	idk really what to do exactly atm. On one side I want to do the experimental "complex"
+	inventory health/Damage system. On the other side maybe it feels too weird and bad and 
+	overly complicated. Maybe should just try to get basic system first. Like slay the spire
+	cards and combat.
+
+	But simple idea atm was to make cards that just deal damage, heal, give armor etc basic thing.
+	But have very powerful random side effects (on card creation). That can also change the world.
+	For example if you want to deal high damage you might have to destroy an ally, trader, wipe
+	your resources, summon enemies near you, make everything more dangerous or whatever.
+
+
+	Other concept that atm came to me with the inventory grid is that we collect cards to our 
+	2x3 or whatever small inventory and whenever we get dealt damage, it damages a random grid.
+	Maybe like we get 3 dmg, it targets 3 grids randomly and deals them 1 damage. Or 3 damage 
+	over 3 turns on one tile. Or something like that. Maybe separate damage cards for them.
+	And if our grid hp goes 0 the card inside gets destroyed. So whenever we take damage we need
+	to sacrifice what cards we permamently will lose. When we use cards we use them from the grid
+	inventory and they go on cooldown. Can do plenty of the standard stuff with the grid. fire, water,
+	freeze etc with the grids. Tho those are kind of common now (tho most ppl i reckon havent also
+	played all this type of card combat games :D). But yeah, when I get there I'll think it through more.
