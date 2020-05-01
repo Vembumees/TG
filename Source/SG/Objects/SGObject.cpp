@@ -23,7 +23,7 @@ ASGObject::ASGObject()
 						defaults
 	 ########################################################### */
 
-	InteractMessage = InteractMessage;
+	this->m_interactMessage = FText::FromString("None");
 	initializeTimer = 1.0f;
 }
 
@@ -48,12 +48,12 @@ void ASGObject::Tick(float DeltaTime)
 
 void ASGObject::Interact_Implementation(AActor* iInteracter)
 {
-	UE_LOG(LogTemp, Warning, TEXT("baah baah %s"));
+	UE_LOG(LogTemp, Warning, TEXT("baah baah %s"), *m_interactMessage.ToString());
 }
 
 FText ASGObject::GetInteractMessage_Implementation()
 {
-	return InteractMessage;
+	return m_interactMessage;
 }
 
 void ASGObject::IDamage_Implementation(AActor* iAttacker)
@@ -89,19 +89,22 @@ void ASGObject::InitDTInfo()
 	if (refGameMode != nullptr && refGameMode->DTObjectData != nullptr)
 	{
 		FObjectData* ObjectData = refGameMode->DTObjectData->FindRow<FObjectData>(
-			refGameMode->DTObjectDataRowNames[DTObjectStatsRowNumber + 1], "SGObject DTObjectStats", true);
+			refGameMode->DTObjectDataRowNames[DTObjectStatsRowNumber], "SGObject DTObjectStats", true);
 		if (ObjectData != nullptr)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("ObjectData LOADED SUCCESSFULLY."));
 			ObjectsCurrentStats = ObjectData->objStats;
 
-
+			//update interactMessage
+			m_interactMessage = ObjectsCurrentStats.interactMessage;
 		}
 		else
 		{
 			UE_LOG(LogTemp, Error, TEXT("ObjectData load FAILED"));
 		}
 	}
+
+	
 }
 
 void ASGObject::InitNecessaryRefs()

@@ -79,7 +79,7 @@ public:
 
 
 	UPROPERTY()
-	FText InteractMessage;
+	FText m_interactMessage;
 
 
 protected:
