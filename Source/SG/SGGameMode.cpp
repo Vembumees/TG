@@ -10,7 +10,7 @@ ASGGameMode::ASGGameMode()
 	DefaultPawnClass = ASGPawn::StaticClass();
 
 	/* ###########################################################
-	DATA
+								DATA
 ########################################################### */
 /*load object stats datatable automatically, datatable values are in beginplay*/
 	static ConstructorHelpers::FObjectFinder<UDataTable> ObjectStatsDTObject(TEXT("DataTable'/Game/Data/ObjectDataDT.ObjectDataDT'"));

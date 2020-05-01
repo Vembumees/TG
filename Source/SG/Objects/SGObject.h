@@ -97,9 +97,17 @@ public:
 	
 
 	/* ###########################################################
-						References
+						Init &	References
 	 ########################################################### */
 protected:
+	void StartInitTimer();
+	UFUNCTION()
+	void InitializeDelayed();
+	void InitDTInfo();
 	void InitNecessaryRefs();
 	class ASGGameMode* refGameMode;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float initializeTimer;
 };
