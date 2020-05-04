@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/ICanBeDamaged.h"
 #include "SGPawn.generated.h"
 
 UCLASS(Blueprintable)
-class ASGPawn : public  APawn
+class ASGPawn : public  APawn, public IICanBeDamaged
 {
 	GENERATED_BODY()
 
@@ -24,6 +25,9 @@ public:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
+
+
+	virtual void OnGetDamaged(float iBaseDamage, AActor* iAttacker) override;
 
 public:
 	ASGPawn();

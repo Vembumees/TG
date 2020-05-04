@@ -46,17 +46,25 @@ void ASGObject::Tick(float DeltaTime)
 
 }
 
-void ASGObject::Interact_Implementation(AActor* iInteracter)
+
+
+
+void ASGObject::OnEnterPlayerRadius(AActor* iPlayer)
+{
+
+}
+
+void ASGObject::OnLeavePlayerRadius(AActor* iPlayer)
+{
+	
+}
+
+void ASGObject::Interact(AActor* iPlayer)
 {
 	UE_LOG(LogTemp, Warning, TEXT("baah baah %s"), *m_interactMessage.ToString());
 }
 
-FText ASGObject::GetInteractMessage_Implementation()
-{
-	return m_interactMessage;
-}
-
-void ASGObject::IDamage_Implementation(AActor* iAttacker)
+void ASGObject::OnGetDamaged(float iBaseDamage, AActor* iAttacker)
 {
 	
 }

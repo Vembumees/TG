@@ -13,21 +13,13 @@ class UInteractInterface : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+
 class SG_API IInteractInterface
 {
 	GENERATED_BODY()
 			
 public:
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Custom")
-		void Interact(AActor* iInteracter);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Custom")
-		FText GetInteractMessage();
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Custom")
-		void IDamage(AActor* iAttacker);
+	virtual void OnEnterPlayerRadius(AActor* iPlayer) = 0;
+	virtual void OnLeavePlayerRadius(AActor* iPlayer) = 0;
+	virtual void Interact(AActor* iPlayer) = 0;
 };

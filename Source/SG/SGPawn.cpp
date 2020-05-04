@@ -18,6 +18,7 @@
 #include "Kismet/KismetMathLibrary.h"
 
 
+
 ASGPawn::ASGPawn()
 {	
 	
@@ -53,6 +54,11 @@ ASGPawn::ASGPawn()
 
 	forwardVec = FVector(1.f, 0.f, 0.f);
 	rightVec = FVector(0.f, 1.f, 0.f);
+}
+
+void ASGPawn::OnGetDamaged(float iBaseDamage, AActor* iAttacker)
+{
+
 }
 
 void ASGPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -144,8 +150,11 @@ void ASGPawn::Interact()
 				UGameplayStatics::PlaySoundAtLocation(this, SFXInteractSuccess, GetActorLocation());
 				interactedActor = HitResult.GetActor();
 				
-				IInteractInterface::Execute_Interact(HitResult.GetActor(), Caller);
-				IInteractInterface::Execute_GetInteractMessage(HitResult.GetActor());
+				IInteractInterface* IT = Cast<IInteractInterface>(interactedActor);
+				if (IT != nullptr)
+				{
+					IT->Interact(this);
+				}
 			}
 			else
 			{

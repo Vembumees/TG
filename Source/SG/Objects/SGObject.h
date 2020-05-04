@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/DataTable.h"
 #include "SG/Interfaces/InteractInterface.h"
+#include "SG/Interfaces/ICanBeDamaged.h"
 #include "SGObject.generated.h"
 
 USTRUCT(BlueprintType)
@@ -45,7 +46,7 @@ struct FObjectData : public FTableRowBase
 };
 
 UCLASS()
-class SG_API ASGObject : public AActor, public IInteractInterface
+class SG_API ASGObject : public AActor, public IInteractInterface, public IICanBeDamaged
 {
 	GENERATED_BODY()
 	
@@ -65,22 +66,23 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Custom - Interact")
-		void Interact(AActor* iInteractor);
-	virtual void Interact_Implementation(AActor* iInteracter) override;
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Custom - Interact")
-		FText GetInteractMessage();	//prototype declaration
-	virtual FText GetInteractMessage_Implementation() override;
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Custom - Interact")
-		void IDamage(AActor* iAttacker);
-	virtual void IDamage_Implementation(AActor* iAttacker) override;
 
 
 	UPROPERTY()
 	FText m_interactMessage;
 
+
+
+	virtual void OnEnterPlayerRadius(AActor* iPlayer) override;
+
+
+	virtual void OnLeavePlayerRadius(AActor* iPlayer) override;
+
+
+	virtual void Interact(AActor* iPlayer) override;
+
+
+	virtual void OnGetDamaged(float iBaseDamage, AActor* iAttacker) override;
 
 protected:
 

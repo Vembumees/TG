@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UI/MasterWidget.h"
+#include "SG/UI/MasterWidget.h"
 #include "W_ShipInventorySlot.generated.h"
 
 /**

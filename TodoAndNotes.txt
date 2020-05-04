@@ -86,6 +86,11 @@ Notes:
 
 
 
+	#################################################################################################3
+	Where I left off?
+	To make inventory component and widgets. Havent started. Start building the shipinventory.
+
+
 
 
 
