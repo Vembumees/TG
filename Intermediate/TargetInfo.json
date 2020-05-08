@@ -1,13 +1,13 @@
 {
 	"Targets": [
 		{
-			"Name": "SG",
-			"Path": "C:\\Users\\Vemb\\Documents\\Unreal Projects\\SG\\Source\\SG.Target.cs",
+			"Name": "TG",
+			"Path": "C:\\Users\\Vemb\\Documents\\Unreal Projects\\TG\\Source\\TG.Target.cs",
 			"Type": "Game"
 		},
 		{
-			"Name": "SGEditor",
-			"Path": "C:\\Users\\Vemb\\Documents\\Unreal Projects\\SG\\Source\\SGEditor.Target.cs",
+			"Name": "TGEditor",
+			"Path": "C:\\Users\\Vemb\\Documents\\Unreal Projects\\TG\\Source\\TGEditor.Target.cs",
 			"Type": "Editor"
 		}
 	]
