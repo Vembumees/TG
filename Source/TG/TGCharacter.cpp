@@ -10,6 +10,8 @@
 #include "GameFramework/Controller.h"
 #include "Components/BoxComponent.h"
 #include "Camera/CameraComponent.h"
+#include "TG/Interfaces/Interact.h"
+#include "DrawDebugHelpers.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SideScrollerCharacter, Log, All);
 
@@ -80,6 +82,12 @@ ATGCharacter::ATGCharacter()
 
 	/*currentFlipbook = idleAnimation;*/
 }
+
+void ATGCharacter::OnGetDamaged(float iBaseDamage, AActor* iAttacker)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Got Damaged"));
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -89,6 +97,7 @@ void ATGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("BasicAttack", IE_Pressed, this, &ATGCharacter::BasicAttack);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ATGCharacter::Interact);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ATGCharacter::MoveRight);
 }
 
@@ -127,9 +136,7 @@ void ATGCharacter::BasicAttack()
 {
 	UE_LOG(LogTemp, Error, TEXT("atk"));
 	if (currentState != ECharacterStates::ATTACKING && 
-		currentState != ECharacterStates::JUMPING &&
-		currentState != ECharacterStates::SLIDING &&
-		currentState != ECharacterStates::STUNNED)
+		currentState != ECharacterStates::JUMPING)
 	{
 		currentState = ECharacterStates::ATTACKING;
 		UpdateCharacter();
@@ -233,4 +240,42 @@ void ATGCharacter::UpdateCharacter()
 {
 	// Update animation to match the motion
 	UpdateAnimation();
+}
+
+void ATGCharacter::Interact()
+{
+	FVector Start;
+	FVector End;
+	
+	FVector PlayerEyesLoc;
+	FRotator PlayerEyesRot;
+
+	GetActorEyesViewPoint(PlayerEyesLoc, PlayerEyesRot);
+	Start = PlayerEyesLoc;
+	End = PlayerEyesLoc + (PlayerEyesRot.Vector() * InteractDistance);
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(this);
+	TraceParams.bTraceComplex = true;
+	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 1.0f);
+	FHitResult HitResult = FHitResult(ForceInit);
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_WorldDynamic, TraceParams))
+	{
+		if (HitResult.GetActor() != nullptr)
+		{
+			if (HitResult.GetActor()->GetClass()->ImplementsInterface(UInteract::StaticClass()))
+			{
+				//play success sound?
+
+				//since its here not above scope it will only show actors with the interact interface only 
+				interactedActor = HitResult.GetActor();
+
+				IInteract* Interact = Cast<IInteract>(interactedActor);
+				if (Interact != nullptr)
+				{
+					Interact->Interact(this);
+				}
+			}
+		}
+	}
 }

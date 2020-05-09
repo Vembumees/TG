@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
 #include "TG/Enumerations.h"
+#include "TG/Interfaces/CanBeDamaged.h"
 #include "TGCharacter.generated.h"
 
 class UTextRenderComponent;
@@ -18,7 +19,7 @@ class UTextRenderComponent;
  * The Sprite component (inherited from APaperCharacter) handles the visuals
  */
 UCLASS(config=Game)
-class ATGCharacter : public APaperCharacter
+class ATGCharacter : public APaperCharacter, public ICanBeDamaged
 {
 	GENERATED_BODY()
 
@@ -103,6 +104,7 @@ protected:
 	void StopAttack();
 	void HandleAttack();
 	void UpdateCharacter();
+	void Interact();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
@@ -115,6 +117,9 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
+
+
+	virtual void OnGetDamaged(float iBaseDamage, AActor* iAttacker) override;
 
 protected:
 
@@ -138,6 +143,18 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = ACombat)
 		float AttackAnimLength = 1.0f;
+
+
+	 /* #########################END############################## */
+
+	/* ###########################################################
+						Debug values
+	 ########################################################### */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float InteractDistance = 300;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		AActor* interactedActor;
 
 
 	 /* #########################END############################## */
