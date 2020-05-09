@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
+#include "Components/BoxComponent.h"
 #include "Camera/CameraComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SideScrollerCharacter, Log, All);
@@ -17,6 +18,12 @@ DEFINE_LOG_CATEGORY_STATIC(SideScrollerCharacter, Log, All);
 
 ATGCharacter::ATGCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
+	AttackHitbox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackHitbox"));
+	AttackHitbox->RelativeLocation = AttackHitboxLocation;
+	AttackHitbox->SetupAttachment(RootComponent);
+
 	// Use only Yaw from the controller and ignore the rest of the rotation.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
@@ -34,7 +41,7 @@ ATGCharacter::ATGCharacter()
 	CameraBoom->SetUsingAbsoluteRotation(true);
 	CameraBoom->bDoCollisionTest = false;
 	CameraBoom->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
-	
+
 
 	// Create an orthographic camera (no perspective) and attach it to the boom
 	SideViewCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
@@ -65,28 +72,112 @@ ATGCharacter::ATGCharacter()
 	// behavior on the edge of a ledge versus inclines by setting this to true or false
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
 
-    	TextComponent = CreateDefaultSubobject<UTextRenderComponent>(TEXT("IncarGear"));
-        	TextComponent->SetRelativeScale3D(FVector(3.0f, 3.0f, 3.0f));
-         	TextComponent->SetRelativeLocation(FVector(35.0f, 5.0f, 20.0f));
-         	TextComponent->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
-         	TextComponent->SetupAttachment(RootComponent);
 
-	
 	GetSprite()->SetIsReplicated(true);
 	bReplicates = true;
 
 	currentState = ECharacterStates::IDLE;
-	
+
 	/*currentFlipbook = idleAnimation;*/
+}
+//////////////////////////////////////////////////////////////////////////
+// Input
+
+void ATGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	// Note: the 'Jump' action and the 'MoveRight' axis are bound to actual keys/buttons/sticks in DefaultInput.ini (editable from Project Settings..Input)
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("BasicAttack", IE_Pressed, this, &ATGCharacter::BasicAttack);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ATGCharacter::MoveRight);
+}
+
+void ATGCharacter::MoveRight(float Value)
+{
+	if (currentState != ECharacterStates::ATTACKING)
+	{
+		// Apply the input to the character motion
+		AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+		if (Value == 0)
+		{
+			currentState = ECharacterStates::IDLE;
+		}
+
+		if (Value != 0)
+		{
+			currentState = ECharacterStates::RUNNING;
+			UpdateCharacter();
+		}
+
+		if (Value < 0.0f)
+		{
+			Controller->SetControlRotation(FRotator(0.0, 180.0f, 0.0f));
+		}
+		else if (Value > 0.0f)
+		{
+			Controller->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
+		}
+		UpdateCharacter();
+	}
+}
+
+
+
+void ATGCharacter::BasicAttack()
+{
+	UE_LOG(LogTemp, Error, TEXT("atk"));
+	if (currentState != ECharacterStates::ATTACKING && 
+		currentState != ECharacterStates::JUMPING &&
+		currentState != ECharacterStates::SLIDING &&
+		currentState != ECharacterStates::STUNNED)
+	{
+		currentState = ECharacterStates::ATTACKING;
+		UpdateCharacter();
+
+		//stop attack animation timer
+		GetWorld()->GetTimerManager().SetTimer(AttackTimerHandle, this, &ATGCharacter::StopAttack, AttackAnimLength, false);
+	}
+}
+
+void ATGCharacter::StopAttack()
+{
+	currentState = ECharacterStates::IDLE;
+	UpdateCharacter();
+}
+
+void ATGCharacter::HandleAttack()
+{
+	if (currentState == ECharacterStates::ATTACKING)
+	{
+		//TODO do this later, will implement interactable object first
+// 		TArray<AActor*> OverlappingActors;
+// 		AttackHitbox->GetOverlappingActors(OverlappingActors, ATGCharacter::StaticClass());
+// 		if (OverlappingActors.Num() > 0)
+// 		{
+// 
+// 		}
+	}
 }
 
 // Animation
 
 void ATGCharacter::UpdateAnimation()
 {
-	const FVector PlayerVelocity = GetVelocity();
- 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
+	//this shouldnt have any game logic, just change animations
+	if (currentState != ECharacterStates::ATTACKING)
+	{
+
+		const FVector PlayerVelocity = GetVelocity();
+		const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 		currentState = (PlayerSpeedSqr > 0.0f) ? ECharacterStates::RUNNING : ECharacterStates::IDLE;
+
+	}
+
+	if (currentState == ECharacterStates::ATTACKING)
+	{
+		UE_LOG(LogTemp, Error, TEXT("check"));
+	}
+
 
 
 	switch (currentState)
@@ -124,62 +215,22 @@ void ATGCharacter::UpdateAnimation()
 		GetSprite()->SetFlipbook(crouchingAnimation);
 		break;
 	}
-
-	/*GetSprite()->PlayFromStart();*/
 }
+
+
 
 void ATGCharacter::Tick(float DeltaSeconds)
 {
+	//atm disabled
 	Super::Tick(DeltaSeconds);
-	
-	UpdateCharacter();	
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-// Input
-
-void ATGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
-	// Note: the 'Jump' action and the 'MoveRight' axis are bound to actual keys/buttons/sticks in DefaultInput.ini (editable from Project Settings..Input)
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ATGCharacter::MoveRight);
-}
-
-void ATGCharacter::MoveRight(float Value)
-{
-	/*UpdateChar();*/
-
-	// Apply the input to the character motion
-	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
-}
-
-
-
-void ATGCharacter::BasicAttack()
-{
 
 }
+
+
+
 
 void ATGCharacter::UpdateCharacter()
 {
 	// Update animation to match the motion
 	UpdateAnimation();
-
-	// Now setup the rotation of the controller based on the direction we are travelling
-	const FVector PlayerVelocity = GetVelocity();	
-	float TravelDirection = PlayerVelocity.X;
-	// Set the rotation so that the character faces his direction of travel.
-	if (Controller != nullptr)
-	{
-		if (TravelDirection < 0.0f)
-		{
-			Controller->SetControlRotation(FRotator(0.0, 180.0f, 0.0f));
-		}
-		else if (TravelDirection > 0.0f)
-		{
-			Controller->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
-		}
-	}
 }

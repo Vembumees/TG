@@ -34,6 +34,12 @@ class ATGCharacter : public APaperCharacter
 	virtual void Tick(float DeltaSeconds) override;
 protected:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ACombat)
+		class UBoxComponent* AttackHitbox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ACombat)
+		FVector AttackHitboxLocation = FVector(80.0f, 0, 0);
+
 
 	/* ###########################################################
 						Animations
@@ -94,6 +100,8 @@ protected:
 	void UpdateAnimation();
 	void MoveRight(float Value);
 	void BasicAttack();
+	void StopAttack();
+	void HandleAttack();
 	void UpdateCharacter();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -110,8 +118,29 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Testing)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ATesting)
 		ECharacterStates currentState;
+
+
+	/* ###########################################################
+						Timers
+	 ########################################################### */
+protected:
+	FTimerHandle AttackTimerHandle;
+
+	 /* #########################END############################## */
+
+
+	/* ###########################################################
+						Combat
+	 ########################################################### */
+protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = ACombat)
+		float AttackAnimLength = 1.0f;
+
+
+	 /* #########################END############################## */
 
 	
 };
