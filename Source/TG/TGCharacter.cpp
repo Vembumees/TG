@@ -22,9 +22,6 @@ ATGCharacter::ATGCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	AttackHitbox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackHitbox"));
-	AttackHitbox->RelativeLocation = AttackHitboxLocation;
-	AttackHitbox->SetupAttachment(RootComponent);
 
 	// Use only Yaw from the controller and ignore the rest of the rotation.
 	bUseControllerRotationPitch = false;
@@ -88,18 +85,6 @@ void ATGCharacter::OnGetDamaged(float iBaseDamage, AActor* iAttacker)
 	UE_LOG(LogTemp, Warning, TEXT("Got Damaged"));
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Input
-
-void ATGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
-	// Note: the 'Jump' action and the 'MoveRight' axis are bound to actual keys/buttons/sticks in DefaultInput.ini (editable from Project Settings..Input)
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("BasicAttack", IE_Pressed, this, &ATGCharacter::BasicAttack);
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ATGCharacter::Interact);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ATGCharacter::MoveRight);
-}
 
 void ATGCharacter::MoveRight(float Value)
 {
@@ -157,12 +142,6 @@ void ATGCharacter::HandleAttack()
 	if (currentState == ECharacterStates::ATTACKING)
 	{
 		//TODO do this later, will implement interactable object first
-// 		TArray<AActor*> OverlappingActors;
-// 		AttackHitbox->GetOverlappingActors(OverlappingActors, ATGCharacter::StaticClass());
-// 		if (OverlappingActors.Num() > 0)
-// 		{
-// 
-// 		}
 	}
 }
 

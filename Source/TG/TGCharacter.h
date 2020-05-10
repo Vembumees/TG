@@ -35,11 +35,6 @@ class ATGCharacter : public APaperCharacter, public ICanBeDamaged
 	virtual void Tick(float DeltaSeconds) override;
 protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ACombat)
-		class UBoxComponent* AttackHitbox;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ACombat)
-		FVector AttackHitboxLocation = FVector(80.0f, 0, 0);
 
 
 	/* ###########################################################
@@ -99,6 +94,7 @@ protected:
 
 	/** Called to choose the correct animation to play based on the character's movement state */
 	void UpdateAnimation();
+public:
 	void MoveRight(float Value);
 	void BasicAttack();
 	void StopAttack();
@@ -106,7 +102,6 @@ protected:
 	void UpdateCharacter();
 	void Interact();
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 
 public:

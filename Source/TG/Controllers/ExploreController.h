@@ -13,5 +13,27 @@ UCLASS()
 class TG_API AExploreController : public APlayerController
 {
 	GENERATED_BODY()
+public:
+	AExploreController();
+
+protected:
+	virtual void SetupInputComponent() override;
+
+	virtual void BeginPlay() override;
 	
+	//controls
+	void BasicAttack();
+	void Interact();	
+	void MoveRight(float iVal);
+	void InitializeRefs();
+	void Jump();
+
+	/* ###########################################################
+						references
+	 ########################################################### */
+public:
+	UPROPERTY()
+	class ATGCharacter* refTGCharacter;
+
+	/* #########################END############################## */
 };
