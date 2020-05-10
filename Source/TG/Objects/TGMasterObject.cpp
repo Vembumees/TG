@@ -38,6 +38,19 @@ ATGMasterObject::ATGMasterObject()
 
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	audioComp->SetupAttachment(objectRootComp);
+
+
+
+
+
+
+	/* ###########################################################
+						DEFAULT VALUES	
+	 ########################################################### */
+		initializeTimer = 0.3f;
+		objectDeathTimer = 5.0f;
+		
+	 /* #########################END############################## */
 	
 
 }
@@ -57,9 +70,26 @@ void ATGMasterObject::Interact(AActor* iPlayer)
 	UE_LOG(LogTemp, Warning, TEXT("Interacted"));
 }
 
-void ATGMasterObject::OnGetDamaged(float iBaseDamage, AActor* iAttacker)
+void ATGMasterObject::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
 {
+	if (iBaseDamage <= 0)
+	{
+		currentBasicStats.currentHealth -= iBaseDamage;
+		if (currentBasicStats.currentHealth <= 0)
+		{
+			//play death animation and in 10 seconds fall through the ground and destroy self
+			this->SpriteComp->SetLooping(false);
+			this->SpriteComp->SetFlipbook(currentBasicAnimations.ObjectDestroyedAnimation);
 
+			//give xp & drop loot?
+			
+			//here we can add some effect in future for disappearing corpses
+
+			//destroys the object in set time
+			this->SetLifeSpan(objectDeathTimer);
+
+		}
+	}
 }
 
 void ATGMasterObject::OnConstruction(const FTransform& Transform)
@@ -79,11 +109,16 @@ void ATGMasterObject::BeginPlay()
 	StartInitializeTimer();
 	InitializeReferences();
 	SetDataTableObjectDataRowNames();
+	
 }
 
 void ATGMasterObject::PassDataFromTableToObjectVariables()
 {
+	//pass the sprite
 	this->SpriteComp->SetFlipbook(currentBasicAnimations.ObjectIdleAnimation);
+
+	//pass stats
+	
 
 }
 
@@ -130,3 +165,4 @@ void ATGMasterObject::SetDataTableObjectDataRowNames()
 		DataTableObjectRowNames = DataTableObjectData->GetRowNames();
 	}
 }
+

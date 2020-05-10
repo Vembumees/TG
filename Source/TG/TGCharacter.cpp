@@ -54,7 +54,7 @@ ATGCharacter::ATGCharacter()
 
 	// Configure character movement
 	GetCharacterMovement()->GravityScale = 3.0f;
-	GetCharacterMovement()->AirControl = 0;
+	GetCharacterMovement()->AirControl = 0.1;
 	GetCharacterMovement()->JumpZVelocity = 1000.f;
 	GetCharacterMovement()->GroundFriction = 3.0f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
@@ -76,13 +76,25 @@ ATGCharacter::ATGCharacter()
 	currentState = ECharacterStates::IDLE;
 
 	/*currentFlipbook = idleAnimation;*/
+
+
+
+	/* ###########################################################
+						DEFAULT VALUES
+	 ########################################################### */
+	AttackAnimLength = 1.0f;
+	InteractDistance = 300.0f;
+
+
+	 /* #########################END############################## */
 }
 
-void ATGCharacter::OnGetDamaged(float iBaseDamage, AActor* iAttacker)
+
+
+void ATGCharacter::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Got Damaged"));
-}
 
+}
 
 void ATGCharacter::MoveRight(float Value)
 {
@@ -118,7 +130,7 @@ void ATGCharacter::MoveRight(float Value)
 void ATGCharacter::BasicAttack()
 {
 	UE_LOG(LogTemp, Error, TEXT("atk"));
-	if (currentState != ECharacterStates::ATTACKING && 
+	if (currentState != ECharacterStates::ATTACKING &&
 		currentState != ECharacterStates::JUMPING)
 	{
 		currentState = ECharacterStates::ATTACKING;
@@ -223,7 +235,7 @@ void ATGCharacter::Interact()
 {
 	FVector Start;
 	FVector End;
-	
+
 	FVector PlayerEyesLoc;
 	FRotator PlayerEyesRot;
 

@@ -104,6 +104,8 @@ public:
 
 
 
+
+
 public:
 	ATGCharacter();
 
@@ -114,7 +116,7 @@ public:
 
 
 
-	virtual void OnGetDamaged(float iBaseDamage, AActor* iAttacker) override;
+	virtual void OnGetDamaged(int32 iBaseDamage, AActor* iAttacker) override;
 
 protected:
 
@@ -137,16 +139,16 @@ protected:
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = ACombat)
-		float AttackAnimLength = 1.0f;
+		float AttackAnimLength;
 
 
 	 /* #########################END############################## */
 
 	/* ###########################################################
-						Debug values
+						Debug 
 	 ########################################################### */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float InteractDistance = 300;
+		float InteractDistance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		AActor* interactedActor;

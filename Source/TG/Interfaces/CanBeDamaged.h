@@ -23,5 +23,5 @@ class TG_API ICanBeDamaged
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	virtual void OnGetDamaged(float iBaseDamage, AActor* iAttacker) = 0;
+	virtual void OnGetDamaged(int32 iBaseDamage, AActor* iAttacker) = 0;
 };

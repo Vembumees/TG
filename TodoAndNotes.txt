@@ -2,93 +2,16 @@ Small game where you fly around space and so some random whatever stuff i decide
 Nothing fancy here. Just a place to hack some broken code together.
 
 TODO:
-	*card widget class
-	*card manager - manages effects, damage, etc
-	*card UI small effects stuff
-	*card combat
 	
-	*basic stats ui widget
-
-	*inventory grid for cards
-
-	*shop to buy cards
-	*mini dialogue widget
 	
 	
 Notes:
-	idk really what to do exactly atm. On one side I want to do the experimental "complex"
-	inventory health/Damage system. On the other side maybe it feels too weird and bad and 
-	overly complicated. Maybe should just try to get basic system first. Like slay the spire
-	cards and combat.
-
-	But simple idea atm was to make cards that just deal damage, heal, give armor etc basic thing.
-	But have very powerful random side effects (on card creation). That can also change the world.
-	For example if you want to deal high damage you might have to destroy an ally, trader, wipe
-	your resources, summon enemies near you, make everything more dangerous or whatever.
-
-
-	Other concept that atm came to me with the inventory grid is that we collect cards to our 
-	2x3 or whatever small inventory and whenever we get dealt damage, it damages a random grid.
-	Maybe like we get 3 dmg, it targets 3 grids randomly and deals them 1 damage. Or 3 damage 
-	over 3 turns on one tile. Or something like that. Maybe separate damage cards for them.
-	And if our grid hp goes 0 the card inside gets destroyed. So whenever we take damage we need
-	to sacrifice what cards we permamently will lose. When we use cards we use them from the grid
-	inventory and they go on cooldown. Can do plenty of the standard stuff with the grid. fire, water,
-	freeze etc with the grids. Tho those are kind of common now (tho most ppl i reckon havent also
-	played all this type of card combat games :D). But yeah, when I get there I'll think it through more.
-
-
-
-	#################################################################################################
-	Card
-	Quick brainstorm
-
-	class Card;
-		*we want card to have name, image, description. basic stats. And Effect enum. 
-		we put it all in a struct. Card gets the data from a datatable, this way we can 
-		easily create cards in datatable.
-
-		1)
-		Enum that lists all card effects, even ones like +1 dmg, +2 dmg etc.
-
-		class EffectMgr manages the effect logic. Like when we use the card, it calls effectMgr, which
-		asks the effect enum which effect it wants and plays the effect function on the target.
-
-	How should it work?
-	We select card, Call UseCard(), select the target we will use the effect on, then the card
-	calls the effectmanager to who we pass the target. The effectmanager calls the effect.
-	Now how do we do the card? I think it should be possible to just give cards ID and that all. Based 
-	on ID, effectmanager should be able to get the effect itself. Tho in this case, targeting should
-	also be done by the effect manager inside the effect function. But whatever. Lets start by figuring
-	things out.
-
-	#################################################################################################
-	inventory/life grid
-	this is basically ship's defences
-
-	entities that have this inventory aka creatures have inventory component.
-	But atm I think only player should have this.
-
-	3x3 or whatever, expandable, upgradable etc grid.
-	consists of 
-	Widgets
-	1)slot - has life, depending on life changes color, this is background just for color indication
-	2)button - this is basically item slot, this has the image of the item/card and you click on item to use it.
-	3)Inventory bar widget, this is where all the slots are created.
-
-	Manager
-	4)inventory component
-
-	??
-	Do I hold life in slot or inventory manager? I think slot. But I could hold all in inventory manager
-	and call Update() every time I do an action that updates the slot by ID that got modified. If I want to
-	buff a slot, where do I call? Will try to get the rest of this stuff somehow work then think. 
-
+	
 
 
 	#################################################################################################3
 	Where I left off?
-	To make inventory component and widgets. Havent started. Start building the shipinventory.
+	
 
 
 
