@@ -2,13 +2,11 @@
 
 #include "TGCharacter.h"
 #include "PaperFlipbookComponent.h"
-#include "Components/TextRenderComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
-#include "Components/BoxComponent.h"
 #include "Camera/CameraComponent.h"
 #include "TG/Interfaces/Interact.h"
 #include "DrawDebugHelpers.h"
