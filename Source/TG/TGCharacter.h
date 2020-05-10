@@ -6,18 +6,11 @@
 #include "PaperCharacter.h"
 #include "TG/Enumerations.h"
 #include "TG/Interfaces/CanBeDamaged.h"
+#include "TG/Interfaces/Interact.h"
 #include "TGCharacter.generated.h"
 
-class UTextRenderComponent;
 
-/**
- * This class is the default character for TG, and it is responsible for all
- * physical interaction between the player and the world.
- *
- * The capsule component (inherited from ACharacter) handles collision with the world
- * The CharacterMovementComponent (inherited from ACharacter) handles movement of the collision capsule
- * The Sprite component (inherited from APaperCharacter) handles the visuals
- */
+
 UCLASS(config=Game)
 class ATGCharacter : public APaperCharacter, public ICanBeDamaged
 {
@@ -31,11 +24,13 @@ class ATGCharacter : public APaperCharacter, public ICanBeDamaged
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	UTextRenderComponent* TextComponent;
 	virtual void Tick(float DeltaSeconds) override;
 protected:
 
 
+	
+
+	 /* #########################END############################## */
 
 	/* ###########################################################
 						Animations
@@ -128,7 +123,7 @@ protected:
 						Timers
 	 ########################################################### */
 protected:
-	FTimerHandle AttackTimerHandle;
+
 
 	 /* #########################END############################## */
 
@@ -147,15 +142,16 @@ protected:
 	/* ###########################################################
 						Debug 
 	 ########################################################### */
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float InteractDistance;
+		float InteractRange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 InteractTraceCount;
+		int32 TraceCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float InteractSpread;
+		float InteractTraceSpread;
 	//if we make a successful interaction, how many seconds until we can interact again
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float InteractCooldown;
+		float InteractTraceCooldown;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		AActor* interactedActor;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -163,6 +159,26 @@ protected:
 
 	void InteractCooldownTimer();
 
+	bool bAnimationFinished = false;
+
+	void CheckForIsNonloopingActionFinished();
+	void AttackAnimationChecks();
+	void DealDamage();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float BasicAttackTraceSpread;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float BasicAttackRange;
+	//this needs better more accurate checking in future tied with animation frames !!
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float BasicAttackCooldown;
+
+	void BasicAttackCooldownTimer();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bDidJustBasicAttack;
+
+	int32 basicAttackDamage = 1;
 	 /* #########################END############################## */
 
 	

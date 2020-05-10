@@ -72,14 +72,17 @@ void ATGMasterObject::Interact(AActor* iPlayer)
 
 void ATGMasterObject::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
 {
-	if (iBaseDamage <= 0)
+	UE_LOG(LogTemp, Warning, TEXT("dmg attempt, %i"), iBaseDamage);
+	if (iBaseDamage >= 0)
 	{
 		currentBasicStats.currentHealth -= iBaseDamage;
+		UE_LOG(LogTemp, Warning, TEXT("Object damaged, %i health remaining."), currentBasicStats.currentHealth);
 		if (currentBasicStats.currentHealth <= 0)
 		{
 			//play death animation and in 10 seconds fall through the ground and destroy self
 			this->SpriteComp->SetLooping(false);
-			this->SpriteComp->SetFlipbook(currentBasicAnimations.ObjectDestroyedAnimation);
+			/*this->SpriteComp->SetFlipbook(currentBasicAnimations.ObjectDestroyedAnimation); !! atm dont have anim*/ 
+			this->SpriteComp->SetSpriteColor(FLinearColor::Red);
 
 			//give xp & drop loot?
 			

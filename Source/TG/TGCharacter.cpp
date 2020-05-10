@@ -8,7 +8,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
-#include "TG/Interfaces/Interact.h"
 #include "DrawDebugHelpers.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SideScrollerCharacter, Log, All);
@@ -83,11 +82,15 @@ ATGCharacter::ATGCharacter()
 						DEFAULT VALUES
 	 ########################################################### */
 	AttackAnimLength = 1.0f;
-	InteractDistance = 300.0f;
-	InteractSpread = 0.5f;
-	InteractTraceCount = 10;
+	InteractRange = 300.0f;
+	InteractTraceSpread = 0.5f;
+	TraceCount = 10;
 	bDidJustInteract = false;
-	InteractCooldown = 1.0f;
+	InteractTraceCooldown = 1.0f;
+	BasicAttackRange = 150;
+	BasicAttackTraceSpread = 0.5;
+	BasicAttackCooldown = 1.0f;
+	bDidJustBasicAttack = false;
 
 
 	 /* #########################END############################## */
@@ -103,6 +106,83 @@ void ATGCharacter::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
 void ATGCharacter::InteractCooldownTimer()
 {
 	bDidJustInteract = false;
+}
+
+
+void ATGCharacter::CheckForIsNonloopingActionFinished()
+{
+	if (currentState == ECharacterStates::ATTACKING)
+	{
+		AttackAnimationChecks();
+	}
+}
+
+void ATGCharacter::AttackAnimationChecks()
+{
+	int32 currentAnimationLength = this->GetSprite()->GetFlipbookLengthInFrames() - 1;
+	int32 CurrentAnimationFrame = this->GetSprite()->GetPlaybackPositionInFrames();
+	//deal damage at this frame
+	if (CurrentAnimationFrame == currentAnimationLength - 6) //deals damage only at this frame
+	{
+		DealDamage();
+	}
+
+	//attack is finished
+	if (CurrentAnimationFrame >= currentAnimationLength)
+	{
+		StopAttack();
+	}
+}
+
+//Todo do checks later for events when we hit multiple different actors at once. store array of lasthits and compare them etc
+void ATGCharacter::DealDamage()
+{
+	FVector Start;
+	FVector End;
+	FVector PlayerEyesLoc;
+	FRotator PlayerEyesRot;
+	GetActorEyesViewPoint(PlayerEyesLoc, PlayerEyesRot);
+	Start = PlayerEyesLoc;
+	/*End = Start + (PlayerEyesRot.Vector() * InteractDistance);*/ //normal
+	for (int i = 0; i < TraceCount; i++)
+	{
+		End = Start + (FMath::VRandCone(PlayerEyesRot.Vector(), BasicAttackTraceSpread, BasicAttackTraceSpread)) * BasicAttackRange; //with spread
+		FCollisionQueryParams TraceParams;
+		TraceParams.AddIgnoredActor(this);
+		TraceParams.bTraceComplex = true;
+		DrawDebugLine(GetWorld(), Start, End, FColor::Green , false, 1.0f, 0, 3.0f);
+		FHitResult HitResult = FHitResult(ForceInit);
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_WorldDynamic, TraceParams))
+		{
+			if (HitResult.GetActor() != nullptr)
+			{
+				if (HitResult.GetActor()->GetClass()->ImplementsInterface(UCanBeDamaged::StaticClass()) &&
+					!bDidJustBasicAttack)
+				{
+					//if we did successful interact with interface we need to make sure it only did it once
+					bDidJustBasicAttack = true;
+					FTimerHandle justBasicAttackedTimer;
+					GetWorld()->GetTimerManager().SetTimer(justBasicAttackedTimer, this, &ATGCharacter::BasicAttackCooldownTimer, BasicAttackCooldown, false);
+
+					//play success sound?
+
+					//since its here not above scope it will only show actors with the interact interface only 
+					interactedActor = HitResult.GetActor();
+
+					ICanBeDamaged* dmgInterface = Cast<ICanBeDamaged>(interactedActor);
+					if (dmgInterface != nullptr)
+					{
+						dmgInterface->OnGetDamaged(basicAttackDamage, this);
+					}
+				}
+			}
+		}
+	}
+}
+
+void ATGCharacter::BasicAttackCooldownTimer()
+{
+	bDidJustBasicAttack = false;
 }
 
 void ATGCharacter::MoveRight(float Value)
@@ -145,13 +225,14 @@ void ATGCharacter::BasicAttack()
 		currentState = ECharacterStates::ATTACKING;
 		UpdateCharacter();
 
-		//stop attack animation timer
-		GetWorld()->GetTimerManager().SetTimer(AttackTimerHandle, this, &ATGCharacter::StopAttack, AttackAnimLength, false);
+		/*tick checks if our state animation is finished and stops the animation at last frame*/
+
 	}
 }
 
 void ATGCharacter::StopAttack()
 {
+	
 	currentState = ECharacterStates::IDLE;
 	UpdateCharacter();
 }
@@ -168,10 +249,11 @@ void ATGCharacter::HandleAttack()
 
 void ATGCharacter::UpdateAnimation()
 {
+	
 	//this shouldnt have any game logic, just change animations
 	if (currentState != ECharacterStates::ATTACKING)
 	{
-
+		GetSprite()->SetLooping(true);
 		const FVector PlayerVelocity = GetVelocity();
 		const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 		currentState = (PlayerSpeedSqr > 0.0f) ? ECharacterStates::RUNNING : ECharacterStates::IDLE;
@@ -183,40 +265,59 @@ void ATGCharacter::UpdateAnimation()
 		UE_LOG(LogTemp, Error, TEXT("check"));
 	}
 
-
+	/*every state where we want to play the animation only once, we just set it to not loop here,
+	so we dont have to make a spaghetti of timers, only ones mostly that shouldn't be looping are 
+	stuff like death, attacks etc that should only play once and then go to another state when
+	completed*/
 
 	switch (currentState)
 	{
 	default:
 		break;
 	case ECharacterStates::IDLE:
+		
+		GetSprite()->SetLooping(true);
 		GetSprite()->SetFlipbook(idleAnimation);
 		break;
 	case ECharacterStates::WALKING:
+		GetSprite()->SetLooping(true);
 		GetSprite()->SetFlipbook(walkingAnimation);
 		break;
 	case ECharacterStates::RUNNING:
+		GetSprite()->SetLooping(true);
 		GetSprite()->SetFlipbook(runningAnimation);
 		break;
 	case ECharacterStates::ATTACKING:
+		GetSprite()->SetLooping(false);
+		GetSprite()->PlayFromStart();
 		GetSprite()->SetFlipbook(basicAttackAnimation);
 		break;
 	case ECharacterStates::STUNNED:
+		GetSprite()->SetLooping(true);
 		GetSprite()->SetFlipbook(stunnedAnimation);
 		break;
 	case ECharacterStates::DAMAGED:
+		GetSprite()->SetLooping(true);
 		GetSprite()->SetFlipbook(damagedAnimation);
 		break;
 	case ECharacterStates::FALLING:
+		GetSprite()->SetLooping(false);
 		GetSprite()->SetFlipbook(fallingAnimation);
 		break;
 	case ECharacterStates::JUMPING:
+		GetSprite()->SetLooping(false);
 		GetSprite()->SetFlipbook(jumpingAnimation);
 		break;
 	case ECharacterStates::SLIDING:
+		GetSprite()->SetLooping(true);
 		GetSprite()->SetFlipbook(slidingAnimation);
 		break;
 	case ECharacterStates::CROUCHING:
+		GetSprite()->SetLooping(true);
+		GetSprite()->SetFlipbook(crouchingAnimation);
+		break;
+	case ECharacterStates::DEAD:
+		GetSprite()->SetLooping(false);
 		GetSprite()->SetFlipbook(crouchingAnimation);
 		break;
 	}
@@ -229,6 +330,8 @@ void ATGCharacter::Tick(float DeltaSeconds)
 	//atm disabled
 	Super::Tick(DeltaSeconds);
 
+	CheckForIsNonloopingActionFinished();
+	
 }
 
 
@@ -249,9 +352,9 @@ void ATGCharacter::Interact()
 	GetActorEyesViewPoint(PlayerEyesLoc, PlayerEyesRot);
 	Start = PlayerEyesLoc;
 	/*End = Start + (PlayerEyesRot.Vector() * InteractDistance);*/ //normal
-	for (int i = 0; i < InteractTraceCount; i++)
+	for (int i = 0; i < TraceCount; i++)
 	{
-		End = Start + (FMath::VRandCone(PlayerEyesRot.Vector(), InteractSpread, InteractSpread)) * InteractDistance; //with spread
+		End = Start + (FMath::VRandCone(PlayerEyesRot.Vector(), InteractTraceSpread, InteractTraceSpread)) * InteractRange; //with spread
 		FCollisionQueryParams TraceParams;
 		TraceParams.AddIgnoredActor(this);
 		TraceParams.bTraceComplex = true;
@@ -267,17 +370,17 @@ void ATGCharacter::Interact()
 					//if we did successful interact with interface we need to make sure it only did it once
 					bDidJustInteract = true;
 					FTimerHandle justInteractedTimer;
-					GetWorld()->GetTimerManager().SetTimer(justInteractedTimer,this, &ATGCharacter::InteractCooldownTimer, InteractCooldown, false);
+					GetWorld()->GetTimerManager().SetTimer(justInteractedTimer,this, &ATGCharacter::InteractCooldownTimer, InteractTraceCooldown, false);
 
 					//play success sound?
 
 					//since its here not above scope it will only show actors with the interact interface only 
 					interactedActor = HitResult.GetActor();
 
-					IInteract* Interact = Cast<IInteract>(interactedActor);
-					if (Interact != nullptr)
+					IInteract* interactInterface = Cast<IInteract>(interactedActor);
+					if (interactInterface != nullptr)
 					{
-						Interact->Interact(this);
+						interactInterface->Interact(this);
 					}
 				}
 			}
