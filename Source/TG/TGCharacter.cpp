@@ -84,6 +84,10 @@ ATGCharacter::ATGCharacter()
 	 ########################################################### */
 	AttackAnimLength = 1.0f;
 	InteractDistance = 300.0f;
+	InteractSpread = 0.5f;
+	InteractTraceCount = 10;
+	bDidJustInteract = false;
+	InteractCooldown = 1.0f;
 
 
 	 /* #########################END############################## */
@@ -94,6 +98,11 @@ ATGCharacter::ATGCharacter()
 void ATGCharacter::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
 {
 
+}
+
+void ATGCharacter::InteractCooldownTimer()
+{
+	bDidJustInteract = false;
 }
 
 void ATGCharacter::MoveRight(float Value)
@@ -235,34 +244,41 @@ void ATGCharacter::Interact()
 {
 	FVector Start;
 	FVector End;
-
 	FVector PlayerEyesLoc;
 	FRotator PlayerEyesRot;
-
 	GetActorEyesViewPoint(PlayerEyesLoc, PlayerEyesRot);
 	Start = PlayerEyesLoc;
-	End = PlayerEyesLoc + (PlayerEyesRot.Vector() * InteractDistance);
-	FCollisionQueryParams TraceParams;
-	TraceParams.AddIgnoredActor(this);
-	TraceParams.bTraceComplex = true;
-	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 1.0f);
-	FHitResult HitResult = FHitResult(ForceInit);
-
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_WorldDynamic, TraceParams))
+	/*End = Start + (PlayerEyesRot.Vector() * InteractDistance);*/ //normal
+	for (int i = 0; i < InteractTraceCount; i++)
 	{
-		if (HitResult.GetActor() != nullptr)
+		End = Start + (FMath::VRandCone(PlayerEyesRot.Vector(), InteractSpread, InteractSpread)) * InteractDistance; //with spread
+		FCollisionQueryParams TraceParams;
+		TraceParams.AddIgnoredActor(this);
+		TraceParams.bTraceComplex = true;
+		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 3.0f);
+		FHitResult HitResult = FHitResult(ForceInit);
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_WorldDynamic, TraceParams))
 		{
-			if (HitResult.GetActor()->GetClass()->ImplementsInterface(UInteract::StaticClass()))
+			if (HitResult.GetActor() != nullptr)
 			{
-				//play success sound?
-
-				//since its here not above scope it will only show actors with the interact interface only 
-				interactedActor = HitResult.GetActor();
-
-				IInteract* Interact = Cast<IInteract>(interactedActor);
-				if (Interact != nullptr)
+				if (HitResult.GetActor()->GetClass()->ImplementsInterface(UInteract::StaticClass()) &&
+					!bDidJustInteract)
 				{
-					Interact->Interact(this);
+					//if we did successful interact with interface we need to make sure it only did it once
+					bDidJustInteract = true;
+					FTimerHandle justInteractedTimer;
+					GetWorld()->GetTimerManager().SetTimer(justInteractedTimer,this, &ATGCharacter::InteractCooldownTimer, InteractCooldown, false);
+
+					//play success sound?
+
+					//since its here not above scope it will only show actors with the interact interface only 
+					interactedActor = HitResult.GetActor();
+
+					IInteract* Interact = Cast<IInteract>(interactedActor);
+					if (Interact != nullptr)
+					{
+						Interact->Interact(this);
+					}
 				}
 			}
 		}

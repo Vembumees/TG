@@ -149,10 +149,19 @@ protected:
 	 ########################################################### */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float InteractDistance;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 InteractTraceCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float InteractSpread;
+	//if we make a successful interaction, how many seconds until we can interact again
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float InteractCooldown;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		AActor* interactedActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bDidJustInteract;
 
+	void InteractCooldownTimer();
 
 	 /* #########################END############################## */
 
