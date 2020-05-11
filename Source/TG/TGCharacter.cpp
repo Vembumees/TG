@@ -17,6 +17,22 @@ DEFINE_LOG_CATEGORY_STATIC(SideScrollerCharacter, Log, All);
 
 ATGCharacter::ATGCharacter()
 {
+
+	/* ###########################################################
+						DATA
+########################################################### */
+/*load object stats datatable automatically, datatable values are in beginplay*/
+	static ConstructorHelpers::FObjectFinder<UDataTable> PlayerDataDTObject(TEXT("DataTable'/Game/TG/BP/Data/DT_PlayerData.DT_PlayerData'"));
+	if (PlayerDataDTObject.Succeeded())
+	{
+
+		//Use CharacterStatsDataTable to access the table data
+		DataTableObjectData = PlayerDataDTObject.Object;
+	}
+	/* #########################END############################## */
+
+
+
 	PrimaryActorTick.bCanEverTick = true;
 
 
@@ -81,6 +97,8 @@ ATGCharacter::ATGCharacter()
 	/* ###########################################################
 						DEFAULT VALUES
 	 ########################################################### */
+	initializeTimer = 0.1f;
+
 	AttackAnimLength = 1.0f;
 	InteractRange = 300.0f;
 	InteractTraceSpread = 0.5f;
@@ -89,7 +107,7 @@ ATGCharacter::ATGCharacter()
 	InteractTraceCooldown = 1.0f;
 	BasicAttackRange = 150;
 	BasicAttackTraceSpread = 0.5;
-	BasicAttackCooldown = 1.0f;
+	BasicAttackCooldown = 0.3f;
 	bDidJustBasicAttack = false;
 
 
@@ -98,7 +116,42 @@ ATGCharacter::ATGCharacter()
 
 
 
-void ATGCharacter::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
+
+
+void ATGCharacter::StartInitializeTimer()
+{
+	FTimerHandle TGCharacterInitializeTimer;
+	GetWorld()->GetTimerManager().SetTimer(TGCharacterInitializeTimer, this, &ATGCharacter::InitializeDelayed,
+		initializeTimer, false);
+}
+
+void ATGCharacter::InitializeDelayed()
+{
+	InitializeDataTableInfo();
+	PassDataFromTableToObjectVariables();
+}
+
+void ATGCharacter::InitializeDataTableInfo()
+{
+	FPlayerData* PlayerData = DataTableObjectData->FindRow<FPlayerData>(
+		DataTableObjectRowNames[DTPlayerDataRowNumber], "TGCharacter ObjectData", true);
+	if (PlayerData != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ObjectData LOADED SUCCESSFULLY."));
+		currentPlayerStats = PlayerData->playerStats;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("ObjectData load FAILED"));
+	}
+}
+
+void ATGCharacter::InitializeReferences()
+{
+
+}
+
+void ATGCharacter::PassDataFromTableToObjectVariables()
 {
 
 }
@@ -134,7 +187,7 @@ void ATGCharacter::AttackAnimationChecks()
 	}
 }
 
-//Todo do checks later for events when we hit multiple different actors at once. store array of lasthits and compare them etc
+// !! do checks later for events when we hit multiple different actors at once. store array of lasthits and compare them etc
 void ATGCharacter::DealDamage()
 {
 	FVector Start;
@@ -172,7 +225,7 @@ void ATGCharacter::DealDamage()
 					ICanBeDamaged* dmgInterface = Cast<ICanBeDamaged>(interactedActor);
 					if (dmgInterface != nullptr)
 					{
-						dmgInterface->OnGetDamaged(basicAttackDamage, this);
+						dmgInterface->OnGetDamaged(currentPlayerStats.AttackDamage, this);
 					}
 				}
 			}
@@ -183,6 +236,16 @@ void ATGCharacter::DealDamage()
 void ATGCharacter::BasicAttackCooldownTimer()
 {
 	bDidJustBasicAttack = false;
+}
+
+void ATGCharacter::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
+{
+		if (iBaseDamage >= 0)
+	 	{
+	 		currentPlayerStats.currentHealth -= iBaseDamage;
+	 		UE_LOG(LogTemp, Warning, TEXT("Player damaged, %i health remaining."), currentPlayerStats.currentHealth);
+			CheckForDeath();
+	 	}
 }
 
 void ATGCharacter::MoveRight(float Value)
@@ -237,11 +300,13 @@ void ATGCharacter::StopAttack()
 	UpdateCharacter();
 }
 
-void ATGCharacter::HandleAttack()
+
+
+void ATGCharacter::SetDataTableObjectDataRowNames()
 {
-	if (currentState == ECharacterStates::ATTACKING)
+	if (DataTableObjectData != nullptr)
 	{
-		//TODO do this later, will implement interactable object first
+		DataTableObjectRowNames = DataTableObjectData->GetRowNames();
 	}
 }
 
@@ -318,7 +383,7 @@ void ATGCharacter::UpdateAnimation()
 		break;
 	case ECharacterStates::DEAD:
 		GetSprite()->SetLooping(false);
-		GetSprite()->SetFlipbook(crouchingAnimation);
+		GetSprite()->SetFlipbook(deathAnimation);
 		break;
 	}
 }
@@ -336,6 +401,15 @@ void ATGCharacter::Tick(float DeltaSeconds)
 
 
 
+
+void ATGCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	StartInitializeTimer();
+	InitializeReferences();
+	SetDataTableObjectDataRowNames();
+}
 
 void ATGCharacter::UpdateCharacter()
 {
@@ -385,5 +459,22 @@ void ATGCharacter::Interact()
 				}
 			}
 		}
+	}
+}
+
+void ATGCharacter::CheckForDeath()
+{
+	if (currentPlayerStats.currentHealth <= 0)
+	{
+		
+		//play death animation and in 10 seconds fall through the ground and destroy self
+		currentState = ECharacterStates::DEAD;
+		UpdateAnimation();
+
+		//give xp & drop loot?
+
+		//here we can add some effect in future for disappearing corpses
+
+		
 	}
 }

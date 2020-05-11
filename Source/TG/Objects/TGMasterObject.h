@@ -112,7 +112,6 @@ protected:
 	void InitializeDelayed();
 	void InitializeDataTableInfo();
 	void InitializeReferences();
-
 	void PassDataFromTableToObjectVariables();
 
 	UPROPERTY(EditAnywhere)

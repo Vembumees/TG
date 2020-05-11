@@ -7,15 +7,49 @@
 #include "TG/Enumerations.h"
 #include "TG/Interfaces/CanBeDamaged.h"
 #include "TG/Interfaces/Interact.h"
+#include "Engine/DataTable.h"
 #include "TGCharacter.generated.h"
 
+//stats that every object we inherit from this has
+USTRUCT(BlueprintType)
+struct FPlayerStats : public FTableRowBase
+{
+	GENERATED_BODY()
 
+		FPlayerStats()
+	{
+		characterName = FText::FromString("Object");
+		maxHealth = 3;
+		currentHealth = maxHealth;
+		AttackDamage = 1;
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText characterName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 maxHealth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 currentHealth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 AttackDamage;
+		
+};
+
+USTRUCT(BlueprintType)
+struct FPlayerData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FPlayerStats playerStats;
+};
 
 UCLASS(config=Game)
 class ATGCharacter : public APaperCharacter, public ICanBeDamaged
 {
 	GENERATED_BODY()
 
+public:
 	/** Side view camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess="true"))
 	class UCameraComponent* SideViewCameraComponent;
@@ -25,17 +59,19 @@ class ATGCharacter : public APaperCharacter, public ICanBeDamaged
 	class USpringArmComponent* CameraBoom;
 
 	virtual void Tick(float DeltaSeconds) override;
-protected:
 
 
 	
 
-	 /* #########################END############################## */
+	
+
+
+	virtual void BeginPlay() override;
 
 	/* ###########################################################
 						Animations
 	 ########################################################### */
-	 
+protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=  Animations)
 		class UPaperFlipbook* runningAnimation;
@@ -79,12 +115,45 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sounds)
 		USoundBase* basicAttackSound;
 
+	 /* #########################END############################## */
 
+   /* ###########################################################
+					   Data
+	########################################################### */
 
+	void SetDataTableObjectDataRowNames();
 
+	UPROPERTY()
+		class UDataTable* DataTableObjectData;
+	UPROPERTY()
+		TArray<FName> DataTableObjectRowNames;
+	/*Enter the row you want the object to use starts from 0, could also make it a string later*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AData)
+		int32 DTPlayerDataRowNumber;
+	//ANIMATIONS
 
+	//STATS
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AData)
+		FPlayerStats currentPlayerStats;
+	//SOUND?
 
 	 /* #########################END############################## */
+
+	/* ###########################################################
+						Initialize & References
+	 ########################################################### */
+protected:
+	//init sprites etc ingame
+
+	void StartInitializeTimer();
+	void InitializeDelayed();
+	void InitializeDataTableInfo();
+	void InitializeReferences();
+	void PassDataFromTableToObjectVariables();
+
+	UPROPERTY(EditAnywhere)
+		float initializeTimer;
+	/* #########################END############################## */
 
 
 	/** Called to choose the correct animation to play based on the character's movement state */
@@ -93,9 +162,9 @@ public:
 	void MoveRight(float Value);
 	void BasicAttack();
 	void StopAttack();
-	void HandleAttack();
 	void UpdateCharacter();
 	void Interact();
+	void CheckForDeath();
 
 
 
@@ -119,10 +188,6 @@ protected:
 		ECharacterStates currentState;
 
 
-	/* ###########################################################
-						Timers
-	 ########################################################### */
-protected:
 
 
 	 /* #########################END############################## */
@@ -178,7 +243,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool bDidJustBasicAttack;
 
-	int32 basicAttackDamage = 1;
 	 /* #########################END############################## */
 
 	

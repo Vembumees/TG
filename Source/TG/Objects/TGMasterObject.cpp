@@ -12,15 +12,16 @@ ATGMasterObject::ATGMasterObject()
 {
 	/* ###########################################################
 							DATA
-########################################################### */
+	########################################################### */
 /*load object stats datatable automatically, datatable values are in beginplay*/
-	static ConstructorHelpers::FObjectFinder<UDataTable> ObjectStatsDTObject(TEXT("DataTable'/Game/TG/BP/Data/DT_ObjectData.DT_ObjectData'"));
-	if (ObjectStatsDTObject.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UDataTable> ObjectDataDTObject(TEXT("DataTable'/Game/TG/BP/Data/DT_ObjectData.DT_ObjectData'"));
+	if (ObjectDataDTObject.Succeeded())
 	{
 
 		//Use CharacterStatsDataTable to access the table data
-		DataTableObjectData = ObjectStatsDTObject.Object;
+		DataTableObjectData = ObjectDataDTObject.Object;
 	}
+	/* #########################END############################## */
 
 	objectRootComp = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
 	this->RootComponent = objectRootComp;
@@ -72,7 +73,6 @@ void ATGMasterObject::Interact(AActor* iPlayer)
 
 void ATGMasterObject::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
 {
-	UE_LOG(LogTemp, Warning, TEXT("dmg attempt, %i"), iBaseDamage);
 	if (iBaseDamage >= 0)
 	{
 		currentBasicStats.currentHealth -= iBaseDamage;
