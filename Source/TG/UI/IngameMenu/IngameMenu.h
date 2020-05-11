@@ -20,7 +20,7 @@ public:
 						GameMenu
 	 ########################################################### */
 	
-	void ReturnGame();
+	void ReturnToGame();
 	void Options();
 	void QuitGame();
 

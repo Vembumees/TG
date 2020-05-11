@@ -6,25 +6,27 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 
-void UIngameMenu::ReturnGame()
+void UIngameMenu::ReturnToGame()
 {
+	UE_LOG(LogTemp, Log, TEXT("UIngameMenu::ReturnToGame()"));
 	this->CloseIngameMenu();
 }
 
 void UIngameMenu::Options()
 {
-
+	UE_LOG(LogTemp, Log, TEXT("UIngameMenu::Options()"));
 }
 
 void UIngameMenu::QuitGame()
 {
+	UE_LOG(LogTemp, Log, TEXT("UIngameMenu::QuitGame()"));
 	if (refExploreController)
 	{
 		UWorld* world = GetWorld();
 		if (world != nullptr)
 		{
 			//TODO !! later should just redirect to main menu
-			UKismetSystemLibrary::QuitGame(world, world->GetFirstPlayerController(), EQuitPreference::Quit, true);
+			UKismetSystemLibrary::QuitGame(world, world->GetFirstPlayerController(), EQuitPreference::Quit, false);
 		}
 	}
 }
@@ -32,7 +34,7 @@ void UIngameMenu::QuitGame()
 void UIngameMenu::OpenIngameMenu()
 {
 	//!! TODO also do a gamestate check
-	UE_LOG(LogTemp, Log, TEXT("IngameMenu::Open()"));
+	UE_LOG(LogTemp, Log, TEXT("UIngameMenu::OpenIngameMenu()"));
 	checkSlow(this->GetVisibility() == ESlateVisibility::Hidden); //only want to open from closed
 	this->SetVisibility(ESlateVisibility::Visible);
 
@@ -53,7 +55,7 @@ void UIngameMenu::OpenIngameMenu()
 void UIngameMenu::CloseIngameMenu()
 {
 	//!! TODO also do a gamestate check
-	UE_LOG(LogTemp, Log, TEXT("UMainMenuWidget::Close()"));
+	UE_LOG(LogTemp, Log, TEXT("UIngameMenu::CloseIngameMenu()"));
 	checkSlow(this->GetVisibility() == ESlateVisibility::Visible); // only want to closed from open
 	this->SetVisibility(ESlateVisibility::Hidden);
 

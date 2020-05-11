@@ -19,13 +19,18 @@ class TG_API ATGHUD : public AHUD
 public: 
 
 	void InitializeWidgets();
+	void InitializeIngameMenuComponents();
 	void ToggleIngameMenu();
 
+	UFUNCTION()
+	void IngameMenu_ReturnButtonClicked();
+	UFUNCTION()
+	void IngameMenu_OptionsButtonClicked();
+	UFUNCTION()
+	void IngameMenu_QuitButtonClicked();
+	
 protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<class UMainMenu> MainMenuClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TSubclassOf<class UIngameMenu> IngameMenuClass;
@@ -38,10 +43,7 @@ protected:
 						widgets refs
 	 ########################################################### */
 
-	class UMainMenu* refMainMenu;
-
 	class UIngameMenu* refIngameMenu;
-
 	class UIngameInventoryMenu* refIngameInventoryMenu;
 	 /* #########################END############################## */
 };

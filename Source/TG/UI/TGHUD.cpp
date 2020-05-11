@@ -5,29 +5,20 @@
 #include "TG/UI/MainMenu/MainMenu.h"
 #include "TG/UI/IngameMenu/IngameMenu.h"
 #include "TG/UI/IngameInventoryMenu/IngameInventoryMenu.h"
+#include "Components/Button.h"
 
 void ATGHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
 	InitializeWidgets();
+	
+	
 
 }
 
 void ATGHUD::InitializeWidgets()
 {
-	if (MainMenuClass != nullptr)
-	{
-		refMainMenu = CreateWidget<UMainMenu>(GetWorld(), MainMenuClass);
-		if (refMainMenu != nullptr)
-		{
-			refMainMenu->AddToViewport();
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("set the BP widget in TGHUD BP"));
-	}
 
 	if (IngameMenuClass != nullptr)
 	{
@@ -56,7 +47,23 @@ void ATGHUD::InitializeWidgets()
 // 		UE_LOG(LogTemp, Error, TEXT("set the BP widget in TGHUD BP"));
 // 	}
 
+	//start adding bindings on widget buttons and stuff
+	FTimerHandle timerHandleTGHUDMainMenuButtons;
+	GetWorld()->GetTimerManager().SetTimer(
+		timerHandleTGHUDMainMenuButtons, this, &ATGHUD::InitializeIngameMenuComponents, 0.5f);
 
+}
+
+void ATGHUD::InitializeIngameMenuComponents()
+{
+	UButton* IngameMenuReturnButton = this->refIngameMenu->refReturnGameButton;
+	IngameMenuReturnButton->OnClicked.AddDynamic(this, &ATGHUD::IngameMenu_ReturnButtonClicked);
+
+	UButton* IngameMenuOptionsButton = this->refIngameMenu->refOptionsButton;
+	IngameMenuOptionsButton->OnClicked.AddDynamic(this, &ATGHUD::IngameMenu_OptionsButtonClicked);
+
+	UButton* IngameMenuQuitToMenuButton = this->refIngameMenu->refQuitGameButton;
+	IngameMenuQuitToMenuButton->OnClicked.AddDynamic(this, &ATGHUD::IngameMenu_QuitButtonClicked);
 }
 
 void ATGHUD::ToggleIngameMenu()
@@ -68,4 +75,19 @@ void ATGHUD::ToggleIngameMenu()
 			refIngameMenu->CloseIngameMenu() : refIngameMenu->OpenIngameMenu();	
 		
 	}
+}
+
+void ATGHUD::IngameMenu_ReturnButtonClicked()
+{
+	refIngameMenu->ReturnToGame();
+}
+
+void ATGHUD::IngameMenu_OptionsButtonClicked()
+{
+	refIngameMenu->Options();
+}
+
+void ATGHUD::IngameMenu_QuitButtonClicked()
+{
+	refIngameMenu->QuitGame();
 }
