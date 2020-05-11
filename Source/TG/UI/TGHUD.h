@@ -14,20 +14,29 @@ class TG_API ATGHUD : public AHUD
 {
 	GENERATED_BODY()
 
-	/*should hold references to all the widgets we have in game and manages the Menu statemachine*/
 	
 public: 
 
 	void InitializeWidgets();
+	void InitializeReferences();
 	void InitializeIngameMenuComponents();
-	void ToggleIngameMenu();
+	
 
+	/* ###########################################################
+						Ingame Menu
+	 ########################################################### */
+	void IngameMenuToggle();
+
+	void IngameMenuOpen();
+	void IngameMenuClose();
+	
 	UFUNCTION()
 	void IngameMenu_ReturnButtonClicked();
 	UFUNCTION()
 	void IngameMenu_OptionsButtonClicked();
 	UFUNCTION()
 	void IngameMenu_QuitButtonClicked();
+	 /* #########################END############################## */
 	
 protected:
 	virtual void BeginPlay() override;
@@ -45,5 +54,11 @@ protected:
 
 	class UIngameMenu* refIngameMenu;
 	class UIngameInventoryMenu* refIngameInventoryMenu;
+	 /* #########################END############################## */
+
+	/* ###########################################################
+						refs
+	 ########################################################### */
+	 class AExploreController* refExplorePlayerController;
 	 /* #########################END############################## */
 };

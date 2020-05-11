@@ -2,18 +2,19 @@
 
 
 #include "TGHUD.h"
-#include "TG/UI/MainMenu/MainMenu.h"
 #include "TG/UI/IngameMenu/IngameMenu.h"
 #include "TG/UI/IngameInventoryMenu/IngameInventoryMenu.h"
+#include "TG/Controllers/ExploreController.h"
 #include "Components/Button.h"
+#include "Kismet/GameplayStatics.h"
 
 void ATGHUD::BeginPlay()
 {
 	Super::BeginPlay();
-
+	InitializeReferences();
 	InitializeWidgets();
-	
-	
+
+
 
 }
 
@@ -26,7 +27,7 @@ void ATGHUD::InitializeWidgets()
 		if (refIngameMenu != nullptr)
 		{
 			refIngameMenu->AddToViewport();
-			refIngameMenu->CloseIngameMenu();
+			IngameMenuClose();
 		}
 	}
 	else
@@ -34,24 +35,26 @@ void ATGHUD::InitializeWidgets()
 		UE_LOG(LogTemp, Error, TEXT("set the BP widget in TGHUD BP"));
 	}
 
-// 	if (IngameInventoryMenu!= nullptr)
-// 	{
-// 		refIngameInventoryMenu = CreateWidget<UIngameInventoryMenu>(GetWorld(), IngameInventoryMenu);
-// 		if (refIngameInventoryMenu != nullptr)
-// 		{
-// 			refIngameInventoryMenu->AddToViewport();
-// 		}
-// 	}
-// 	else
-// 	{
-// 		UE_LOG(LogTemp, Error, TEXT("set the BP widget in TGHUD BP"));
-// 	}
+	// 	if (IngameInventoryMenu!= nullptr)
+	// 	{
+	// 		refIngameInventoryMenu = CreateWidget<UIngameInventoryMenu>(GetWorld(), IngameInventoryMenu);
+	// 		if (refIngameInventoryMenu != nullptr)
+	// 		{
+	// 			refIngameInventoryMenu->AddToViewport();
+	// 		}
+	// 	}
+	// 	else
+	// 	{
+	// 		UE_LOG(LogTemp, Error, TEXT("set the BP widget in TGHUD BP"));
+	// 	}
 
-	//start adding bindings on widget buttons and stuff
-	FTimerHandle timerHandleTGHUDMainMenuButtons;
-	GetWorld()->GetTimerManager().SetTimer(
-		timerHandleTGHUDMainMenuButtons, this, &ATGHUD::InitializeIngameMenuComponents, 0.5f);
+	InitializeIngameMenuComponents();
 
+}
+
+void ATGHUD::InitializeReferences()
+{
+	 refExplorePlayerController = Cast<AExploreController>(GetWorld()->GetFirstPlayerController());
 }
 
 void ATGHUD::InitializeIngameMenuComponents()
@@ -66,28 +69,65 @@ void ATGHUD::InitializeIngameMenuComponents()
 	IngameMenuQuitToMenuButton->OnClicked.AddDynamic(this, &ATGHUD::IngameMenu_QuitButtonClicked);
 }
 
-void ATGHUD::ToggleIngameMenu()
+void ATGHUD::IngameMenuToggle()
 {
 	//simple toggle on/off
 	if (refIngameMenu != nullptr)
+	{	
+		refIngameMenu->GetVisibility() == ESlateVisibility::Visible ? this->IngameMenuClose() : this->IngameMenuOpen();
+	}
+}
+
+void ATGHUD::IngameMenuOpen()
+{
+	UWorld* World = GetWorld();
+	//!! TODO also do a gamestate check
+	UE_LOG(LogTemp, Log, TEXT("OpenIngameMenu()"));
+	checkSlow(refIngameMenu->GetVisibility() == ESlateVisibility::Hidden); //only want to open from closed
+	refIngameMenu->SetVisibility(ESlateVisibility::Visible);
+	if (World != nullptr)
 	{
-		refIngameMenu->GetVisibility() == ESlateVisibility::Visible ? 
-			refIngameMenu->CloseIngameMenu() : refIngameMenu->OpenIngameMenu();	
-		
+		refExplorePlayerController->bShowMouseCursor = true;
+		FInputModeUIOnly InputMode;
+		refExplorePlayerController->SetInputMode(InputMode);
+		UGameplayStatics::SetGamePaused(this, true);
+	}	
+}
+
+void ATGHUD::IngameMenuClose()
+{
+	UWorld* World = GetWorld();
+	//!! TODO also do a gamestate check
+	UE_LOG(LogTemp, Log, TEXT("CloseIngameMenu()"));
+	checkSlow(refIngameMenu->GetVisibility() == ESlateVisibility::Visible); // only want to closed from open
+	refIngameMenu->SetVisibility(ESlateVisibility::Hidden);
+
+
+	if (World != nullptr)
+	{
+		refExplorePlayerController->bShowMouseCursor = false;
+		FInputModeGameOnly InputMode;
+		refExplorePlayerController->SetInputMode(InputMode);
+		UGameplayStatics::SetGamePaused(this, false);
 	}
 }
 
 void ATGHUD::IngameMenu_ReturnButtonClicked()
 {
-	refIngameMenu->ReturnToGame();
+	UE_LOG(LogTemp, Log, TEXT("ATGHUD::IngameMenu_ReturnButtonClicked()"));
+	this->IngameMenuToggle();
 }
 
 void ATGHUD::IngameMenu_OptionsButtonClicked()
 {
-	refIngameMenu->Options();
+	UE_LOG(LogTemp, Log, TEXT("ATGHUD::IngameMenu_OptionsButtonClicked()"));
 }
 
 void ATGHUD::IngameMenu_QuitButtonClicked()
 {
-	refIngameMenu->QuitGame();
+	UE_LOG(LogTemp, Log, TEXT("ATGHUD::IngameMenu_QuitButtonClicked()"));
+	FName NextLevelName = TEXT("MapMainMenu");
+	UGameplayStatics::OpenLevel(
+		this->GetWorld(),
+		NextLevelName);
 }

@@ -15,17 +15,6 @@ class TG_API UIngameMenu : public UUserWidget
 	GENERATED_BODY()
 
 public:
-
-	/* ###########################################################
-						GameMenu
-	 ########################################################### */
-	
-	void ReturnToGame();
-	void Options();
-	void QuitGame();
-
-	void OpenIngameMenu();
-	void CloseIngameMenu();
 	
 	
 	 /* #########################END############################## */

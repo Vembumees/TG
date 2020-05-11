@@ -77,6 +77,6 @@ void AExploreController::ToggleIngameMenu()
 {
 	if (refHUD != nullptr)
 	{
-		refHUD->ToggleIngameMenu();
+		refHUD->IngameMenuToggle();
 	}
 }
