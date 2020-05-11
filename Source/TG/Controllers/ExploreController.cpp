@@ -3,6 +3,7 @@
 
 #include "ExploreController.h"
 #include "TG/TGCharacter.h"
+#include "TG/UI/TGHUD.h"
 
 AExploreController::AExploreController()
 {
@@ -17,6 +18,8 @@ void AExploreController::SetupInputComponent()
 	InputComponent->BindAction("BasicAttack", IE_Pressed, this, &AExploreController::BasicAttack);
 	InputComponent->BindAction("Interact", IE_Pressed, this, &AExploreController::Interact);
 	InputComponent->BindAxis("MoveRight", this, &AExploreController::MoveRight);
+
+	InputComponent->BindAction("ToggleIngameMenu", IE_Pressed, this, &AExploreController::ToggleIngameMenu);
 
 }
 
@@ -56,8 +59,10 @@ void AExploreController::MoveRight(float iVal)
 
 void AExploreController::InitializeRefs()
 {
-	
 	refTGCharacter = Cast<ATGCharacter>(this->GetPawn());
+
+	/*HUD*/
+	refHUD = Cast<ATGHUD>(this->GetHUD());
 }
 
 void AExploreController::Jump()
@@ -65,5 +70,13 @@ void AExploreController::Jump()
 	if (refTGCharacter != nullptr)
 	{
 		refTGCharacter->Jump();
+	}
+}
+
+void AExploreController::ToggleIngameMenu()
+{
+	if (refHUD != nullptr)
+	{
+		refHUD->ToggleIngameMenu();
 	}
 }

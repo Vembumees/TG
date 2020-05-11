@@ -28,12 +28,18 @@ protected:
 	void InitializeRefs();
 	void Jump();
 
+	/*Menus*/
+	void ToggleIngameMenu();
+
 	/* ###########################################################
 						references
 	 ########################################################### */
 public:
 	UPROPERTY()
 	class ATGCharacter* refTGCharacter;
+
+	UPROPERTY()
+		class ATGHUD* refHUD;
 
 	/* #########################END############################## */
 };

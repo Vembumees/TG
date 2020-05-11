@@ -16,4 +16,32 @@ class TG_API ATGHUD : public AHUD
 
 	/*should hold references to all the widgets we have in game and manages the Menu statemachine*/
 	
+public: 
+
+	void InitializeWidgets();
+	void ToggleIngameMenu();
+
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class UMainMenu> MainMenuClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class UIngameMenu> IngameMenuClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class UIngameInventoryMenu> IngameInventoryMenu;
+
+
+	/* ###########################################################
+						widgets refs
+	 ########################################################### */
+
+	class UMainMenu* refMainMenu;
+
+	class UIngameMenu* refIngameMenu;
+
+	class UIngameInventoryMenu* refIngameInventoryMenu;
+	 /* #########################END############################## */
 };
