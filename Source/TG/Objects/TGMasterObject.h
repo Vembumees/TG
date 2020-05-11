@@ -20,7 +20,7 @@ struct FObjectBasicStats : public FTableRowBase
 		objectName = FText::FromString("Object");
 		maxHealth = 3;
 		currentHealth = maxHealth;
-		bIsDamaged = false;
+		bIsDestroyed = false;
 	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -30,7 +30,8 @@ struct FObjectBasicStats : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 currentHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool bIsDamaged;
+		bool bIsDestroyed;
+	
 };
 
 //animations that every object we inherit from this has
@@ -147,4 +148,10 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		float objectDeathTimer;
+	UPROPERTY(EditAnywhere)
+		FLinearColor flickerColor;
+	
+	void FlickerOndamageTakenBadMethod();
+	void FlickerSetFlashColor();
+	void FlickerSetFlashNormal();
 };

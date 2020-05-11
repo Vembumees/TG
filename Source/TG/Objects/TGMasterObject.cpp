@@ -73,16 +73,19 @@ void ATGMasterObject::Interact(AActor* iPlayer)
 
 void ATGMasterObject::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
 {
-	if (iBaseDamage >= 0)
+	if (iBaseDamage >= 0 && !currentBasicStats.bIsDestroyed)
 	{
+		FlickerOndamageTakenBadMethod();
 		currentBasicStats.currentHealth -= iBaseDamage;
 		UE_LOG(LogTemp, Warning, TEXT("Object damaged, %i health remaining."), currentBasicStats.currentHealth);
 		if (currentBasicStats.currentHealth <= 0)
 		{
+			currentBasicStats.bIsDestroyed = true;
 			//play death animation and in 10 seconds fall through the ground and destroy self
 			this->SpriteComp->SetLooping(false);
 			/*this->SpriteComp->SetFlipbook(currentBasicAnimations.ObjectDestroyedAnimation); !! atm dont have anim*/ 
 			this->SpriteComp->SetSpriteColor(FLinearColor::Red);
+			this->boxCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 			//give xp & drop loot?
 			
@@ -167,5 +170,36 @@ void ATGMasterObject::SetDataTableObjectDataRowNames()
 	{
 		DataTableObjectRowNames = DataTableObjectData->GetRowNames();
 	}
+}
+
+void ATGMasterObject::FlickerOndamageTakenBadMethod()
+{
+	//this is some incredibly horrendous code but i couldnt quickly figure out a way to do this in this crappy
+	//unsupported paper2d without drawing the sprites manually, maybe will find or figure something out in future !!
+	// or just not do the flashing xD
+
+	//or just make 2-3 sprites for object, each more broken. Not like most of them will be animated anyway, just sprites
+
+	//maybe could just do a shake with lerp or something (that requires tick tho) or manually shake the object
+	//basic gamefeel not rly priority tho atm
+	FTimerHandle DmgTakenFlickerSetFlashColor;
+	FTimerHandle DmgTakenFlickerSetNormal;
+	FTimerHandle DmgTakenFlickerSetFlashColor2;
+	FTimerHandle DmgTakenFlickerSetNormal2;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		DmgTakenFlickerSetFlashColor, this,&ATGMasterObject::FlickerSetFlashColor, 0.1);
+	GetWorld()->GetTimerManager().SetTimer(
+		DmgTakenFlickerSetNormal, this, &ATGMasterObject::FlickerSetFlashNormal, 0.2);
+}
+
+void ATGMasterObject::FlickerSetFlashColor()
+{
+	this->SpriteComp->SetSpriteColor(flickerColor);
+}
+
+void ATGMasterObject::FlickerSetFlashNormal()
+{
+	this->SpriteComp->SetSpriteColor(FLinearColor::White);
 }
 
