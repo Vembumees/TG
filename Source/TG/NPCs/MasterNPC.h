@@ -30,15 +30,46 @@ struct FNPCDialogues
 {
 	GENERATED_BODY()
 
+		FNPCDialogues() {
+		dialogueMessages.Add(FText::FromString("Hello!"));
+		dialogueMessages.Add(FText::FromString("Hey!"));
+		dialogueMessages.Add(FText::FromString("Ok enough said."));
+
+		dialogueMessagesRumor.Add(FText::FromString("Event1 Rumor"));
+		dialogueMessagesRumor.Add(FText::FromString("Event2 Rumor"));
+		dialogueMessagesRumor.Add(FText::FromString("Event3 Rumor"));
+		dialogueMessagesRumor.Add(FText::FromString("Event4 Rumor"));
+
+		dialogueMessagesHasDoneEvent1.Add(FText::FromString("Event1 message"));
+		dialogueMessagesHasDoneEvent2.Add(FText::FromString("Event2 message"));
+		dialogueMessagesHasDoneEvent3.Add(FText::FromString("Event3 message"));
+		dialogueMessagesHasDoneEvent4.Add(FText::FromString("Event4 message"));
+
+		dialogueMessagesPlayerHasDoneAllTasks.Add(FText::FromString("AllEventsCompleted"));
+		}
+
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FText npcName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 		TArray<FText> dialogueMessages;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FText> dialogueMessagesExhausted;
+	UPROPERTY(EditAnywhere)
+		TArray<FText> dialogueMessagesRumor;
 
+	UPROPERTY(EditAnywhere)
+		TArray<FText> dialogueMessagesHasDoneEvent1;
+
+	UPROPERTY(EditAnywhere)
+		TArray<FText> dialogueMessagesHasDoneEvent2;
+
+	UPROPERTY(EditAnywhere)
+		TArray<FText> dialogueMessagesHasDoneEvent3;
+
+	UPROPERTY(EditAnywhere)
+		TArray<FText> dialogueMessagesHasDoneEvent4;
+	UPROPERTY(EditAnywhere)
+		TArray<FText> dialogueMessagesPlayerHasDoneAllTasks;
 };
 
 USTRUCT(BlueprintType)
@@ -46,10 +77,10 @@ struct FNPCData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UPROPERTY(EditAnywhere, Category = ADialogue)
 		FNPCStats npcStats;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, Category = ADialogue)
 		FNPCDialogues npcDialogues;
 };
 
@@ -61,10 +92,10 @@ class TG_API AMasterNPC : public APaperCharacter, public IInteract
 		AMasterNPC();
 
 protected:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleDefaultsOnly)
 	class UPaperFlipbookComponent* dialogueAlert;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleDefaultsOnly)
 		class UWidgetComponent* dialogueComp;	//dont forget to set the widget in the blueprint
 
 public:
@@ -99,7 +130,7 @@ protected:
 		class UDataTable* DataTableObjectData;
 	UPROPERTY()
 		TArray<FName> DataTableObjectRowNames;
-	/*Enter the row you want the object to use starts from 0, could also make it a string later*/
+	/*Row number and take 1 off from it. Making it do it automatically in all code is too much extra complexity.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AData)
 		int32 DTNPCDataRowNumber;
 	//ANIMATIONS
@@ -145,16 +176,47 @@ protected:
 						Dialogue
 	 ########################################################### */
 protected:
+	//this holds all dialogues
 	UPROPERTY(EditAnywhere)
 		TArray<FNPCDialogues> dialogueMessages;
 
+	void InitDialogueMessageHack();
+
 	void ShowNextDialogueMessage();
 
-	void InitDialogueMessageHack();
 	int32 simpleDialogueCounter;
+	int32 simpleDialogueCounterEvent1;
+	int32 simpleDialogueCounterEvent2;
+	int32 simpleDialogueCounterEvent3;
+	int32 simpleDialogueCounterEvent4;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = ADialogue)
 	bool bDoesDialogueLoop;
 	bool bIsDialogueExhausted;
+
+	UPROPERTY(EditAnywhere, Category = ADialogue)
+	bool bHasPlayerDoneEvent1;
+	UPROPERTY(EditAnywhere, Category = ADialogue)
+	bool bHasPlayerDoneEvent2;
+	UPROPERTY(EditAnywhere, Category = ADialogue)
+	bool bHasPlayerDoneEvent3;
+	UPROPERTY(EditAnywhere, Category = ADialogue)
+	bool bHasPlayerDoneEvent4;
+
+	bool bEvent1DialogueFinished;
+	bool bEvent2DialogueFinished;
+	bool bEvent3DialogueFinished;
+	bool bEvent4DialogueFinished;
+
+
+	//refactor functions
+	void GreetingsLoopMessage();
+	void GreetingsNonLoopMessage();
+	void ExhaustedDialogue();
+	void Event1Dialogue();
+	void Event2Dialogue();
+	void Event3Dialogue();
+	void Event4Dialogue();
+	void AllEventsFinishedDialogue();
 	 /* #########################END############################## */
 };

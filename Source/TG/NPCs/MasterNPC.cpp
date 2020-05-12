@@ -25,10 +25,10 @@ AMasterNPC::AMasterNPC()
 	/* #########################END############################## */
 
 
-	dialogueAlert= CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("dialogueAlert"));
+	dialogueAlert = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("dialogueAlert"));
 	dialogueAlert->SetupAttachment(RootComponent);
-	dialogueAlert->SetRelativeLocation(FVector(30,0,150));
-	dialogueAlert->SetRelativeScale3D(FVector(3,3,3));
+	dialogueAlert->SetRelativeLocation(FVector(30, 0, 150));
+	dialogueAlert->SetRelativeScale3D(FVector(3, 3, 3));
 	dialogueAlert->SetVisibility(false);
 
 	//sets our character sprite default scale
@@ -53,7 +53,23 @@ AMasterNPC::AMasterNPC()
 	bDoesDialogueLoop = true;
 	bIsDialogueExhausted = false;
 
-	 /* #########################END############################## */
+	//dialogue - events
+	bHasPlayerDoneEvent1 = false;
+	bHasPlayerDoneEvent2 = false;
+	bHasPlayerDoneEvent3 = false;
+	bHasPlayerDoneEvent4 = false;
+
+	bEvent1DialogueFinished = false;
+	bEvent2DialogueFinished = false;
+	bEvent3DialogueFinished = false;
+	bEvent4DialogueFinished = false;
+
+	simpleDialogueCounterEvent1 = 0;
+	simpleDialogueCounterEvent2 = 0;
+	simpleDialogueCounterEvent3 = 0;
+	simpleDialogueCounterEvent4 = 0;
+
+	/* #########################END############################## */
 }
 
 void AMasterNPC::OnEnterPlayerRadius(AActor* iPlayer)
@@ -63,7 +79,7 @@ void AMasterNPC::OnEnterPlayerRadius(AActor* iPlayer)
 
 
 
-	
+
 }
 
 void AMasterNPC::OnLeavePlayerRadius(AActor* iPlayer)
@@ -87,7 +103,7 @@ void AMasterNPC::BeginPlay()
 	StartInitializeTimer();
 	InitializeReferences();
 	SetDataTableObjectDataRowNames();
-	
+
 
 	refDialogueWidget = CastChecked<UDialogueWidget>(dialogueComp->GetUserWidgetObject());
 	refDialogueWidget->SetVisibility(ESlateVisibility::Hidden);
@@ -169,6 +185,8 @@ void AMasterNPC::PassDataFromTableToObjectVariables()
 
 void AMasterNPC::ShowNextDialogueMessage()
 {
+
+
 	if (refDialogueWidget == nullptr || refDialogueWidget->refDialogueTextBlock == nullptr)
 	{
 		return;
@@ -176,7 +194,7 @@ void AMasterNPC::ShowNextDialogueMessage()
 
 	//check if arrays are valid
 	if (!(currentNPCDialogues.dialogueMessages.IsValidIndex(0) &&
-		currentNPCDialogues.dialogueMessagesExhausted.IsValidIndex(0)))
+		currentNPCDialogues.dialogueMessagesRumor.IsValidIndex(0)))
 	{
 		return;
 	}
@@ -185,37 +203,163 @@ void AMasterNPC::ShowNextDialogueMessage()
 	//if not, when it gets to the end just keep showing message ...
 	if (bDoesDialogueLoop)
 	{
-		refDialogueWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
-		simpleDialogueCounter++;
-		if ((currentNPCDialogues.dialogueMessages.Num()) == simpleDialogueCounter)
-		{
-			simpleDialogueCounter = 0;
-		}
+		GreetingsLoopMessage();
 	}
 	else
 	{
 		if (!bIsDialogueExhausted)
 		{
-			if ((currentNPCDialogues.dialogueMessages.Num() - 1) == simpleDialogueCounter)
-			{
-				bIsDialogueExhausted = true;
-				return;
-			}
+			GreetingsNonLoopMessage();
 
-			//not exhausted
-			refDialogueWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
-			simpleDialogueCounter++;
-		
 		}
 		else
 		{
-			//exhausted
-			//pick random dialogue from the list
-			int32 l_randExhaustedDialogue = FMath::RandRange(0, currentNPCDialogues.dialogueMessagesExhausted.Num() - 1);
-			refDialogueWidget->refDialogueTextBlock->SetText(
-				currentNPCDialogues.dialogueMessagesExhausted[l_randExhaustedDialogue]);
-
+			//check if player has done any of the events
+			if (bHasPlayerDoneEvent1 || bHasPlayerDoneEvent2 || bHasPlayerDoneEvent3 || bHasPlayerDoneEvent4)
+			{
+				if (bHasPlayerDoneEvent1 && !bEvent1DialogueFinished)
+				{
+					if (!currentNPCDialogues.dialogueMessagesHasDoneEvent1.IsValidIndex(0))
+					{
+						return;	//checking this just in case i might accidentally delete a row in Datatable
+					}
+					Event1Dialogue();
+					return;
+				}
+				else if (bHasPlayerDoneEvent2 && !bEvent2DialogueFinished)
+				{
+					if (!currentNPCDialogues.dialogueMessagesHasDoneEvent2.IsValidIndex(0))
+					{
+						return; //checking this just in case i might accidentally delete a row in Datatable
+					}
+					Event2Dialogue();
+					return;
+				}
+				else if (bHasPlayerDoneEvent3 && !bEvent3DialogueFinished)
+				{
+					if (!currentNPCDialogues.dialogueMessagesHasDoneEvent3.IsValidIndex(0))
+					{
+						return;//checking this just in case i might accidentally delete a row in Datatable
+					}
+					Event3Dialogue();
+					return;
+				}
+				else if (bHasPlayerDoneEvent4 && !bEvent4DialogueFinished)
+				{
+					if (!currentNPCDialogues.dialogueMessagesHasDoneEvent4.IsValidIndex(0))
+					{
+						return;//checking this just in case i might accidentally delete a row in Datatable
+					}
+					Event4Dialogue();
+					return;
+				}
+			}
+			else
+			{
+				ExhaustedDialogue();
+			}
+			ExhaustedDialogue();
+		
+			if (bHasPlayerDoneEvent4 && bHasPlayerDoneEvent3 && bHasPlayerDoneEvent2 && bHasPlayerDoneEvent1)
+			{
+				AllEventsFinishedDialogue();
+			}
 		}
 	}
 
+}
+
+void AMasterNPC::GreetingsLoopMessage()
+{
+	refDialogueWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
+	if ((currentNPCDialogues.dialogueMessages.Num()) == simpleDialogueCounter)
+	{
+		simpleDialogueCounter = 0;
+	}
+	simpleDialogueCounter++;
+}
+
+void AMasterNPC::GreetingsNonLoopMessage()
+{
+	if ((currentNPCDialogues.dialogueMessages.Num()) == simpleDialogueCounter)
+	{
+		bIsDialogueExhausted = true;
+		ExhaustedDialogue();
+		return;
+	}
+
+	//not exhausted
+	refDialogueWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
+	simpleDialogueCounter++;
+}
+
+void AMasterNPC::ExhaustedDialogue()
+{
+	int32 l_randDialogue = FMath::RandRange(0, currentNPCDialogues.dialogueMessagesRumor.Num() - 1);
+	refDialogueWidget->refDialogueTextBlock->SetText(
+		currentNPCDialogues.dialogueMessagesRumor[l_randDialogue]);
+}
+
+void AMasterNPC::Event1Dialogue()
+{
+
+	if ((currentNPCDialogues.dialogueMessagesHasDoneEvent1.Num()) == simpleDialogueCounterEvent1)
+	{
+		bEvent1DialogueFinished = true;
+		ShowNextDialogueMessage();
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("inside Event1 %i"), currentNPCDialogues.dialogueMessagesHasDoneEvent1.Num());
+	refDialogueWidget->refDialogueTextBlock->SetText(
+		currentNPCDialogues.dialogueMessagesHasDoneEvent1[simpleDialogueCounterEvent1]);
+	simpleDialogueCounterEvent1++;
+}
+
+void AMasterNPC::Event2Dialogue()
+{
+	if ((currentNPCDialogues.dialogueMessagesHasDoneEvent2.Num()) == simpleDialogueCounterEvent2)
+	{
+		bEvent2DialogueFinished = true;
+		ShowNextDialogueMessage();
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("inside Event2 %i"), currentNPCDialogues.dialogueMessagesHasDoneEvent2.Num());
+	refDialogueWidget->refDialogueTextBlock->SetText(
+		currentNPCDialogues.dialogueMessagesHasDoneEvent2[simpleDialogueCounterEvent2]);
+	simpleDialogueCounterEvent2++;
+}
+
+void AMasterNPC::Event3Dialogue()
+{
+	if ((currentNPCDialogues.dialogueMessagesHasDoneEvent3.Num()) == simpleDialogueCounterEvent3)
+	{
+		bEvent3DialogueFinished = true;
+		ShowNextDialogueMessage();
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("inside Event3 %i"), currentNPCDialogues.dialogueMessagesHasDoneEvent3.Num());
+	refDialogueWidget->refDialogueTextBlock->SetText(
+		currentNPCDialogues.dialogueMessagesHasDoneEvent3[simpleDialogueCounterEvent3]);
+	simpleDialogueCounterEvent3++;
+}
+
+void AMasterNPC::Event4Dialogue()
+{
+	if ((currentNPCDialogues.dialogueMessagesHasDoneEvent4.Num()) == simpleDialogueCounterEvent4)
+	{
+		bEvent4DialogueFinished = true;
+		ShowNextDialogueMessage();
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("inside Event4 %i"), currentNPCDialogues.dialogueMessagesHasDoneEvent4.Num());
+	refDialogueWidget->refDialogueTextBlock->SetText(
+		currentNPCDialogues.dialogueMessagesHasDoneEvent4[simpleDialogueCounterEvent4]);
+	simpleDialogueCounterEvent4++;
+}
+
+void AMasterNPC::AllEventsFinishedDialogue()
+{
+	int32 l_randDialogue = FMath::RandRange(0, currentNPCDialogues.dialogueMessagesPlayerHasDoneAllTasks.Num() - 1);
+	refDialogueWidget->refDialogueTextBlock->SetText(
+		currentNPCDialogues.dialogueMessagesPlayerHasDoneAllTasks[l_randDialogue]);
 }

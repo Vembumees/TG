@@ -130,7 +130,7 @@ protected:
 		class UDataTable* DataTableObjectData;
 	UPROPERTY()
 		TArray<FName> DataTableObjectRowNames;
-	/*Enter the row you want the object to use starts from 0, could also make it a string later*/
+	/*Row number and take 1 off from it. Making it do it automatically in all code is too much extra complexity.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AData)
 		int32 DTObjectStatsRowNumber;
 	//ANIMATIONS
