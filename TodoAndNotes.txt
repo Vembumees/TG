@@ -39,6 +39,25 @@ Notes:
 	run has a different villain. The winner gets to rule the castle and each battle you
 	fight a previous most powerful mage.
 
+
+	Idea: Castle is full of weird monsters. Every time you play a duel, the loser turns into a monster.
+	So each combat vs NPC is a duel that also ends with a real time combat encounter. Combat should be 
+	kind of easy tho. If I do some kind of checkpoint saving where player can also die after winning a duel
+	and having to restart (which is unfun), I could use it as an advantage tho to make powerful cards that 
+	have sideeffects that affect your real combat. Like you gain a powerful damage boost in cards, but each 
+	time you use a card you summon a monster close to you who will attack you after duel is over. Cards that 
+	make you extremely weak etc. So you can use a cheat trick to win a duel, but by doing that you can just 
+	make yourself lose in the realtime combat.
+
+	Big point of the game should be that the Boss duels should be epic. That's the goal of the game.
+	Epic battles. With weird powerful scary enemies. Like yugioh duel monsters. Duels that hype up.
+	And raise the stakes. The duel consumes the loser and each side makes big sacrifices and you 
+	constantly have to sacrifice your ability to beat the game just to win a duel. That's the point of 
+	the game. Can I make it? Hell no. I am way too beginner to make this type of stuff happen well :D.
+	But if I work hard for months I can make at least hopefully something that resembles the idea :D.
+
+	Another dumb idea for realistic speed: how about we make it 1 bit game...Except magic. The entire game
+	and characters are all 1 bit. But Magic has colors/effects/lighting etc. 
 	
 	#################################################################################################3
 	Where I left off?

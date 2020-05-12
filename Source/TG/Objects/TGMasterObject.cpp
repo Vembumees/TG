@@ -2,6 +2,7 @@
 
 
 #include "TGMasterObject.h"
+#include "TG/TG.h"
 #include "PaperFlipbookComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/AudioComponent.h"
@@ -36,6 +37,7 @@ ATGMasterObject::ATGMasterObject()
 
 	SpriteComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("SpriteComp"));
 	SpriteComp->AttachToComponent(objectRootComp, FAttachmentTransformRules::KeepRelativeTransform);
+	SpriteComp->SetRelativeScale3D(TG_SPRITE_SCALE);
 
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	audioComp->SetupAttachment(objectRootComp);
@@ -58,12 +60,12 @@ ATGMasterObject::ATGMasterObject()
 
 void ATGMasterObject::OnEnterPlayerRadius(AActor* iPlayer)
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("Enter"));
 }
 
 void ATGMasterObject::OnLeavePlayerRadius(AActor* iPlayer)
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("Leave"));
 }
 
 void ATGMasterObject::Interact(AActor* iPlayer)
@@ -81,7 +83,7 @@ void ATGMasterObject::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
 		if (currentBasicStats.currentHealth <= 0)
 		{
 			currentBasicStats.bIsDestroyed = true;
-			//play death animation and in 10 seconds fall through the ground and destroy self
+			//play death animation and in 10 seconds fall through the ground and destroy self 
 			this->SpriteComp->SetLooping(false);
 			/*this->SpriteComp->SetFlipbook(currentBasicAnimations.ObjectDestroyedAnimation); !! atm dont have anim*/ 
 			this->SpriteComp->SetSpriteColor(FLinearColor::Red);

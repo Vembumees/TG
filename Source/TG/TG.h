@@ -3,3 +3,5 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#define TG_SPRITE_SCALE FVector(5.0f, 0.0f, 5.0f)

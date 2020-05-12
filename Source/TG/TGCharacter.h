@@ -58,15 +58,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UBoxComponent* npcDetectComponent;
+
+
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+protected:
 	virtual void Tick(float DeltaSeconds) override;
 
-
-	
-
-	
-
-
 	virtual void BeginPlay() override;
+	UFUNCTION()
+	void OnNpcDetectCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32  OtherBodyIndex, bool  bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+		void OnNpcDetectCompEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32  OtherBodyIndex);
 
 	/* ###########################################################
 						Animations

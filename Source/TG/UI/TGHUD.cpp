@@ -85,13 +85,11 @@ void ATGHUD::IngameMenuOpen()
 	UE_LOG(LogTemp, Log, TEXT("OpenIngameMenu()"));
 	checkSlow(refIngameMenu->GetVisibility() == ESlateVisibility::Hidden); //only want to open from closed
 	refIngameMenu->SetVisibility(ESlateVisibility::Visible);
-	if (World != nullptr)
-	{
 		refExplorePlayerController->bShowMouseCursor = true;
 		FInputModeUIOnly InputMode;
 		refExplorePlayerController->SetInputMode(InputMode);
 		UGameplayStatics::SetGamePaused(this, true);
-	}	
+	
 }
 
 void ATGHUD::IngameMenuClose()
@@ -103,13 +101,12 @@ void ATGHUD::IngameMenuClose()
 	refIngameMenu->SetVisibility(ESlateVisibility::Hidden);
 
 
-	if (World != nullptr)
-	{
+
 		refExplorePlayerController->bShowMouseCursor = false;
 		FInputModeGameOnly InputMode;
 		refExplorePlayerController->SetInputMode(InputMode);
 		UGameplayStatics::SetGamePaused(this, false);
-	}
+
 }
 
 void ATGHUD::IngameMenu_ReturnButtonClicked()

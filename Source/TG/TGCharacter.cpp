@@ -1,6 +1,7 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "TGCharacter.h"
+#include "TG/TG.h"
 #include "PaperFlipbookComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -8,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 #include "DrawDebugHelpers.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SideScrollerCharacter, Log, All);
@@ -31,7 +33,7 @@ ATGCharacter::ATGCharacter()
 	}
 	/* #########################END############################## */
 
-
+	GetSprite()->SetRelativeScale3D(TG_SPRITE_SCALE);
 
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -92,6 +94,11 @@ ATGCharacter::ATGCharacter()
 
 	/*currentFlipbook = idleAnimation;*/
 
+	npcDetectComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("npcDetectComponent"));
+	npcDetectComponent->SetupAttachment(RootComponent);
+	npcDetectComponent->SetBoxExtent(FVector(600, 50, 600));
+	npcDetectComponent->OnComponentBeginOverlap.AddDynamic(this, &ATGCharacter::OnNpcDetectCompBeginOverlap);
+	npcDetectComponent->OnComponentEndOverlap.AddDynamic(this, &ATGCharacter::OnNpcDetectCompEndOverlap);
 
 
 	/* ###########################################################
@@ -388,7 +395,16 @@ void ATGCharacter::UpdateAnimation()
 	}
 }
 
-
+void ATGCharacter::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	//keeps the actor at the right position in 2d in editor
+	FTransform trans = this->GetActorTransform();
+	FVector loc = trans.GetLocation();
+	loc.Y = -1; //so it wouldn't clip
+	trans.SetLocation(loc);
+	this->SetActorTransform(trans);
+}
 
 void ATGCharacter::Tick(float DeltaSeconds)
 {
@@ -409,6 +425,24 @@ void ATGCharacter::BeginPlay()
 	StartInitializeTimer();
 	InitializeReferences();
 	SetDataTableObjectDataRowNames();
+}
+
+void ATGCharacter::OnNpcDetectCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	IInteract* InteractionInterface = Cast<IInteract>(OtherActor);
+	if (InteractionInterface)
+	{
+		InteractionInterface->OnEnterPlayerRadius(this);
+	}
+}
+
+void ATGCharacter::OnNpcDetectCompEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	IInteract* InteractionInterface = Cast<IInteract>(OtherActor);
+	if (InteractionInterface)
+	{
+		InteractionInterface->OnLeavePlayerRadius(this);
+	}
 }
 
 void ATGCharacter::UpdateCharacter()
