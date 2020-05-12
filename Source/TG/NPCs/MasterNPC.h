@@ -36,6 +36,9 @@ struct FNPCDialogues
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FText> dialogueMessages;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FText> dialogueMessagesExhausted;
+
 };
 
 USTRUCT(BlueprintType)
@@ -149,5 +152,9 @@ protected:
 
 	void InitDialogueMessageHack();
 	int32 simpleDialogueCounter;
+
+	UPROPERTY(EditAnywhere)
+	bool bDoesDialogueLoop;
+	bool bIsDialogueExhausted;
 	 /* #########################END############################## */
 };

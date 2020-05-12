@@ -48,7 +48,10 @@ AMasterNPC::AMasterNPC()
 	 ########################################################### */
 	initializeTimer = 0.1f;
 
+	//dialogue
 	simpleDialogueCounter = 0;
+	bDoesDialogueLoop = true;
+	bIsDialogueExhausted = false;
 
 	 /* #########################END############################## */
 }
@@ -171,12 +174,48 @@ void AMasterNPC::ShowNextDialogueMessage()
 		return;
 	}
 
-
-	refDialogueWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
-	simpleDialogueCounter++;
-	if ((currentNPCDialogues.dialogueMessages.Num()) == simpleDialogueCounter)
+	//check if arrays are valid
+	if (!(currentNPCDialogues.dialogueMessages.IsValidIndex(0) &&
+		currentNPCDialogues.dialogueMessagesExhausted.IsValidIndex(0)))
 	{
-		simpleDialogueCounter = 0;
+		return;
+	}
+
+	//if dialogue loops, it just gets to the end and starts again, can also make random later so it shows rand message
+	//if not, when it gets to the end just keep showing message ...
+	if (bDoesDialogueLoop)
+	{
+		refDialogueWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
+		simpleDialogueCounter++;
+		if ((currentNPCDialogues.dialogueMessages.Num()) == simpleDialogueCounter)
+		{
+			simpleDialogueCounter = 0;
+		}
+	}
+	else
+	{
+		if (!bIsDialogueExhausted)
+		{
+			if ((currentNPCDialogues.dialogueMessages.Num() - 1) == simpleDialogueCounter)
+			{
+				bIsDialogueExhausted = true;
+				return;
+			}
+
+			//not exhausted
+			refDialogueWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
+			simpleDialogueCounter++;
+		
+		}
+		else
+		{
+			//exhausted
+			//pick random dialogue from the list
+			int32 l_randExhaustedDialogue = FMath::RandRange(0, currentNPCDialogues.dialogueMessagesExhausted.Num() - 1);
+			refDialogueWidget->refDialogueTextBlock->SetText(
+				currentNPCDialogues.dialogueMessagesExhausted[l_randExhaustedDialogue]);
+
+		}
 	}
 
 }

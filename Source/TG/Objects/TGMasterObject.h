@@ -11,7 +11,7 @@
 
 //stats that every object we inherit from this has
 USTRUCT(BlueprintType)
-struct FObjectBasicStats : public FTableRowBase
+struct FObjectBasicStats
 {
 	GENERATED_BODY()
 
@@ -36,7 +36,7 @@ struct FObjectBasicStats : public FTableRowBase
 
 //animations that every object we inherit from this has
 USTRUCT(BlueprintType)
-struct FObjectBasicAnimations : public FTableRowBase
+struct FObjectBasicAnimations
 {
 	GENERATED_BODY()
 

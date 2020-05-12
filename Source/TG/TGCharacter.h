@@ -12,7 +12,7 @@
 
 //stats that every object we inherit from this has
 USTRUCT(BlueprintType)
-struct FPlayerStats : public FTableRowBase
+struct FPlayerStats
 {
 	GENERATED_BODY()
 
@@ -36,7 +36,7 @@ struct FPlayerStats : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FPlayerData : public FTableRowBase
+struct FPlayerData
 {
 	GENERATED_BODY()
 
