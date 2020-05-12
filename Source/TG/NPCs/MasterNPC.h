@@ -8,19 +8,46 @@
 #include "Engine/DataTable.h"
 #include "MasterNPC.generated.h"
 
+//stats that every object we inherit from this has
 USTRUCT(BlueprintType)
-struct FNPCDialogues: public FTableRowBase
+struct FNPCStats
 {
 	GENERATED_BODY()
 
-		FNPCDialogues()
+		FNPCStats()
 	{
-		dialogueMessage = FText::FromString("Welcome to TG friend!");
+		npcName = FText::FromString("Smugger");
 	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FText dialogueMessage;
+		FText npcName;
+};
 
+
+
+USTRUCT(BlueprintType)
+struct FNPCDialogues
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText npcName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FText> dialogueMessages;
+
+};
+
+USTRUCT(BlueprintType)
+struct FNPCData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FNPCStats npcStats;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FNPCDialogues npcDialogues;
 };
 
 UCLASS()
@@ -59,6 +86,46 @@ protected:
 
 	void RotateTowardsPlayer(AActor* iPlayer);
 
+	/* ###########################################################
+					Data
+ ########################################################### */
+
+	void SetDataTableObjectDataRowNames();
+
+	UPROPERTY()
+		class UDataTable* DataTableObjectData;
+	UPROPERTY()
+		TArray<FName> DataTableObjectRowNames;
+	/*Enter the row you want the object to use starts from 0, could also make it a string later*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AData)
+		int32 DTNPCDataRowNumber;
+	//ANIMATIONS
+
+	//STATS
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AData)
+		FNPCStats currentNPCStats;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AData)
+		FNPCDialogues currentNPCDialogues;
+	//SOUND?
+
+	 /* #########################END############################## */
+	
+		/* ###########################################################
+						Initialize & References
+	 ########################################################### */
+protected:
+	//init sprites etc ingame
+
+	void StartInitializeTimer();
+	void InitializeDelayed();
+	void InitializeDataTableInfo();
+	void InitializeReferences();
+	void PassDataFromTableToObjectVariables();
+
+	UPROPERTY(EditAnywhere)
+		float initializeTimer;
+	/* #########################END############################## */
 
 
 	/* ###########################################################

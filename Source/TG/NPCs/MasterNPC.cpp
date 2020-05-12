@@ -10,6 +10,21 @@
 
 AMasterNPC::AMasterNPC()
 {
+
+	/* ###########################################################
+					DATA
+	########################################################### */
+	/*load object stats datatable automatically, datatable values are in beginplay*/
+	static ConstructorHelpers::FObjectFinder<UDataTable> NPCDataDTObject(TEXT("DataTable'/Game/TG/BP/Data/DT_NPCData.DT_NPCData'"));
+	if (NPCDataDTObject.Succeeded())
+	{
+
+		//Use CharacterStatsDataTable to access the table data
+		DataTableObjectData = NPCDataDTObject.Object;
+	}
+	/* #########################END############################## */
+
+
 	dialogueAlert= CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("dialogueAlert"));
 	dialogueAlert->SetupAttachment(RootComponent);
 	dialogueAlert->SetRelativeLocation(FVector(30,0,150));
@@ -31,6 +46,7 @@ AMasterNPC::AMasterNPC()
 	/* ###########################################################
 						default values
 	 ########################################################### */
+	initializeTimer = 0.1f;
 
 	simpleDialogueCounter = 0;
 
@@ -65,20 +81,13 @@ void AMasterNPC::Interact(AActor* iPlayer)
 void AMasterNPC::BeginPlay()
 {
 	Super::BeginPlay();
-
+	StartInitializeTimer();
+	InitializeReferences();
+	SetDataTableObjectDataRowNames();
 	
 
 	refDialogueWidget = CastChecked<UDialogueWidget>(dialogueComp->GetUserWidgetObject());
 	refDialogueWidget->SetVisibility(ESlateVisibility::Hidden);
-	FNPCDialogues demo;
-	demo.dialogueMessage = FText::FromString("Man I'd do anything for a cigarette right now.");
-	FNPCDialogues demo2;
-	demo2.dialogueMessage = FText::FromString("I really mean it dude, I'll blow you for a pack!");
-	FNPCDialogues demo3;
-	demo3.dialogueMessage = FText::FromString("I'll even swallow your load!");
-	dialogueMessages.Add(demo);
-	dialogueMessages.Add(demo2);
-	dialogueMessages.Add(demo3);
 
 
 }
@@ -108,6 +117,53 @@ void AMasterNPC::RotateTowardsPlayer(AActor* iPlayer)
 
 }
 
+void AMasterNPC::SetDataTableObjectDataRowNames()
+{
+	if (DataTableObjectData != nullptr)
+	{
+		DataTableObjectRowNames = DataTableObjectData->GetRowNames();
+	}
+}
+
+void AMasterNPC::StartInitializeTimer()
+{
+	FTimerHandle MasterNPCInitializeTimer;
+	GetWorld()->GetTimerManager().SetTimer(MasterNPCInitializeTimer, this, &AMasterNPC::InitializeDelayed,
+		initializeTimer, false);
+}
+
+void AMasterNPC::InitializeDelayed()
+{
+	InitializeDataTableInfo();
+	PassDataFromTableToObjectVariables();
+}
+
+void AMasterNPC::InitializeDataTableInfo()
+{
+	FNPCData* npcData = DataTableObjectData->FindRow<FNPCData>(
+		DataTableObjectRowNames[DTNPCDataRowNumber], "MasterNPC ObjectData", true);
+	if (npcData != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("npcData LOADED SUCCESSFULLY."));
+		currentNPCDialogues = npcData->npcDialogues;
+		currentNPCStats = npcData->npcStats;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("npcData load FAILED"));
+	}
+}
+
+void AMasterNPC::InitializeReferences()
+{
+
+}
+
+void AMasterNPC::PassDataFromTableToObjectVariables()
+{
+
+}
+
 void AMasterNPC::ShowNextDialogueMessage()
 {
 	if (refDialogueWidget == nullptr || refDialogueWidget->refDialogueTextBlock == nullptr)
@@ -116,9 +172,9 @@ void AMasterNPC::ShowNextDialogueMessage()
 	}
 
 
-	refDialogueWidget->refDialogueTextBlock->SetText(dialogueMessages[simpleDialogueCounter].dialogueMessage);
+	refDialogueWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
 	simpleDialogueCounter++;
-	if ((dialogueMessages.Num()) == simpleDialogueCounter)
+	if ((currentNPCDialogues.dialogueMessages.Num()) == simpleDialogueCounter)
 	{
 		simpleDialogueCounter = 0;
 	}
