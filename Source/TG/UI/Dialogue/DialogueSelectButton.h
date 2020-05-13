@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "TG/Enumerations.h"
 #include "DialogueSelectButton.generated.h"
 
 /**
@@ -23,8 +24,10 @@ public:
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 			class UTextBlock* refTextDialogueButton;
 
+		void SetButtonText(EDialogueSelectButtons iBtn);
+
 protected:
 	virtual void NativeConstruct() override;
 
-
+	
 };

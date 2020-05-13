@@ -7,6 +7,7 @@
 #include "Components/WidgetComponent.h"
 #include "TG/UI/Dialogue/DialogueWidget.h"
 #include "Components/TextBlock.h"
+#include "TG/UI/Dialogue/DialogueSelectionMenu.h"
 
 AMasterNPC::AMasterNPC()
 {
@@ -36,7 +37,7 @@ AMasterNPC::AMasterNPC()
 
 	dialogueTextComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("dialogueTextComp"));
 	dialogueTextComp->SetupAttachment(RootComponent);
-	dialogueTextComp->SetRelativeLocation(FVector(30, 0, 150));
+	dialogueTextComp->SetRelativeLocation(FVector(0, 0, 200));
 	dialogueTextComp->SetVisibility(true);
 	dialogueTextComp->SetCollisionProfileName(TEXT("NoCollision"));
 	dialogueTextComp->SetGenerateOverlapEvents(false);
@@ -44,7 +45,7 @@ AMasterNPC::AMasterNPC()
 
 	dialogueSelectionComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("dialogueSelectionComp"));
 	dialogueSelectionComp->SetupAttachment(RootComponent);
-	dialogueSelectionComp->SetRelativeLocation(FVector(150, 0, 0));
+	dialogueSelectionComp->SetRelativeLocation(FVector(0, 0, 150));
 	dialogueSelectionComp->SetVisibility(true);
 	dialogueSelectionComp->SetCollisionProfileName(TEXT("NoCollision"));
 	dialogueSelectionComp->SetGenerateOverlapEvents(false);
@@ -100,8 +101,11 @@ void AMasterNPC::Interact(AActor* iPlayer)
 {
 	RotateTowardsPlayer(iPlayer);
 	dialogueAlert->SetVisibility(false);
-	refDialogueTextWidget->SetVisibility(ESlateVisibility::Visible);
-	ShowNextDialogueMessage();
+	CreateDialogueSelection();
+// 	FTimerHandle interactTimer;
+// 	GetWorld()->GetTimerManager().SetTimer(interactTimer, this, &AMasterNPC::CreateDialogueSelection, 0.5f, false);
+// 	refDialogueTextWidget->SetVisibility(ESlateVisibility::Visible);
+// 	ShowNextDialogueMessage();
 }
 
 void AMasterNPC::BeginPlay()
@@ -112,8 +116,7 @@ void AMasterNPC::BeginPlay()
 	SetDataTableObjectDataRowNames();
 
 
-	refDialogueTextWidget = CastChecked<UDialogueWidget>(dialogueTextComp->GetUserWidgetObject());
-	refDialogueTextWidget->SetVisibility(ESlateVisibility::Hidden);
+	
 
 
 }
@@ -182,7 +185,10 @@ void AMasterNPC::InitializeDataTableInfo()
 
 void AMasterNPC::InitializeReferences()
 {
+	refDialogueTextWidget = CastChecked<UDialogueWidget>(dialogueTextComp->GetUserWidgetObject());
+	refDialogueTextWidget->SetVisibility(ESlateVisibility::Hidden);
 
+	refDialogueSelectionMenu = CastChecked<UDialogueSelectionMenu>(dialogueSelectionComp->GetUserWidgetObject());
 }
 
 void AMasterNPC::PassDataFromTableToObjectVariables()
@@ -369,4 +375,14 @@ void AMasterNPC::AllEventsFinishedDialogue()
 	int32 l_randDialogue = FMath::RandRange(0, currentNPCDialogues.dialogueMessagesPlayerHasDoneAllTasks.Num() - 1);
 	refDialogueTextWidget->refDialogueTextBlock->SetText(
 		currentNPCDialogues.dialogueMessagesPlayerHasDoneAllTasks[l_randDialogue]);
+}
+
+void AMasterNPC::CreateDialogueSelection()
+{
+	if (refDialogueSelectionMenu == nullptr)
+	{
+		return;
+	}
+	refDialogueSelectionMenu->CreateDialogueButtons(currentNPCDialogues.dialogueSelectionMenuButtons);
+
 }

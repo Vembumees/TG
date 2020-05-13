@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
 #include "TG/Interfaces/Interact.h"
+#include "TG/Enumerations.h"
 #include "Engine/DataTable.h"
 #include "MasterNPC.generated.h"
 
@@ -46,6 +47,7 @@ struct FNPCDialogues
 		dialogueMessagesHasDoneEvent4.Add(FText::FromString("Event4 message"));
 
 		dialogueMessagesPlayerHasDoneAllTasks.Add(FText::FromString("AllEventsCompleted"));
+		dialogueSelectionMenuButtons.AddUnique(EDialogueSelectButtons::TALK);
 		}
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -70,6 +72,10 @@ struct FNPCDialogues
 		TArray<FText> dialogueMessagesHasDoneEvent4;
 	UPROPERTY(EditAnywhere)
 		TArray<FText> dialogueMessagesPlayerHasDoneAllTasks;
+	//buttons that this npc has when interacted with, talk, trade etc
+	UPROPERTY(EditAnywhere)
+		TArray<EDialogueSelectButtons> dialogueSelectionMenuButtons;
+
 };
 
 USTRUCT(BlueprintType)
@@ -112,13 +118,6 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-	/* ###########################################################
-						References
-	 ########################################################### */
-	class UDialogueWidget* refDialogueTextWidget;
-
-	 /* #########################END############################## */
-
 protected:
 
 	void RotateTowardsPlayer(AActor* iPlayer);
@@ -151,6 +150,8 @@ protected:
 		/* ###########################################################
 						Initialize & References
 	 ########################################################### */
+
+
 protected:
 	//init sprites etc ingame
 
@@ -162,6 +163,11 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		float initializeTimer;
+
+	UPROPERTY()
+	class UDialogueWidget* refDialogueTextWidget;
+	UPROPERTY()
+	class UDialogueSelectionMenu* refDialogueSelectionMenu;
 	/* #########################END############################## */
 
 
@@ -221,5 +227,9 @@ protected:
 	void Event3Dialogue();
 	void Event4Dialogue();
 	void AllEventsFinishedDialogue();
+
+	//DialogueSelectionMenu
+	void CreateDialogueSelection();
+
 	 /* #########################END############################## */
 };

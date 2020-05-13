@@ -33,3 +33,15 @@ enum class ETGGameState : uint8
 	INGAMEDUEL					UMETA(DisplayName = "INGAME DUEL"),
 	DEATHSCREEN					UMETA(DisplayName = "DEATH SCREEN"),
 };
+
+UENUM(BlueprintType)
+enum class EDialogueSelectButtons : uint8
+{
+	TALK					UMETA(DisplayName = "TALK"),
+	ASK						UMETA(DisplayName = "ASK"),
+	GIVE					UMETA(DisplayName = "GIVE"),
+	TRADE					UMETA(DisplayName = "TRADE"),
+	INVITE					UMETA(DisplayName = "INVITE TO GROUP"),
+	DUEL					UMETA(DisplayName = "DUEL"),
+	DUELPRACTICE			UMETA(DisplayName = "DUELPRACTICE"),
+};
