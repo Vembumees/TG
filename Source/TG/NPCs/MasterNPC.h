@@ -96,7 +96,10 @@ protected:
 	class UPaperFlipbookComponent* dialogueAlert;
 
 	UPROPERTY(VisibleDefaultsOnly)
-		class UWidgetComponent* dialogueComp;	//dont forget to set the widget in the blueprint
+		class UWidgetComponent* dialogueTextComp;	//dont forget to set the widget in the blueprint
+
+	UPROPERTY(VisibleDefaultsOnly)
+		class UWidgetComponent* dialogueSelectionComp;	//dont forget to set the widget in the blueprint
 
 public:
 	virtual void OnEnterPlayerRadius(AActor* iPlayer) override;
@@ -112,7 +115,7 @@ public:
 	/* ###########################################################
 						References
 	 ########################################################### */
-	class UDialogueWidget* refDialogueWidget;
+	class UDialogueWidget* refDialogueTextWidget;
 
 	 /* #########################END############################## */
 
