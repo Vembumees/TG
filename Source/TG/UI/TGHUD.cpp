@@ -7,6 +7,7 @@
 #include "TG/Controllers/ExploreController.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+#include "ExplorerMode/ExplorerModeScreen.h"
 
 void ATGHUD::BeginPlay()
 {
@@ -21,6 +22,15 @@ void ATGHUD::BeginPlay()
 void ATGHUD::InitializeWidgets()
 {
 
+	if (ExplorerModeScreenClass != nullptr)
+	{
+		refExplorerModeScreen = CreateWidget<UExplorerModeScreen>(GetWorld(), ExplorerModeScreenClass);
+		if (refExplorerModeScreen != nullptr)
+		{
+			refExplorerModeScreen->AddToViewport();
+		}
+	}
+
 	if (IngameMenuClass != nullptr)
 	{
 		refIngameMenu = CreateWidget<UIngameMenu>(GetWorld(), IngameMenuClass);
@@ -34,6 +44,7 @@ void ATGHUD::InitializeWidgets()
 	{
 		UE_LOG(LogTemp, Error, TEXT("set the BP widget in TGHUD BP"));
 	}
+
 
 	// 	if (IngameInventoryMenu!= nullptr)
 	// 	{
@@ -89,6 +100,11 @@ void ATGHUD::IngameMenuOpen()
 		FInputModeUIOnly InputMode;
 		refExplorePlayerController->SetInputMode(InputMode);
 		UGameplayStatics::SetGamePaused(this, true);
+
+		if (refExplorerModeScreen != nullptr)
+		{
+			refExplorerModeScreen->SetVisibility(ESlateVisibility::Hidden);
+		}
 	
 }
 
@@ -100,13 +116,15 @@ void ATGHUD::IngameMenuClose()
 	checkSlow(refIngameMenu->GetVisibility() == ESlateVisibility::Visible); // only want to closed from open
 	refIngameMenu->SetVisibility(ESlateVisibility::Hidden);
 
-
-
 		refExplorePlayerController->bShowMouseCursor = false;
 		FInputModeGameOnly InputMode;
 		refExplorePlayerController->SetInputMode(InputMode);
 		UGameplayStatics::SetGamePaused(this, false);
-
+		
+		if (refExplorerModeScreen != nullptr)
+		{
+			refExplorerModeScreen->SetVisibility(ESlateVisibility::Visible);
+		}
 }
 
 void ATGHUD::IngameMenu_ReturnButtonClicked()

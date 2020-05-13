@@ -47,6 +47,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TSubclassOf<class UIngameInventoryMenu> IngameInventoryMenu;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class UExplorerModeScreen> ExplorerModeScreenClass;
+
 
 	/* ###########################################################
 						widgets refs
@@ -54,6 +57,7 @@ protected:
 
 	class UIngameMenu* refIngameMenu;
 	class UIngameInventoryMenu* refIngameInventoryMenu;
+	class UExplorerModeScreen* refExplorerModeScreen;
 	 /* #########################END############################## */
 
 	/* ###########################################################
