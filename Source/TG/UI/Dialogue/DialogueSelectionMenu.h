@@ -26,6 +26,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UHorizontalBox* refDialogueMenuHorizontalBox;
 
+	class AMasterNPC* refOwnerNPC; // gets initialized by masternpc when this instance is created
+
 	
 
 	 /* #########################END############################## */

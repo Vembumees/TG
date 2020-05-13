@@ -97,6 +97,9 @@ class TG_API AMasterNPC : public APaperCharacter, public IInteract
 
 		AMasterNPC();
 
+public:
+	friend class UDialogueSelectButton; // for dialogue stuff so it can access friend functions
+
 protected:
 	UPROPERTY(VisibleDefaultsOnly)
 	class UPaperFlipbookComponent* dialogueAlert;
@@ -164,6 +167,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 		float initializeTimer;
 
+public:
 	UPROPERTY()
 	class UDialogueWidget* refDialogueTextWidget;
 	UPROPERTY()

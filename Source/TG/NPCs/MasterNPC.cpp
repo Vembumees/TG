@@ -37,7 +37,7 @@ AMasterNPC::AMasterNPC()
 
 	dialogueTextComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("dialogueTextComp"));
 	dialogueTextComp->SetupAttachment(RootComponent);
-	dialogueTextComp->SetRelativeLocation(FVector(0, 0, 200));
+	dialogueTextComp->SetRelativeLocation(FVector(0, 0, 250));
 	dialogueTextComp->SetVisibility(true);
 	dialogueTextComp->SetCollisionProfileName(TEXT("NoCollision"));
 	dialogueTextComp->SetGenerateOverlapEvents(false);
@@ -104,8 +104,7 @@ void AMasterNPC::Interact(AActor* iPlayer)
 	CreateDialogueSelection();
 // 	FTimerHandle interactTimer;
 // 	GetWorld()->GetTimerManager().SetTimer(interactTimer, this, &AMasterNPC::CreateDialogueSelection, 0.5f, false);
-// 	refDialogueTextWidget->SetVisibility(ESlateVisibility::Visible);
-// 	ShowNextDialogueMessage();
+
 }
 
 void AMasterNPC::BeginPlay()
@@ -189,6 +188,7 @@ void AMasterNPC::InitializeReferences()
 	refDialogueTextWidget->SetVisibility(ESlateVisibility::Hidden);
 
 	refDialogueSelectionMenu = CastChecked<UDialogueSelectionMenu>(dialogueSelectionComp->GetUserWidgetObject());
+	refDialogueSelectionMenu->refOwnerNPC = this; 
 }
 
 void AMasterNPC::PassDataFromTableToObjectVariables()
@@ -379,10 +379,7 @@ void AMasterNPC::AllEventsFinishedDialogue()
 
 void AMasterNPC::CreateDialogueSelection()
 {
-	if (refDialogueSelectionMenu == nullptr)
-	{
-		return;
-	}
+	if (refDialogueSelectionMenu == nullptr) { return; }
 	refDialogueSelectionMenu->CreateDialogueButtons(currentNPCDialogues.dialogueSelectionMenuButtons);
 
 }

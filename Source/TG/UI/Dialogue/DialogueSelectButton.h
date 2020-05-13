@@ -22,12 +22,32 @@ public:
 			class UButton* refButtonDialogue;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-			class UTextBlock* refTextDialogueButton;
+			class UTextBlock* refTextOnDialogueBtn;
 
 		void SetButtonText(EDialogueSelectButtons iBtn);
+		void SetButtonBinding(EDialogueSelectButtons iBtn);
 
+		class AMasterNPC* refOwnerNPC; // gets initialized in selectionmenu
 protected:
 	virtual void NativeConstruct() override;
+	
+	UFUNCTION()
+	void ButtonPressedTalk();
+	UFUNCTION()
+	void ButtonPressedAsk();
+	UFUNCTION()
+	void ButtonPressedGive();
+	UFUNCTION()
+	void ButtonPressedTrade();
+	UFUNCTION()
+	void ButtonPressedInvite();
+	UFUNCTION()
+	void ButtonPressedDuel();
+	UFUNCTION()
+	void ButtonPressedDuelPractice();
+	
+	void ClearPreviousDialogueWidgets();
+
 
 	
 };

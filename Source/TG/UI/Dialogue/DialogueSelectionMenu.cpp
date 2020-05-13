@@ -59,8 +59,11 @@ void UDialogueSelectionMenu::CreateDialogueButtons(const TArray<EDialogueSelectB
 		//dnt forget to add WBP correct to the Blueprint
 		UDialogueSelectButton* wDialogueBtn = CreateWidget<UDialogueSelectButton>(GetWorld(), WBP_DialogueSelectButton);
 		refDialogueMenuHorizontalBox->AddChildToHorizontalBox(wDialogueBtn);
+		wDialogueBtn->refOwnerNPC = this->refOwnerNPC;
 		wDialogueBtn->SetButtonText(e);
+		wDialogueBtn->SetButtonBinding(e);
 		bHaveTheButtonsAlreadyBeenCreated = true;
+		
 	}
 	
 	
