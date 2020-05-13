@@ -35,14 +35,6 @@ AMasterNPC::AMasterNPC()
 	//sets our character sprite default scale
 	GetSprite()->SetRelativeScale3D(TG_SPRITE_SCALE);
 
-	dialogueTextComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("dialogueTextComp"));
-	dialogueTextComp->SetupAttachment(RootComponent);
-	dialogueTextComp->SetRelativeLocation(FVector(0, 0, 250));
-	dialogueTextComp->SetVisibility(true);
-	dialogueTextComp->SetCollisionProfileName(TEXT("NoCollision"));
-	dialogueTextComp->SetGenerateOverlapEvents(false);
-	dialogueTextComp->SetWidgetSpace(EWidgetSpace::Screen);
-
 	dialogueSelectionComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("dialogueSelectionComp"));
 	dialogueSelectionComp->SetupAttachment(RootComponent);
 	dialogueSelectionComp->SetRelativeLocation(FVector(0, 0, 150));
@@ -93,7 +85,8 @@ void AMasterNPC::OnEnterPlayerRadius(AActor* iPlayer)
 void AMasterNPC::OnLeavePlayerRadius(AActor* iPlayer)
 {
 	dialogueAlert->SetVisibility(false); //this cliches right now a bit when disappearing it, needs animation in future
-	refDialogueTextWidget->SetVisibility(ESlateVisibility::Hidden);
+
+	SetDialogueSelectInvisible();
 
 }
 
@@ -102,6 +95,7 @@ void AMasterNPC::Interact(AActor* iPlayer)
 	RotateTowardsPlayer(iPlayer);
 	dialogueAlert->SetVisibility(false);
 	CreateDialogueSelection();
+	SetDialogueSelectVisible();
 // 	FTimerHandle interactTimer;
 // 	GetWorld()->GetTimerManager().SetTimer(interactTimer, this, &AMasterNPC::CreateDialogueSelection, 0.5f, false);
 
@@ -184,8 +178,6 @@ void AMasterNPC::InitializeDataTableInfo()
 
 void AMasterNPC::InitializeReferences()
 {
-	refDialogueTextWidget = CastChecked<UDialogueWidget>(dialogueTextComp->GetUserWidgetObject());
-	refDialogueTextWidget->SetVisibility(ESlateVisibility::Hidden);
 
 	refDialogueSelectionMenu = CastChecked<UDialogueSelectionMenu>(dialogueSelectionComp->GetUserWidgetObject());
 	refDialogueSelectionMenu->refOwnerNPC = this; 
@@ -200,7 +192,7 @@ void AMasterNPC::ShowNextDialogueMessage()
 {
 
 
-	if (refDialogueTextWidget == nullptr || refDialogueTextWidget->refDialogueTextBlock == nullptr)
+	if (refDialogueSelectionMenu == nullptr || refDialogueSelectionMenu->refDialogueTextWidget == nullptr)
 	{
 		return;
 	}
@@ -282,9 +274,20 @@ void AMasterNPC::ShowNextDialogueMessage()
 
 }
 
+void AMasterNPC::SetDialogueSelectInvisible()
+{
+	refDialogueSelectionMenu->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void AMasterNPC::SetDialogueSelectVisible()
+{
+	refDialogueSelectionMenu->SetVisibility(ESlateVisibility::Visible);
+}
+
+
 void AMasterNPC::GreetingsLoopMessage()
 {
-	refDialogueTextWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
+	refDialogueSelectionMenu->refDialogueTextWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
 	if ((currentNPCDialogues.dialogueMessages.Num()) == simpleDialogueCounter)
 	{
 		simpleDialogueCounter = 0;
@@ -302,14 +305,14 @@ void AMasterNPC::GreetingsNonLoopMessage()
 	}
 
 	//not exhausted
-	refDialogueTextWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
+	refDialogueSelectionMenu->refDialogueTextWidget->refDialogueTextBlock->SetText(currentNPCDialogues.dialogueMessages[simpleDialogueCounter]);
 	simpleDialogueCounter++;
 }
 
 void AMasterNPC::ExhaustedDialogue()
 {
 	int32 l_randDialogue = FMath::RandRange(0, currentNPCDialogues.dialogueMessagesRumor.Num() - 1);
-	refDialogueTextWidget->refDialogueTextBlock->SetText(
+	refDialogueSelectionMenu->refDialogueTextWidget->refDialogueTextBlock->SetText(
 		currentNPCDialogues.dialogueMessagesRumor[l_randDialogue]);
 }
 
@@ -323,7 +326,7 @@ void AMasterNPC::Event1Dialogue()
 		return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("inside Event1 %i"), currentNPCDialogues.dialogueMessagesHasDoneEvent1.Num());
-	refDialogueTextWidget->refDialogueTextBlock->SetText(
+	refDialogueSelectionMenu->refDialogueTextWidget->refDialogueTextBlock->SetText(
 		currentNPCDialogues.dialogueMessagesHasDoneEvent1[simpleDialogueCounterEvent1]);
 	simpleDialogueCounterEvent1++;
 }
@@ -337,7 +340,7 @@ void AMasterNPC::Event2Dialogue()
 		return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("inside Event2 %i"), currentNPCDialogues.dialogueMessagesHasDoneEvent2.Num());
-	refDialogueTextWidget->refDialogueTextBlock->SetText(
+	refDialogueSelectionMenu->refDialogueTextWidget->refDialogueTextBlock->SetText(
 		currentNPCDialogues.dialogueMessagesHasDoneEvent2[simpleDialogueCounterEvent2]);
 	simpleDialogueCounterEvent2++;
 }
@@ -351,7 +354,7 @@ void AMasterNPC::Event3Dialogue()
 		return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("inside Event3 %i"), currentNPCDialogues.dialogueMessagesHasDoneEvent3.Num());
-	refDialogueTextWidget->refDialogueTextBlock->SetText(
+	refDialogueSelectionMenu->refDialogueTextWidget->refDialogueTextBlock->SetText(
 		currentNPCDialogues.dialogueMessagesHasDoneEvent3[simpleDialogueCounterEvent3]);
 	simpleDialogueCounterEvent3++;
 }
@@ -365,7 +368,7 @@ void AMasterNPC::Event4Dialogue()
 		return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("inside Event4 %i"), currentNPCDialogues.dialogueMessagesHasDoneEvent4.Num());
-	refDialogueTextWidget->refDialogueTextBlock->SetText(
+	refDialogueSelectionMenu->refDialogueTextWidget->refDialogueTextBlock->SetText(
 		currentNPCDialogues.dialogueMessagesHasDoneEvent4[simpleDialogueCounterEvent4]);
 	simpleDialogueCounterEvent4++;
 }
@@ -373,7 +376,7 @@ void AMasterNPC::Event4Dialogue()
 void AMasterNPC::AllEventsFinishedDialogue()
 {
 	int32 l_randDialogue = FMath::RandRange(0, currentNPCDialogues.dialogueMessagesPlayerHasDoneAllTasks.Num() - 1);
-	refDialogueTextWidget->refDialogueTextBlock->SetText(
+	refDialogueSelectionMenu->refDialogueTextWidget->refDialogueTextBlock->SetText(
 		currentNPCDialogues.dialogueMessagesPlayerHasDoneAllTasks[l_randDialogue]);
 }
 

@@ -4,6 +4,7 @@
 #include "DialogueSelectionMenu.h"
 #include "Components/HorizontalBox.h"
 #include "DialogueSelectButton.h"
+#include "TG/UI/Dialogue/DialogueWidget.h"
 #include "TG/NPCs/MasterNPC.h"
 
 
@@ -13,6 +14,7 @@ void UDialogueSelectionMenu::NativeConstruct()
 	Super::NativeConstruct();
 	InitializeRefsInBP();
 	InitializeReferences();
+	refDialogueTextWidget->SetVisibility(ESlateVisibility::Hidden);
 
 }
 
@@ -65,8 +67,6 @@ void UDialogueSelectionMenu::CreateDialogueButtons(const TArray<EDialogueSelectB
 		bHaveTheButtonsAlreadyBeenCreated = true;
 		
 	}
-	
-	
 	
 }
 

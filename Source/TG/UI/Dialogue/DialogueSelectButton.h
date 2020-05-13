@@ -47,7 +47,8 @@ protected:
 	void ButtonPressedDuelPractice();
 	
 	void ClearPreviousDialogueWidgets();
+	void HideDialogueText();
 
-
+	FTimerHandle hideDialogueTextWindowTimer;
 	
 };

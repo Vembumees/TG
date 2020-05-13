@@ -105,9 +105,6 @@ protected:
 	class UPaperFlipbookComponent* dialogueAlert;
 
 	UPROPERTY(VisibleDefaultsOnly)
-		class UWidgetComponent* dialogueTextComp;	//dont forget to set the widget in the blueprint
-
-	UPROPERTY(VisibleDefaultsOnly)
 		class UWidgetComponent* dialogueSelectionComp;	//dont forget to set the widget in the blueprint
 
 public:
@@ -169,8 +166,6 @@ protected:
 
 public:
 	UPROPERTY()
-	class UDialogueWidget* refDialogueTextWidget;
-	UPROPERTY()
 	class UDialogueSelectionMenu* refDialogueSelectionMenu;
 	/* #########################END############################## */
 
@@ -196,6 +191,9 @@ protected:
 	void InitDialogueMessageHack();
 
 	void ShowNextDialogueMessage();
+
+	void SetDialogueSelectInvisible();
+	void SetDialogueSelectVisible();
 
 	int32 simpleDialogueCounter;
 	int32 simpleDialogueCounterEvent1;

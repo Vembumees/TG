@@ -4,6 +4,7 @@
 #include "DialogueSelectButton.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "TG/UI/Dialogue/DialogueSelectionMenu.h"
 #include "TG/UI/Dialogue/DialogueWidget.h"
 #include "TG/NPCs/MasterNPC.h"
 
@@ -18,8 +19,10 @@ void UDialogueSelectButton::ButtonPressedTalk()
 	if (refOwnerNPC == nullptr)	{ return; }
 	ClearPreviousDialogueWidgets();
 
-	 	refOwnerNPC->refDialogueTextWidget->SetVisibility(ESlateVisibility::Visible);
+	 	refOwnerNPC->refDialogueSelectionMenu->refDialogueTextWidget->SetVisibility(ESlateVisibility::Visible);
 	 	refOwnerNPC->ShowNextDialogueMessage();	
+		GetWorld()->GetTimerManager().SetTimer(
+			hideDialogueTextWindowTimer, this, &UDialogueSelectButton::HideDialogueText, 5.0f, false);
 }
 
 void UDialogueSelectButton::ButtonPressedAsk()
@@ -61,6 +64,12 @@ void UDialogueSelectButton::ButtonPressedDuelPractice()
 void UDialogueSelectButton::ClearPreviousDialogueWidgets()
 {
 	//TODO: here clear other button's tabs !!
+}
+
+void UDialogueSelectButton::HideDialogueText()
+{
+	//this would need an animation in future
+	refOwnerNPC->refDialogueSelectionMenu->refDialogueTextWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UDialogueSelectButton::SetButtonText(EDialogueSelectButtons iBtn)
