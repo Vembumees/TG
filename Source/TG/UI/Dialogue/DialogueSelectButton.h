@@ -24,9 +24,12 @@ public:
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 			class UTextBlock* refTextOnDialogueBtn;
 
-		void SetButtonText(EDialogueSelectButtons iBtn);
+		//index is to show what button to select it with
+		void SetButtonText(EDialogueSelectButtons iBtn, const int32 iIdx);
 		void SetButtonBinding(EDialogueSelectButtons iBtn);
 
+		void CallButtonFunctionWithInput(EDialogueSelectButtons iSelectedButton);
+		bool CheckIfHasSelectedButton(EDialogueSelectButtons iSelectedButton);
 		class AMasterNPC* refOwnerNPC; // gets initialized in selectionmenu
 protected:
 	virtual void NativeConstruct() override;

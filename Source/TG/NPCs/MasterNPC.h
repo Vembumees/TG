@@ -232,6 +232,7 @@ protected:
 
 	//DialogueSelectionMenu
 	void CreateDialogueSelection();
+	void AddsMasterNPCRefToPlayer(AActor* iPlayer);
 
 	 /* #########################END############################## */
 };

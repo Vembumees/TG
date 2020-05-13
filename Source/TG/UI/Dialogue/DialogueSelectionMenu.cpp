@@ -35,10 +35,10 @@ void UDialogueSelectionMenu::CreateDialogueButtons(const TArray<EDialogueSelectB
 	
 	/*reads the input and adds only unique values so we won't have 2 talks 
 	when we make mistake in the datatable*/
-	TArray<EDialogueSelectButtons> l_dialogueBtns;
+	currentDialogueButtons.Empty();
 	for (int i = 0; i <= iDialogueBtns.Num() - 1; i++)
 	{		
-		l_dialogueBtns.AddUnique(iDialogueBtns[i]);
+		currentDialogueButtons.AddUnique(iDialogueBtns[i]);
 	}
 	
 
@@ -55,19 +55,26 @@ void UDialogueSelectionMenu::CreateDialogueButtons(const TArray<EDialogueSelectB
 	}
 
 	//Create buttons
-	for (auto& e : l_dialogueBtns)
+	int32 counter = 0;
+	for (auto& e : currentDialogueButtons)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("createBtn"));
 		//dnt forget to add WBP correct to the Blueprint
 		UDialogueSelectButton* wDialogueBtn = CreateWidget<UDialogueSelectButton>(GetWorld(), WBP_DialogueSelectButton);
 		refDialogueMenuHorizontalBox->AddChildToHorizontalBox(wDialogueBtn);
 		wDialogueBtn->refOwnerNPC = this->refOwnerNPC;
-		wDialogueBtn->SetButtonText(e);
+		wDialogueBtn->SetButtonText(e, counter);
 		wDialogueBtn->SetButtonBinding(e);
 		bHaveTheButtonsAlreadyBeenCreated = true;
 		
+		counter++;
 	}
 	
+}
+
+TArray<EDialogueSelectButtons> UDialogueSelectionMenu::GetCurrentDialogueButtons()
+{
+	return currentDialogueButtons;
 }
 
 void UDialogueSelectionMenu::InitializeReferences()

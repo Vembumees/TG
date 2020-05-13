@@ -10,3 +10,14 @@ UTGGameInstance::UTGGameInstance()
 
 
 }
+
+void UTGGameInstance::SetTGGameState(ETGGameState iNewGameState)
+{
+	TGGameState = iNewGameState;
+}
+
+ETGGameState UTGGameInstance::GetTGGameState()
+{
+	return TGGameState;
+}
+

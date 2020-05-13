@@ -22,6 +22,13 @@ enum class ECharacterStates : uint8
 };
 
 UENUM(BlueprintType)
+enum class EPlayerExploringStates : uint8
+{
+	EXPLORING					UMETA(DisplayName = "Exploring"),
+	DIALOGUE					UMETA(DisplayName = "Idle")
+};
+
+UENUM(BlueprintType)
 enum class ETGGameState : uint8
 {
 	MAINMENU					UMETA(DisplayName = "MAIN MENU"),

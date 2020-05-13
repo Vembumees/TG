@@ -11,8 +11,9 @@
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "DrawDebugHelpers.h"
+#include "TG/GameInstance/TGGameInstance.h"
+#include "TG/NPCs/MasterNPC.h"
 
-DEFINE_LOG_CATEGORY_STATIC(SideScrollerCharacter, Log, All);
 
 //////////////////////////////////////////////////////////////////////////
 // ATGCharacter
@@ -90,7 +91,6 @@ ATGCharacter::ATGCharacter()
 	GetSprite()->SetIsReplicated(true);
 	bReplicates = true;
 
-	currentState = ECharacterStates::IDLE;
 
 	/*currentFlipbook = idleAnimation;*/
 
@@ -120,10 +120,6 @@ ATGCharacter::ATGCharacter()
 
 	 /* #########################END############################## */
 }
-
-
-
-
 
 void ATGCharacter::StartInitializeTimer()
 {
@@ -161,6 +157,14 @@ void ATGCharacter::InitializeReferences()
 void ATGCharacter::PassDataFromTableToObjectVariables()
 {
 
+}
+
+void ATGCharacter::InitializeStates()
+{
+
+	currentState = ECharacterStates::IDLE;
+	currentPlayerState = EPlayerExploringStates::EXPLORING;
+	Cast<UTGGameInstance>(GetGameInstance())->SetTGGameState(ETGGameState::INGAMEEXPLORE);
 }
 
 void ATGCharacter::InteractCooldownTimer()
@@ -288,7 +292,6 @@ void ATGCharacter::MoveRight(float Value)
 
 void ATGCharacter::BasicAttack()
 {
-	UE_LOG(LogTemp, Error, TEXT("atk"));
 	if (currentState != ECharacterStates::ATTACKING &&
 		currentState != ECharacterStates::JUMPING)
 	{
@@ -331,12 +334,6 @@ void ATGCharacter::UpdateAnimation()
 		currentState = (PlayerSpeedSqr > 0.0f) ? ECharacterStates::RUNNING : ECharacterStates::IDLE;
 
 	}
-
-	if (currentState == ECharacterStates::ATTACKING)
-	{
-		UE_LOG(LogTemp, Error, TEXT("check"));
-	}
-
 	/*every state where we want to play the animation only once, we just set it to not loop here,
 	so we dont have to make a spaghetti of timers, only ones mostly that shouldn't be looping are 
 	stuff like death, attacks etc that should only play once and then go to another state when
@@ -421,7 +418,7 @@ void ATGCharacter::Tick(float DeltaSeconds)
 void ATGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+	InitializeStates();
 	StartInitializeTimer();
 	InitializeReferences();
 	SetDataTableObjectDataRowNames();

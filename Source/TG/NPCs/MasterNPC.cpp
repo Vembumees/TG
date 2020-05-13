@@ -8,6 +8,7 @@
 #include "TG/UI/Dialogue/DialogueWidget.h"
 #include "Components/TextBlock.h"
 #include "TG/UI/Dialogue/DialogueSelectionMenu.h"
+#include "TG/TGCharacter.h"
 
 AMasterNPC::AMasterNPC()
 {
@@ -92,6 +93,9 @@ void AMasterNPC::OnLeavePlayerRadius(AActor* iPlayer)
 
 void AMasterNPC::Interact(AActor* iPlayer)
 {
+	//give our reference to the player, this only works with TGCharacter !!
+
+	AddsMasterNPCRefToPlayer(iPlayer);
 	RotateTowardsPlayer(iPlayer);
 	dialogueAlert->SetVisibility(false);
 	CreateDialogueSelection();
@@ -385,4 +389,13 @@ void AMasterNPC::CreateDialogueSelection()
 	if (refDialogueSelectionMenu == nullptr) { return; }
 	refDialogueSelectionMenu->CreateDialogueButtons(currentNPCDialogues.dialogueSelectionMenuButtons);
 
+}
+
+void AMasterNPC::AddsMasterNPCRefToPlayer(AActor* iPlayer)
+{
+	ATGCharacter* playerChar = Cast<ATGCharacter>(iPlayer);
+	if (playerChar != nullptr)
+	{
+		playerChar->refCurrentlyInteractingNPC = this;
+	}
 }

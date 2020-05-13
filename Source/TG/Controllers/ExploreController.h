@@ -31,6 +31,14 @@ protected:
 	/*Menus*/
 	void ToggleIngameMenu();
 
+	void SelectDialog1();
+	void SelectDialog2();
+	void SelectDialog3();
+	void SelectDialog4();
+
+	//this is super spaghetti !!
+	void SelectDialogByIndex(int32 iIdx);
+
 	/* ###########################################################
 						references
 	 ########################################################### */

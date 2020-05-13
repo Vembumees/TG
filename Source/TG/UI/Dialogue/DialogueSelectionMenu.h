@@ -31,6 +31,7 @@ public:
 	class AMasterNPC* refOwnerNPC; // gets initialized by masternpc when this instance is created
 
 	
+	
 
 	 /* #########################END############################## */
 protected:
@@ -39,11 +40,13 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "AWidgets")
 		TSubclassOf<class UDialogueSelectButton> WBP_DialogueSelectButton;
 
-	
+	TArray<EDialogueSelectButtons> currentDialogueButtons;
 public:
 	void CreateDialogueButtons(const TArray<EDialogueSelectButtons>& iDialogueBtns);
-
+	//returns enums of the current dialogue buttons the npc has
+	TArray<EDialogueSelectButtons>  GetCurrentDialogueButtons();
 
 private:
 	bool bHaveTheButtonsAlreadyBeenCreated = false;
+
 };

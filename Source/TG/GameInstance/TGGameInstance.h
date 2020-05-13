@@ -22,8 +22,13 @@ class TG_API UTGGameInstance : public UGameInstance
 
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	
+
+	void SetTGGameState(ETGGameState iNewGameState);
+	
+	ETGGameState GetTGGameState();
+
+private:
+	UPROPERTY(VisibleAnywhere)
 		ETGGameState TGGameState;
-
-
 };

@@ -158,9 +158,11 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		float initializeTimer;
+public:
+	class AMasterNPC* refCurrentlyInteractingNPC;
 	/* #########################END############################## */
 
-
+	protected:
 	/** Called to choose the correct animation to play based on the character's movement state */
 	void UpdateAnimation();
 public:
@@ -191,6 +193,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ATesting)
 		ECharacterStates currentState;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ATesting)
+		EPlayerExploringStates currentPlayerState;
+
+	void InitializeStates();
+
 
 
 
