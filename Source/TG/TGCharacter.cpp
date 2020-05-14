@@ -13,6 +13,7 @@
 #include "DrawDebugHelpers.h"
 #include "TG/GameInstance/TGGameInstance.h"
 #include "TG/NPCs/MasterNPC.h"
+#include "Components/InventoryComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -100,6 +101,8 @@ ATGCharacter::ATGCharacter()
 	npcDetectComponent->OnComponentBeginOverlap.AddDynamic(this, &ATGCharacter::OnNpcDetectCompBeginOverlap);
 	npcDetectComponent->OnComponentEndOverlap.AddDynamic(this, &ATGCharacter::OnNpcDetectCompEndOverlap);
 
+
+	inventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("inventoryComp"));
 
 	/* ###########################################################
 						DEFAULT VALUES

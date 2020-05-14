@@ -2,4 +2,12 @@
 
 
 #include "InventorySlot.h"
+#include "Components/Border.h"
+#include "Components/Image.h"
+#include "Components/SizeBox.h"
 
+void UInventorySlot::NativeConstruct()
+{
+	Super::NativeConstruct();
+	InitializeRefsInBP();
+}

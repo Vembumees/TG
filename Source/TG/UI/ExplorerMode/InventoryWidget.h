@@ -13,5 +13,15 @@ UCLASS()
 class TG_API UInventoryWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+		void InitializeRefsInBP();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UInventoryGridPanel* refInventoryGridPanel;
 	
+protected:
+	virtual void NativeConstruct() override;
+
 };

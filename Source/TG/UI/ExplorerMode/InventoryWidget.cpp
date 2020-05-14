@@ -3,3 +3,10 @@
 
 #include "InventoryWidget.h"
 
+#include "InventoryGridPanel.h"
+
+void UInventoryWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	InitializeRefsInBP();
+}
