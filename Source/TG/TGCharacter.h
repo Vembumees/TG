@@ -61,8 +61,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UBoxComponent* npcDetectComponent;
 
-	UPROPERTY(VisibleAnywhere)
-		class UInventoryComponent* inventoryComp;
 
 
 	virtual void OnConstruction(const FTransform& Transform) override;

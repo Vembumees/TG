@@ -18,10 +18,10 @@ public:
 		UFUNCTION(BlueprintImplementableEvent)
 		void InitializeRefsInBP();
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 			class UButton* refButtonDialogue;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 			class UTextBlock* refTextOnDialogueBtn;
 
 		//index is to show what button to select it with

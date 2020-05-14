@@ -18,10 +18,26 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void InitializeRefsInBP();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UInventoryGridPanel* refInventoryGridPanel;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UUniformGridPanel* refInventoryGridPanel;
 	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		TArray<class UInventorySlot*> refInventorySlots;
+
+	UPROPERTY(EditAnywhere)
+	float invSize;
+
 protected:
 	virtual void NativeConstruct() override;
 
+
+	virtual void NativePreConstruct() override;
+
+	UFUNCTION(BlueprintCallable)
+	void CreateInventorySlots();
+
+	//dont forget to update the class in WBP with the BP one
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<UInventorySlot> invSlotClass; 
 };

@@ -23,9 +23,9 @@ public:
 	void InitializeRefsInBP();
 	void InitializeReferences();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UHorizontalBox* refDialogueMenuHorizontalBox;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UDialogueWidget* refDialogueTextWidget;
 
 	class AMasterNPC* refOwnerNPC; // gets initialized by masternpc when this instance is created

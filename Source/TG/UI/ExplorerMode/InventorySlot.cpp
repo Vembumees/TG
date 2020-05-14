@@ -11,3 +11,10 @@ void UInventorySlot::NativeConstruct()
 	Super::NativeConstruct();
 	InitializeRefsInBP();
 }
+
+void UInventorySlot::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	InitializeRefsInBP();
+}

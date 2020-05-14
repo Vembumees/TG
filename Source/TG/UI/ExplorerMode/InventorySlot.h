@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "TG/Enumerations.h"
 #include "InventorySlot.generated.h"
 
 /**
@@ -18,25 +19,36 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void InitializeRefsInBP();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UBorder* refBorderSingleSlot;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UButton* refButtonSlotDownLeft;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UButton* refButtonSlotDownRight;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UButton* refButtonSlotUpLeft;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UButton* refButtonSlotUpRight;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UImage* refItemBackground;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UImage* refItemIcon;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class USizeBox* refSizeBoxSlotSize;
+
+
+	UPROPERTY(EditAnywhere)
+		EInventoryType slotType;
+	UPROPERTY(EditAnywhere)
+		int32 slotIndex;
+	UPROPERTY(EditAnywhere)
+		int32 dragNrFrame;
 
 
 protected:
 	virtual void NativeConstruct() override;
+
+
+	virtual void NativePreConstruct() override;
 
 };

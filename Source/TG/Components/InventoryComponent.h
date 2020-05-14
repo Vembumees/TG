@@ -16,14 +16,11 @@ public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 
-	class UWidgetComponent* GetInventoryCompWidget();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere)
-	class UWidgetComponent* inventoryCompWidget;
 
 public:	
 

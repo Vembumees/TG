@@ -52,3 +52,12 @@ enum class EDialogueSelectButtons : uint8
 	DUEL					UMETA(DisplayName = "DUEL"),
 	DUELPRACTICE			UMETA(DisplayName = "DUELPRACTICE"),
 };
+
+UENUM(BlueprintType)
+enum class EInventoryType : uint8
+{
+	BAG						UMETA(DisplayName = "BAG"),
+	CHEST					UMETA(DisplayName = "CHEST"),
+	EQUIPMENT				UMETA(DisplayName = "EQUIPMENT"),
+	SHOP					UMETA(DisplayName = "SHOP"),
+};

@@ -25,11 +25,11 @@ public:
 	 /*passes the UMG variables from BP to here*/
 	UFUNCTION(BlueprintImplementableEvent)
 		void InitializeBPReferences();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UButton* refReturnGameButton;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UButton* refOptionsButton;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UButton* refQuitGameButton;
 
 

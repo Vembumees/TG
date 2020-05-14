@@ -14,7 +14,7 @@ class TG_API UDialogueWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UTextBlock* refDialogueTextBlock;
 	
 
