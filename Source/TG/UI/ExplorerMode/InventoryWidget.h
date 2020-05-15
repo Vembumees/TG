@@ -53,6 +53,6 @@ protected:
 	//Making 2 of these instead of one function with inputs because i think this is a little bit easier to understand
 	void HighlightSelectedSlot();
 	void DeHighlightLastSelectedSlot();
-
 	void SelectNeighbourSlot(FVector2D iTarget);
+	void GetStartingSlot();
 };

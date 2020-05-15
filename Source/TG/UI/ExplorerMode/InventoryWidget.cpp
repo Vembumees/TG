@@ -17,8 +17,8 @@ void UInventoryWidget::NativeConstruct()
 
 	AddDelegateBindings();
 
-	currentlyActiveSlot = FVector2D(1, 1);
-	
+
+	GetStartingSlot();
 
 // 	FTimerHandle dsa;
 // 	GetWorld()->GetTimerManager().SetTimer(dsa, this, &UInventoryWidget::CreateInventorySlots, 1.f, false);
@@ -123,4 +123,25 @@ void UInventoryWidget::SelectNeighbourSlot(FVector2D iTarget)
 	currentlyActiveSlot = iTarget;
 	DeHighlightLastSelectedSlot();
 	HighlightSelectedSlot();
+}
+
+void UInventoryWidget::GetStartingSlot()
+{
+	//makes the selection start somewhere from the middle, not really accurate and well thought out, good enough
+	float l_column = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns;
+	float l_rows = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows;
+		l_column = FMath::RoundHalfToEven(l_column / 2);
+		l_rows = FMath::RoundHalfToEven(l_rows / 2);
+	
+		//this is just so that with 3x3 selection would be in the middle, there's probably a proper math formula for this
+		l_column -= 1; 
+		l_rows	 -= 1;
+
+		//clamp it so it doesnt go over the column/row sizes, this function needs const parameters so making temp consts
+		const int32 l_tmpClmn = l_column;
+		const int32 l_tmpRows = l_rows;				
+		l_column = FMath::Clamp(l_tmpClmn, 0, UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns);
+		l_rows = FMath::Clamp(l_tmpRows, 0, UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows);
+	FVector2D midVec = FVector2D(l_column, l_rows);
+	currentlyActiveSlot = midVec; //replace this
 }
