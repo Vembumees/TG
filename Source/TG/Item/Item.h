@@ -29,7 +29,8 @@ enum class EItemType : uint8
 };
 
 USTRUCT(Blueprintable)
-struct FItemDamage : public FTableRowBase {
+struct FItemDamage
+{
 
 	GENERATED_BODY()
 
@@ -39,14 +40,15 @@ struct FItemDamage : public FTableRowBase {
 		fire(0)
 		{}
 
-		UPROPERTY(VisibleAnywhere)
+		UPROPERTY(EditAnywhere)
 		float physical;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 		float fire;
 };
 
 USTRUCT(Blueprintable)
-struct FItemDefense : public FTableRowBase {
+struct FItemDefense 
+{
 
 	GENERATED_BODY()
 
@@ -56,15 +58,16 @@ struct FItemDefense : public FTableRowBase {
 		fire(0)
 	{}
 
-		UPROPERTY(VisibleAnywhere)
+		UPROPERTY(EditAnywhere)
 		float physical;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 		float fire;
 };
 
 USTRUCT(Blueprintable)
-struct FItemData : public FTableRowBase {
+struct FItemData
+{
 
 	GENERATED_BODY()
 
@@ -76,32 +79,41 @@ struct FItemData : public FTableRowBase {
 		itemDescription(TEXT("Default item, use with caution")) 
 		{}
 
-		UPROPERTY(VisibleAnywhere)
+		UPROPERTY(EditAnywhere)
 		int32 ID;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 		FName itemName;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 		EItemRarity itemRarity;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 		EItemType itemType;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 		FString itemDescription;
 
-	UPROPERTY(VisibleAnywhere)
-		TAssetPtr<class UPaperSprite> itemIcon;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemIcon;
 
-	UPROPERTY(VisibleAnywhere)
-		TAssetPtr<class UPaperFlipbook> itemWorldFlipbook;
+	UPROPERTY(EditAnywhere)
+		class UPaperFlipbook* itemWorldFlipbook;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 		FItemDamage itemDamage;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 		FItemDefense itemDefense;
+};
+
+USTRUCT(BlueprintType)
+struct FItemAllData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere)
+		FItemData itemData;
 };
 
 UCLASS()
@@ -120,19 +132,19 @@ public:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Item")
+	UPROPERTY(EditDefaultsOnly, Category = AData)
 		bool bIsCollectable = true;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Item")
+	UPROPERTY(EditDefaultsOnly, Category = AData)
 		int32 ID;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = AMesh)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = AItem)
 		class USceneComponent* itemRootComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = AMesh)
-		class UPaperFlipbookComponent* worldFlipbook;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = AItem)
+		class UPaperFlipbookComponent* SpriteComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = AMesh)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = AItem)
 		class UBoxComponent* collisionComp;
 
 public:
@@ -149,5 +161,33 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
+
+	/* ###########################################################
+						DATA
+	 ########################################################### */
+public:
+
+	void SetDataTableItemDataRowNames();
+protected:
+
+	void StartInitializeTimer();
+	void InitializeDelayed();
+	void InitializeDataTableInfo();
+	void PassDataFromTableToObjectVariables();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AData)
+		int32 DTItemDataRowNumber;
+
+	UPROPERTY()
+		class UDataTable* DataTableItemData;
+	UPROPERTY()
+		TArray<FName> DataTableItemRowNames;
+
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AData)
+		FItemData currentItemData;
+
+	 /* #########################END############################## */
 
 };

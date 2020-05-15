@@ -146,13 +146,13 @@ void ATGMasterObject::InitializeDelayed()
 void ATGMasterObject::InitializeDataTableInfo()
 {
 
-	FObjectData* ObjectData = DataTableObjectData->FindRow<FObjectData>(
+	FObjectData* objectData = DataTableObjectData->FindRow<FObjectData>(
 		DataTableObjectRowNames[DTObjectStatsRowNumber], "SGObject DTObjectStats", true);
-	if (ObjectData != nullptr)
+	if (objectData != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ObjectData LOADED SUCCESSFULLY."));
-		currentBasicStats = ObjectData->objectStats;
-		currentBasicAnimations = ObjectData->objectBasicAnimations;
+		currentBasicStats = objectData->objectStats;
+		currentBasicAnimations = objectData->objectBasicAnimations;
 	}
 	else
 	{

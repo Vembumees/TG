@@ -10,15 +10,29 @@
 #include "TG/TGCharacter.h"
 #include "TG/Components/InventoryComponent.h"
 
+
 // Sets default values
 AItem::AItem()
 {
+	/* ###########################################################
+					DATA
+	########################################################### */
+	/*load object stats datatable automatically, datatable values are in beginplay*/
+	static ConstructorHelpers::FObjectFinder<UDataTable> ItemDataDTObject(TEXT("DataTable'/Game/TG/BP/Data/DT_ItemData.DT_ItemData'"));
+	if (ItemDataDTObject.Succeeded())
+	{
+
+		//Use CharacterStatsDataTable to access the table data
+		DataTableItemData = ItemDataDTObject.Object;
+	}
+	/* #########################END############################## */
+
 	itemRootComp = CreateDefaultSubobject<USceneComponent>(TEXT("itemRootComp "));
 	this->RootComponent = itemRootComp;
 
-	worldFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("FlipbookComp"));
-	worldFlipbook->SetRelativeScale3D(FVector(3, 3, 3));
-	worldFlipbook->SetupAttachment(itemRootComp);
+	SpriteComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("FlipbookComp"));
+	SpriteComp->SetRelativeScale3D(FVector(3, 3, 3));
+	SpriteComp->SetupAttachment(itemRootComp);
 
 	collisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("collisionComp "));
 	collisionComp->SetupAttachment(itemRootComp);
@@ -62,13 +76,54 @@ void AItem::NotifyActorBeginOverlap(AActor* OtherActor)
 
 void AItem::SetFlipbook(UPaperFlipbook* iFlipBook)
 {
-	worldFlipbook->SetFlipbook(iFlipBook);
+	SpriteComp->SetFlipbook(iFlipBook);
 }
 
 // Called when the game starts or when spawned
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	StartInitializeTimer();
+	SetDataTableItemDataRowNames();	
+}
+
+void AItem::SetDataTableItemDataRowNames()
+{
+	if (DataTableItemData != nullptr)
+	{
+		DataTableItemRowNames = DataTableItemData->GetRowNames();
+	}
+}
+
+void AItem::StartInitializeTimer()
+{
+	FTimerHandle itemInitializeTimer;
+	GetWorld()->GetTimerManager().SetTimer(itemInitializeTimer, this, &AItem::InitializeDelayed, 0.1, false);
+}
+
+void AItem::InitializeDelayed()
+{
+	InitializeDataTableInfo();
+	PassDataFromTableToObjectVariables();
+}
+
+void AItem::InitializeDataTableInfo()
+{
+	FItemAllData* itemALLData = DataTableItemData->FindRow<FItemAllData>(
+		DataTableItemRowNames[DTItemDataRowNumber], "AItem DTItemData", true);
+	if (itemALLData != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ItemData LOADED SUCCESSFULLY."));
+		currentItemData = itemALLData->itemData;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("ItemData load FAILED"));
+	}
+}
+
+void AItem::PassDataFromTableToObjectVariables()
+{
+	this->SpriteComp->SetFlipbook(currentItemData.itemWorldFlipbook);
 }
 

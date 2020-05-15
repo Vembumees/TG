@@ -168,5 +168,10 @@ void UInventoryWidget::GetStartingSlot()
 void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlayerInventory)
 {
 	UE_LOG(LogTemp, Warning, TEXT(" UInventoryWidget::UpdateItemsFromPlayerInventory()"));
+// 	for (AItem& e : iPlayerInventory)
+// 	{
+// 		e->GetID();
+// 		//todo !! need to figure out how to get item data from id
+// 	}
 }
 
