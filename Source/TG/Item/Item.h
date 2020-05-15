@@ -111,6 +111,9 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Item")
 		bool bIsCollectable = true;

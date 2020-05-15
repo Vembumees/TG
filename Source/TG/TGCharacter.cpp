@@ -13,6 +13,7 @@
 #include "DrawDebugHelpers.h"
 #include "TG/GameInstance/TGGameInstance.h"
 #include "TG/NPCs/MasterNPC.h"
+#include "TG/Components/InventoryComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -99,7 +100,10 @@ ATGCharacter::ATGCharacter()
 	npcDetectComponent->SetBoxExtent(FVector(600, 50, 600));
 	npcDetectComponent->OnComponentBeginOverlap.AddDynamic(this, &ATGCharacter::OnNpcDetectCompBeginOverlap);
 	npcDetectComponent->OnComponentEndOverlap.AddDynamic(this, &ATGCharacter::OnNpcDetectCompEndOverlap);
+	
 
+
+	inventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComp"));
 
 	/* ###########################################################
 						DEFAULT VALUES
@@ -390,6 +394,11 @@ void ATGCharacter::UpdateAnimation()
 		GetSprite()->SetFlipbook(deathAnimation);
 		break;
 	}
+}
+
+class UInventoryComponent* ATGCharacter::GetInventoryComponent()
+{
+	return inventoryComponent;
 }
 
 void ATGCharacter::OnConstruction(const FTransform& Transform)

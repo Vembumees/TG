@@ -7,6 +7,8 @@
 #include "Components/BoxComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "Components/SceneComponent.h"
+#include "TG/TGCharacter.h"
+#include "TG/Components/InventoryComponent.h"
 
 // Sets default values
 AItem::AItem()
@@ -20,7 +22,7 @@ AItem::AItem()
 
 	collisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("collisionComp "));
 	collisionComp->SetupAttachment(itemRootComp);
-
+	collisionComp->SetCollisionObjectType(ECC_GameTraceChannel1);
 }
 
 
@@ -33,6 +35,29 @@ void AItem::OnConstruction(const FTransform& Transform)
 	loc.Y = -1; //so it wouldn't clip
 	trans.SetLocation(loc);
 	this->SetActorTransform(trans);
+}
+
+void AItem::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+	UE_LOG(LogTemp, Warning, TEXT("AItem::NotifyActorBeginOverlap"));
+	ATGCharacter* player = Cast<ATGCharacter>(OtherActor);
+	if (player == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AItem::NotifyActorBeginOverlap cast fail"));
+		return;
+	}
+	
+	if (player->GetInventoryComponent()->AddItemToInventory(this))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AItem::NotifyActorBeginOverlap - adding item successful"));
+		collisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		this->SetActorHiddenInGame(true); //test
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AItem::NotifyActorBeginOverlap - adding item fail"));
+	}
 }
 
 void AItem::SetFlipbook(UPaperFlipbook* iFlipBook)

@@ -61,6 +61,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UBoxComponent* npcDetectComponent;
 
+	class UInventoryComponent* GetInventoryComponent();
+
 
 
 	virtual void OnConstruction(const FTransform& Transform) override;
@@ -74,6 +76,8 @@ protected:
 	UFUNCTION()
 		void OnNpcDetectCompEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32  OtherBodyIndex);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AInventory)
+		class UInventoryComponent* inventoryComponent;
 	/* ###########################################################
 						Animations
 	 ########################################################### */

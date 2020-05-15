@@ -22,7 +22,17 @@ protected:
 	virtual void BeginPlay() override;
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<class AItem*> refItemInventory;
+
 public:	
 
-		
+	bool AddItemToInventory(class AItem* iItem);
+
+	void DeleteItemFromIndex(int32 iIndex);
+	
+	UPROPERTY(VisibleAnywhere)
+	int32 inventoryMaxSize;
+
+
 };

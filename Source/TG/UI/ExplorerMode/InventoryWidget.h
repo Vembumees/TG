@@ -55,4 +55,6 @@ protected:
 	void DeHighlightLastSelectedSlot();
 	void SelectNeighbourSlot(FVector2D iTarget);
 	void GetStartingSlot();
+
+
 };
