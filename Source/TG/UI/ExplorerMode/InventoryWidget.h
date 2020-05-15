@@ -26,6 +26,11 @@ public:
 	UPROPERTY(EditAnywhere)
 		TMap<FVector2D, class UInventorySlot*> mapRefInventorySlots;
 
+	UPROPERTY()
+	class ATGCharacter* refPlayerCharacter;
+	UPROPERTY()
+		class AExploreController* refExplorePlayerController;
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -34,8 +39,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void CreateInventorySlots();
-
+	void InitializeWithTimer();
 	void AddDelegateBindings();
+	void InitializeRefs();
 	
 	UFUNCTION()
 	void MoveInInventory(EMoveDirections iMoveDir);
@@ -56,5 +62,7 @@ protected:
 	void SelectNeighbourSlot(FVector2D iTarget);
 	void GetStartingSlot();
 
+	UFUNCTION()
+	void UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlayerInventory);
 
 };

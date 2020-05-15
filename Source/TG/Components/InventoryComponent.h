@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryUpdate, TArray<class AItem*>, refItemInventory);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TG_API UInventoryComponent : public UActorComponent
@@ -31,8 +32,10 @@ public:
 
 	void DeleteItemFromIndex(int32 iIndex);
 	
+	TArray<class AItem*> GetItemInventory();
+
 	UPROPERTY(VisibleAnywhere)
 	int32 inventoryMaxSize;
 
-
+	FInventoryUpdate delegateInventoryUpdate;
 };

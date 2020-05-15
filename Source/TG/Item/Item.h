@@ -7,6 +7,11 @@
 #include "Engine/DataTable.h"
 #include "Item.generated.h"
 
+/*Items are atm just set invisible when looted and their pointers stored in the character's 
+inventoryComponent, so careful with that, I probably have to store each item we are carrying
+so they come with the character when we change levels, or a global place to store all the items
+or something*/
+
 UENUM(BlueprintType)
 enum class EItemRarity : uint8
 {

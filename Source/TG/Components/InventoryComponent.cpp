@@ -35,6 +35,10 @@ bool UInventoryComponent::AddItemToInventory(class AItem* iItem)
 	 
 	refItemInventory.Add(iItem);
 	UE_LOG(LogTemp, Error, TEXT("Added item successfully."));
+	//also update player UI via delegate
+	delegateInventoryUpdate.Broadcast(refItemInventory);
+
+
 	return true;
 }
 
@@ -42,4 +46,10 @@ void UInventoryComponent::DeleteItemFromIndex(int32 iIndex)
 {
 
 }
+
+TArray<class AItem*> UInventoryComponent::GetItemInventory()
+{
+	return refItemInventory;
+}
+
 

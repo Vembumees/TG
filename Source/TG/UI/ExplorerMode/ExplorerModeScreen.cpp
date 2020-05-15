@@ -2,4 +2,10 @@
 
 
 #include "ExplorerModeScreen.h"
+#include "InventoryWidget.h"
 
+void UExplorerModeScreen::NativeConstruct()
+{
+	Super::NativeConstruct();
+	InitializeReferencesInBP();
+}

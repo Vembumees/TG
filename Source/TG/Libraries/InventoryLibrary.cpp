@@ -49,3 +49,6 @@ FInventoryGridRowsColumns UInventoryLibrary::GetInventoryGridRowsColumns(EInvent
 
 	return l_invSize;
 }
+
+
+

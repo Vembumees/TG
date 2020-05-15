@@ -9,19 +9,24 @@
 #include "Components/Image.h"
 #include "Components/SizeBox.h"
 #include "TG/Controllers/ExploreController.h"
+#include "TG/TGCharacter.h"
+#include "TG/Item/Item.h"
+#include "TG/Components/InventoryComponent.h"
 
 void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	InitializeRefsInBP();
-
+	InitializeRefs();
 	AddDelegateBindings();
-
-
 	GetStartingSlot();
 
-// 	FTimerHandle dsa;
-// 	GetWorld()->GetTimerManager().SetTimer(dsa, this, &UInventoryWidget::CreateInventorySlots, 1.f, false);
+
+
+// 	FTimerHandle invWidgetInitializeWithTimer;
+// 	GetWorld()->GetTimerManager().SetTimer(invWidgetInitializeWithTimer, this, &UInventoryWidget::InitializeWithTimer, 0.5f, false);
+
+
 }
 
 void UInventoryWidget::NativePreConstruct()
@@ -63,10 +68,25 @@ void UInventoryWidget::CreateInventorySlots()
 	HighlightSelectedSlot();
 }
 
+void UInventoryWidget::InitializeWithTimer()
+{
+
+}
+
 void UInventoryWidget::AddDelegateBindings()
 {
-	AExploreController* pc = Cast<AExploreController>(GetWorld()->GetFirstPlayerController());
-	pc->delegateInventoryMove.AddDynamic(this, &UInventoryWidget::MoveInInventory);
+	refExplorePlayerController = Cast<AExploreController>(GetWorld()->GetFirstPlayerController());
+	refExplorePlayerController->delegateInventoryMove.AddDynamic(this, &UInventoryWidget::MoveInInventory);
+	//this is initialized with InitializeRefs, which at least atm is called before this so its safe
+	refPlayerCharacter->GetInventoryComponent()->delegateInventoryUpdate.AddDynamic(this, &UInventoryWidget::UpdateItemsFromPlayerInventory);
+
+	
+}
+
+void UInventoryWidget::InitializeRefs()
+{
+	//init player pawn ref
+	refPlayerCharacter = Cast<ATGCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
 void UInventoryWidget::MoveInInventory(EMoveDirections iMoveDir)
@@ -144,3 +164,9 @@ void UInventoryWidget::GetStartingSlot()
 	FVector2D midVec = FVector2D(l_column, l_rows);
 	currentlyActiveSlot = midVec; //replace this
 }
+
+void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlayerInventory)
+{
+	UE_LOG(LogTemp, Warning, TEXT(" UInventoryWidget::UpdateItemsFromPlayerInventory()"));
+}
+
