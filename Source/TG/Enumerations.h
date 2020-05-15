@@ -71,3 +71,20 @@ enum class EMoveDirections : uint8
 	LEFT						UMETA(DisplayName = "LEFT"),
 	RIGHT					UMETA(DisplayName = "RIGHT"),
 };
+
+
+
+
+UENUM(BlueprintType)
+enum class ECardListFire : uint8
+{
+	FIREBALL						UMETA(DisplayName = "Fireball"),
+	ENCHANTFIRE						UMETA(DisplayName = "EnchantFire"),
+};
+
+UENUM(BlueprintType)
+enum class ECardListPhysical : uint8
+{
+	FISTSOFFURY						UMETA(DisplayName = "Fists of Fury"),
+	SMASH						UMETA(DisplayName = "Smash"),
+};
