@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "TG/Enumerations.h"
 #include "InventoryWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class TG_API UInventoryWidget : public UUserWidget
 {
@@ -36,6 +35,11 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void CreateInventorySlots();
+
+	void AddDelegateBindings();
+	
+	UFUNCTION()
+	void MoveInInventory(EMoveDirections iMoveDir);
 
 	//dont forget to update the class in WBP with the BP one
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

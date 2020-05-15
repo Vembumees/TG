@@ -8,11 +8,14 @@
 #include "Components/Border.h"
 #include "Components/Image.h"
 #include "Components/SizeBox.h"
+#include "TG/Controllers/ExploreController.h"
 
 void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	InitializeRefsInBP();
+
+	AddDelegateBindings();
 
 // 	FTimerHandle dsa;
 // 	GetWorld()->GetTimerManager().SetTimer(dsa, this, &UInventoryWidget::CreateInventorySlots, 1.f, false);
@@ -52,5 +55,34 @@ void UInventoryWidget::CreateInventorySlots()
 		wInvSlot->refSizeBoxSlotSize->SetWidthOverride(invSize);
 		wInvSlot->refSizeBoxSlotSize->SetHeightOverride(invSize);
 		
+	}
+}
+
+void UInventoryWidget::AddDelegateBindings()
+{
+	AExploreController* pc = Cast<AExploreController>(GetWorld()->GetFirstPlayerController());
+	pc->delegateInventoryMove.AddDynamic(this, &UInventoryWidget::MoveInInventory);
+}
+
+void UInventoryWidget::MoveInInventory(EMoveDirections iMoveDir)
+{
+	switch (iMoveDir)
+	{
+	case EMoveDirections::UP:
+
+		UE_LOG(LogTemp, Warning, TEXT("UP"));
+		break;
+	case EMoveDirections::DOWN:
+
+		UE_LOG(LogTemp, Warning, TEXT("DOWN"));
+		break;
+	case EMoveDirections::LEFT:
+
+		UE_LOG(LogTemp, Warning, TEXT("LEFT"));
+		break;
+	case EMoveDirections::RIGHT:
+
+		UE_LOG(LogTemp, Warning, TEXT("RIGHT"));
+		break;
 	}
 }

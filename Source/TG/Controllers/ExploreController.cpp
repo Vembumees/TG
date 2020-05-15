@@ -33,6 +33,13 @@ void AExploreController::SetupInputComponent()
 	InputComponent->BindAction("3", IE_Pressed, this, &AExploreController::SelectDialog3);
 	InputComponent->BindAction("4", IE_Pressed, this, &AExploreController::SelectDialog4);
 
+	InputComponent->BindAction("InventoryUP", IE_Pressed, this, &AExploreController::InventoryUP);
+	InputComponent->BindAction("InventoryDOWN", IE_Pressed, this, &AExploreController::InventoryDOWN);
+	InputComponent->BindAction("InventoryLEFT", IE_Pressed, this, &AExploreController::InventoryLEFT);
+	InputComponent->BindAction("InventoryRIGHT", IE_Pressed, this, &AExploreController::InventoryRIGHT);
+
+
+
 }
 
 void AExploreController::BeginPlay()
@@ -113,6 +120,30 @@ void AExploreController::SelectDialog3()
 void AExploreController::SelectDialog4()
 {
 	SelectDialogByIndex(3);
+}
+
+void AExploreController::InventoryUP()
+{
+	currInventoryMoveDirection = EMoveDirections::UP;
+	delegateInventoryMove.Broadcast(currInventoryMoveDirection);
+}
+
+void AExploreController::InventoryDOWN()
+{
+	currInventoryMoveDirection = EMoveDirections::DOWN;
+	delegateInventoryMove.Broadcast(currInventoryMoveDirection);
+}
+
+void AExploreController::InventoryLEFT()
+{
+	currInventoryMoveDirection = EMoveDirections::LEFT;
+	delegateInventoryMove.Broadcast(currInventoryMoveDirection);
+}
+
+void AExploreController::InventoryRIGHT()
+{
+	currInventoryMoveDirection = EMoveDirections::RIGHT;
+	delegateInventoryMove.Broadcast(currInventoryMoveDirection);
 }
 
 void AExploreController::SelectDialogByIndex(int32 iIdx)

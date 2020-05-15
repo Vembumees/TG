@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "TG/Enumerations.h"
 #include "ExploreController.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryMove, EMoveDirections, currInventoryMoveDirection);
+
 UCLASS()
 class TG_API AExploreController : public APlayerController
 {
@@ -36,8 +36,17 @@ protected:
 	void SelectDialog3();
 	void SelectDialog4();
 
+	void InventoryUP();
+	void InventoryDOWN();
+	void InventoryLEFT();
+	void InventoryRIGHT();
+
 	//this is super spaghetti !!
 	void SelectDialogByIndex(int32 iIdx);
+
+public:
+	EMoveDirections currInventoryMoveDirection;
+	FInventoryMove delegateInventoryMove;
 
 	/* ###########################################################
 						references

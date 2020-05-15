@@ -68,3 +68,12 @@ enum class EInventoryButtonBackgroundType : uint8
 	NORMAL						UMETA(DisplayName = "NORMAL"),
 	SELECTED					UMETA(DisplayName = "SELECTED"),
 };
+
+UENUM(BlueprintType)
+enum class EMoveDirections : uint8
+{
+	UP						UMETA(DisplayName = "UP"),
+	DOWN					UMETA(DisplayName = "DOWN"),
+	LEFT						UMETA(DisplayName = "LEFT"),
+	RIGHT					UMETA(DisplayName = "RIGHT"),
+};
