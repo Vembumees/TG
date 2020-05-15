@@ -17,6 +17,9 @@ void UInventoryWidget::NativeConstruct()
 
 	AddDelegateBindings();
 
+	currentlyActiveSlot = FVector2D(1, 1);
+	
+
 // 	FTimerHandle dsa;
 // 	GetWorld()->GetTimerManager().SetTimer(dsa, this, &UInventoryWidget::CreateInventorySlots, 1.f, false);
 }
@@ -57,6 +60,8 @@ void UInventoryWidget::CreateInventorySlots()
 		wInvSlot->refSizeBoxSlotSize->SetHeightOverride(invSize);
 		
 	}
+
+	HighlightSelectedSlot();
 }
 
 void UInventoryWidget::AddDelegateBindings()
@@ -67,23 +72,55 @@ void UInventoryWidget::AddDelegateBindings()
 
 void UInventoryWidget::MoveInInventory(EMoveDirections iMoveDir)
 {
+	FVector2D l_targetDirection = currentlyActiveSlot;
 	switch (iMoveDir)
 	{
 	case EMoveDirections::UP:
-
 		UE_LOG(LogTemp, Warning, TEXT("UP"));
+		l_targetDirection.X -= 1;
 		break;
 	case EMoveDirections::DOWN:
-
+		l_targetDirection.X += 1;
 		UE_LOG(LogTemp, Warning, TEXT("DOWN"));
 		break;
 	case EMoveDirections::LEFT:
-
+		l_targetDirection.Y -= 1;
 		UE_LOG(LogTemp, Warning, TEXT("LEFT"));
 		break;
 	case EMoveDirections::RIGHT:
-
+		l_targetDirection.Y += 1;
 		UE_LOG(LogTemp, Warning, TEXT("RIGHT"));
 		break;
 	}
+	if (mapRefInventorySlots.Find(l_targetDirection))
+	{
+		SelectNeighbourSlot(l_targetDirection);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("direction where I wanted to move was invalid."));
+	}
+	
+}
+
+void UInventoryWidget::HighlightSelectedSlot()
+{
+	UInventorySlot* l_ref = *mapRefInventorySlots.Find(currentlyActiveSlot);
+	l_ref->slotData.bIsSelected = true;
+	l_ref->UpdateInventoryButtonBackgroundType();
+}
+
+void UInventoryWidget::DeHighlightLastSelectedSlot()
+{
+	UInventorySlot* l_ref = *mapRefInventorySlots.Find(lastActiveSlot);
+	l_ref->slotData.bIsSelected = false;
+	l_ref->UpdateInventoryButtonBackgroundType();
+}
+
+void UInventoryWidget::SelectNeighbourSlot(FVector2D iTarget)
+{
+	lastActiveSlot = currentlyActiveSlot;
+	currentlyActiveSlot = iTarget;
+	DeHighlightLastSelectedSlot();
+	HighlightSelectedSlot();
 }

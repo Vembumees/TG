@@ -16,7 +16,7 @@ struct FInventorySlotData
 	{
 		slotType = EInventoryType::BAG;
 		slotIndex = 0;
-		currentSelectedOrNormal = EInventoryButtonBackgroundType::NORMAL;
+		bIsSelected = false;
 	}
 
 	UPROPERTY(EditAnywhere)
@@ -24,7 +24,7 @@ struct FInventorySlotData
 	UPROPERTY(EditAnywhere)
 		int32 slotIndex;
 	UPROPERTY(EditAnywhere)
-		EInventoryButtonBackgroundType currentSelectedOrNormal;
+		bool bIsSelected;
 
 };
 

@@ -43,4 +43,16 @@ protected:
 	//dont forget to update the class in WBP with the BP one
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TSubclassOf<UInventorySlot> invSlotClass; 
+
+	//inventory selection what do i need to do
+	//move up/down/left/right, add the selected img on selected one and normal one on last.
+	
+	FVector2D currentlyActiveSlot;
+	FVector2D lastActiveSlot;
+
+	//Making 2 of these instead of one function with inputs because i think this is a little bit easier to understand
+	void HighlightSelectedSlot();
+	void DeHighlightLastSelectedSlot();
+
+	void SelectNeighbourSlot(FVector2D iTarget);
 };

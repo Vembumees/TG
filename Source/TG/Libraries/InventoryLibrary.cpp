@@ -9,7 +9,7 @@ float UInventoryLibrary::GetInventorySlotSize(EInventoryType iInventoryType)
 	switch (iInventoryType)
 	{
 	case EInventoryType::BAG:
-		l_slotSize = 50;
+		l_slotSize = 75.0;
 		break;
 	case EInventoryType::CHEST:
 		l_slotSize = 45.0;

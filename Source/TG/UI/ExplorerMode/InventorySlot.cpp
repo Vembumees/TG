@@ -11,16 +11,18 @@ void UInventorySlot::UpdateInventoryButtonBackgroundType()
 {
 
 	FSlateBrush brush;
-	switch (slotData.currentSelectedOrNormal)
+
+	if (slotData.bIsSelected)
 	{
-	case EInventoryButtonBackgroundType::NORMAL:
+		//is selected
+		brush.SetResourceObject(itemBackgroundSelected);
+		refBorderSingleSlot->SetBrush(brush);
+	}
+	else
+	{
+		//normal
 		brush.SetResourceObject(itemBackgroundNormal);
 		refBorderSingleSlot->SetBrush(brush);
-		break;
-	case EInventoryButtonBackgroundType::SELECTED:
-		brush.SetResourceObject(itemBackgroundNormal);
-		refBorderSingleSlot->SetBrush(brush);
-		break;
 	}
 }
 
