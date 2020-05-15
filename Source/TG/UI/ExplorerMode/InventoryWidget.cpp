@@ -39,17 +39,18 @@ void UInventoryWidget::CreateInventorySlots()
 	int32 l_column = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns;
 	int32 l_rows = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows;
 	int32 l_nrOfSlots = (l_rows * l_column) - 1;
-	refInventorySlots.Empty();
+	mapRefInventorySlots.Empty();
 	refInventoryGridPanel->ClearChildren();
 	invSize = UInventoryLibrary::GetInventorySlotSize(EInventoryType::BAG);
 	for (int i = 0; i <= l_nrOfSlots; i++)
 	{
 		//dont forget to update the class in WBP with the BP one
 		UInventorySlot* wInvSlot = CreateWidget<UInventorySlot>(GetWorld(), invSlotClass);
-
+		int32 l_currColumn = i / l_column;
+		int32 l_currRow = i - ((i / l_column) * l_column);
 		refInventoryGridPanel->AddChildToUniformGrid(wInvSlot,
-			i / l_column, i - ((i / l_column) * l_column)); //!! idk what this is just try to add the l_rows here
-		refInventorySlots.Add(wInvSlot);
+			l_currColumn, l_currRow);
+		mapRefInventorySlots.Add(FVector2D(l_currColumn, l_currRow), wInvSlot);
 		wInvSlot->slotData.slotIndex = i;
 		wInvSlot->slotData.slotType = EInventoryType::BAG;
 		wInvSlot->refSizeBoxSlotSize->SetWidthOverride(invSize);

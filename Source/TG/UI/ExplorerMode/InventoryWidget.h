@@ -18,14 +18,13 @@ public:
 		void InitializeRefsInBP();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UUniformGridPanel* refInventoryGridPanel;
-	
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		TArray<class UInventorySlot*> refInventorySlots;
+		class UUniformGridPanel* refInventoryGridPanel;	
 
 	UPROPERTY(EditAnywhere)
 	float invSize;
+
+	UPROPERTY(EditAnywhere)
+		TMap<FVector2D, class UInventorySlot*> mapRefInventorySlots;
 
 protected:
 	virtual void NativeConstruct() override;
