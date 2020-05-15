@@ -4,12 +4,31 @@
 #include "InventorySlot.h"
 #include "Components/Border.h"
 #include "Components/Image.h"
+#include "PaperSprite.h"
 #include "Components/SizeBox.h"
+
+void UInventorySlot::UpdateInventoryButtonBackgroundType()
+{
+
+	FSlateBrush brush;
+	switch (slotData.currentSelectedOrNormal)
+	{
+	case EInventoryButtonBackgroundType::NORMAL:
+		brush.SetResourceObject(itemBackgroundNormal);
+		refBorderSingleSlot->SetBrush(brush);
+		break;
+	case EInventoryButtonBackgroundType::SELECTED:
+		brush.SetResourceObject(itemBackgroundNormal);
+		refBorderSingleSlot->SetBrush(brush);
+		break;
+	}
+}
 
 void UInventorySlot::NativeConstruct()
 {
 	Super::NativeConstruct();
 	InitializeRefsInBP();
+	UpdateInventoryButtonBackgroundType();
 }
 
 void UInventorySlot::NativePreConstruct()

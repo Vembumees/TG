@@ -47,8 +47,8 @@ void UInventoryWidget::CreateInventorySlots()
 		refInventoryGridPanel->AddChildToUniformGrid(wInvSlot,
 			i / l_column, i - ((i / l_column) * l_column)); //!! idk what this is just try to add the l_rows here
 		refInventorySlots.Add(wInvSlot);
-		wInvSlot->slotIndex = i;
-		wInvSlot->slotType = EInventoryType::BAG;
+		wInvSlot->slotData.slotIndex = i;
+		wInvSlot->slotData.slotType = EInventoryType::BAG;
 		wInvSlot->refSizeBoxSlotSize->SetWidthOverride(invSize);
 		wInvSlot->refSizeBoxSlotSize->SetHeightOverride(invSize);
 		

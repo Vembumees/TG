@@ -7,9 +7,28 @@
 #include "TG/Enumerations.h"
 #include "InventorySlot.generated.h"
 
-/**
- * 
- */
+USTRUCT(BlueprintType)
+struct FInventorySlotData
+{
+	GENERATED_BODY()
+
+		FInventorySlotData()
+	{
+		slotType = EInventoryType::BAG;
+		slotIndex = 0;
+		currentSelectedOrNormal = EInventoryButtonBackgroundType::NORMAL;
+	}
+
+	UPROPERTY(EditAnywhere)
+		EInventoryType slotType;
+	UPROPERTY(EditAnywhere)
+		int32 slotIndex;
+	UPROPERTY(EditAnywhere)
+		EInventoryButtonBackgroundType currentSelectedOrNormal;
+
+};
+
+
 UCLASS()
 class TG_API UInventorySlot : public UUserWidget
 {
@@ -22,13 +41,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UBorder* refBorderSingleSlot;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refButtonSlotDownLeft;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refButtonSlotDownRight;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refButtonSlotUpLeft;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refButtonSlotUpRight;
+		class UButton* refButtonSlot;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UImage* refItemBackground;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -36,13 +49,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class USizeBox* refSizeBoxSlotSize;
 
+	FInventorySlotData slotData;
 
+	//temp fix, dnt forget to update these in bp
 	UPROPERTY(EditAnywhere)
-		EInventoryType slotType;
+	class UPaperSprite* itemBackgroundNormal;
 	UPROPERTY(EditAnywhere)
-		int32 slotIndex;
-	UPROPERTY(EditAnywhere)
-		int32 dragNrFrame;
+	class UPaperSprite* itemBackgroundSelected;
+	
+	void UpdateInventoryButtonBackgroundType();
+
 
 
 protected:
