@@ -108,4 +108,12 @@ protected:
 	UFUNCTION()
 	void UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlayerInventory);
 
+	void UpdateTooltipData();
+
+	
+
+
+
+
+
 };

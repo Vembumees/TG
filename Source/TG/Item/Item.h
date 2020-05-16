@@ -73,7 +73,7 @@ struct FItemData
 
 		FItemData()
 		: ID(0),
-		itemName(FName(TEXT("NULL"))),
+		itemName(FText(FText::FromString("NONE"))),
 		itemRarity(EItemRarity::COMMON),
 		itemType(EItemType::TOKEN),
 		itemDescription(TEXT("Default item, use with caution")) 
@@ -83,7 +83,7 @@ struct FItemData
 		int32 ID;
 
 	UPROPERTY(EditAnywhere)
-		FName itemName;
+		FText itemName;
 
 	UPROPERTY(EditAnywhere)
 		EItemRarity itemRarity;

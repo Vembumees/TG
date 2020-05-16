@@ -146,6 +146,7 @@ void UInventoryWidget::SelectNeighbourSlot(FVector2D iTarget)
 	currentlyActiveSlot = iTarget;
 	DeHighlightLastSelectedSlot();
 	HighlightSelectedSlot();
+	UpdateTooltipData();
 }
 
 void UInventoryWidget::GetStartingSlot()
@@ -174,17 +175,84 @@ void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlay
 	UE_LOG(LogTemp, Warning, TEXT(" UInventoryWidget::UpdateItemsFromPlayerInventory()"));
 	TArray<UInventorySlot*> value;
 	mapRefInventorySlots.GenerateValueArray(value);
-	int32 ctr = 0;
+	int32 loopCounter = 0;
 	for (auto& e : iPlayerInventory)
 	{
 		FSlateBrush brush;
 		brush.SetResourceObject(e->GetCurrentItemData().itemIcon);
-		for (int i = ctr; i <= iPlayerInventory.Num() - 1; i++)
+		for (int i = loopCounter; i <= iPlayerInventory.Num() - 1; i++)
 		{
+			//update icon
 			value[i]->refItemIcon->SetBrush(brush);
 			value[i]->refItemIcon->SetBrushSize(FVector2D(45, 45));
+
+			//add item pointer
+			value[i]->slotData.refItem = e;
 		}
-		ctr++;
+		loopCounter++;
 	}
+}
+
+void UInventoryWidget::UpdateTooltipData()
+{
+	/*tooltip, so what do i need to implement?
+		tooltip should be visible, but after some inactivity play animation of going almost out of the screen
+		on selecting next inventoryslot, update all the data from the item ptr in the inventoryslot*/
+
+	//lets find the selected slot data
+	 UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
+	if (l_currInventorySlot == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot == nullptr"));
+		return;
+	}
+
+	if (l_currInventorySlot->slotData.refItem == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot->slotData.refItem == nullptr"));
+		return;
+	}
+
+	FItemData l_selectedItemData = l_currInventorySlot->slotData.refItem->GetCurrentItemData();
+
+	
+		
+	//update refTextItemName
+	refTextItemName->SetText(l_selectedItemData.itemName);
+	//update refTextItemRarity && update refBorderName, border color
+	switch (l_selectedItemData.itemRarity)
+	{
+	case EItemRarity::COMMON:
+		refBorderName->SetBrushColor(FLinearColor::Gray); //hardcode color
+		refTextItemRarity->SetText(FText::FromString("Common"));
+		break;
+	case EItemRarity::MAGIC:
+		refBorderName->SetBrushColor(FLinearColor::Blue); //hardcode color
+		refTextItemRarity->SetText(FText::FromString("Magic"));
+		break;
+	case EItemRarity::ULTRA:
+		refBorderName->SetBrushColor(FLinearColor::Green); //hardcode color
+		refTextItemRarity->SetText(FText::FromString("UltrA"));
+		break;
+	}
+	
+	//update refTExtItemType
+	switch (l_selectedItemData.itemType)
+	{
+	case EItemType::CARD:
+		refTextItemType->SetText(FText::FromString("card"));
+		break;
+	case EItemType::TOKEN:
+		refTextItemType->SetText(FText::FromString("token"));
+		break;
+	case EItemType::CURRENCY:
+		refTextItemType->SetText(FText::FromString("currency"));
+		break;
+	}
+	//update refTextItemDescription
+	refTextItemDescription->SetText(FText::FromString(l_selectedItemData.itemDescription));
+
+	//update refVerticalBoxItemEffects, here we add a child of another widget we create later TODO !!
+
 }
 
