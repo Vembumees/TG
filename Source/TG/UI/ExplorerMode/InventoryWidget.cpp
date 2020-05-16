@@ -13,6 +13,9 @@
 #include "TG/Item/Item.h"
 #include "TG/Components/InventoryComponent.h"
 #include "PaperSprite.h"
+#include "Components/Border.h"
+#include "Components/TextBlock.h"
+#include "Components/VerticalBox.h"
 
 void UInventoryWidget::NativeConstruct()
 {

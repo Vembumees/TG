@@ -17,8 +17,51 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void InitializeRefsInBP();
 
+	/* ###########################################################
+						ITEM SLOTS
+	 ########################################################### */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UUniformGridPanel* refInventoryGridPanel;	
+	
+	/* #########################END############################## */
+
+
+
+	/* ###########################################################
+						TOOLTIP
+	 ########################################################### */
+
+	 //the parent of the tooltip box, default hidden
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class USizeBox* refTooltipBox;
+
+	 //border, this is used to change the name color based on the rarity or type of item
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UBorder* refBorderName;
+
+	//textblock, item name 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UTextBlock* refTextItemName;
+
+	//textblock, item rarity, magic, rare, unique etc
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UTextBlock* refTextItemRarity;
+
+	//textblock, item type, token, scroll, spell, gem, currency etc
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UTextBlock* refTextItemType;
+
+	//textBlock, item description
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UTextBlock* refTextItemDescription;
+
+	//textblock for item effects
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UVerticalBox* refVerticalBoxItemEffects;
+	 
+	 
+	 /* #########################END############################## */
+
 
 	UPROPERTY(EditAnywhere)
 	float invSize;
