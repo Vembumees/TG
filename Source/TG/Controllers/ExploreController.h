@@ -8,6 +8,8 @@
 #include "ExploreController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryMove, EMoveDirections, currInventoryMoveDirection);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryUseItem);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryDropItem);
 
 UCLASS()
 class TG_API AExploreController : public APlayerController
@@ -40,6 +42,8 @@ protected:
 	void InventoryDOWN();
 	void InventoryLEFT();
 	void InventoryRIGHT();
+	void InventoryUseItem();
+	void InventoryDropItem();
 
 	//this is super spaghetti !!
 	void SelectDialogByIndex(int32 iIdx);
@@ -47,6 +51,8 @@ protected:
 public:
 	EMoveDirections currInventoryMoveDirection;
 	FInventoryMove delegateInventoryMove;
+	FInventoryUseItem delegateInventoryUseItem;
+	FInventoryDropItem delegateInventoryDropItem;
 
 	/* ###########################################################
 						references

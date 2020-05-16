@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "TG/Enumerations.h"
+
+#include "TG/Item/Item.h"
 #include "InventoryWidget.generated.h"
 
 
@@ -21,8 +23,8 @@ public:
 						ITEM SLOTS
 	 ########################################################### */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UUniformGridPanel* refInventoryGridPanel;	
-	
+		class UUniformGridPanel* refInventoryGridPanel;
+
 	/* #########################END############################## */
 
 
@@ -35,7 +37,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class USizeBox* refTooltipBox;
 
-	 //border, this is used to change the name color based on the rarity or type of item
+	//border, this is used to change the name color based on the rarity or type of item
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UBorder* refBorderName;
 
@@ -58,19 +60,19 @@ public:
 	//textblock for item effects
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UVerticalBox* refVerticalBoxItemEffects;
-	 
-	 
-	 /* #########################END############################## */
+
+
+	/* #########################END############################## */
 
 
 	UPROPERTY(EditAnywhere)
-	float invSize;
+		float invSize;
 
 	UPROPERTY(EditAnywhere)
 		TMap<FVector2D, class UInventorySlot*> mapRefInventorySlots;
 
 	UPROPERTY()
-	class ATGCharacter* refPlayerCharacter;
+		class ATGCharacter* refPlayerCharacter;
 	UPROPERTY()
 		class AExploreController* refExplorePlayerController;
 
@@ -81,21 +83,21 @@ protected:
 	virtual void NativePreConstruct() override;
 
 	UFUNCTION(BlueprintCallable)
-	void CreateInventorySlots();
+		void CreateInventorySlots();
 	void InitializeWithTimer();
 	void AddDelegateBindings();
 	void InitializeRefs();
-	
+
 	UFUNCTION()
-	void MoveInInventory(EMoveDirections iMoveDir);
+		void MoveInInventory(EMoveDirections iMoveDir);
 
 	//dont forget to update the class in WBP with the BP one
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<UInventorySlot> invSlotClass; 
+		TSubclassOf<UInventorySlot> invSlotClass;
 
 	//inventory selection what do i need to do
 	//move up/down/left/right, add the selected img on selected one and normal one on last.
-	
+
 	FVector2D currentlyActiveSlot;
 	FVector2D lastActiveSlot;
 
@@ -106,13 +108,21 @@ protected:
 	void GetStartingSlot();
 
 	UFUNCTION()
-	void UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlayerInventory);
+		void UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlayerInventory);
 
 	void UpdateTooltipData();
 
-	
 
+	UFUNCTION()
+		void UseSelectedItem();
 
+	UFUNCTION()
+		void DropSelectedItem();
+
+	UFUNCTION()
+	void TimerRemoveCooldown(class AItem* iRefItem);
+
+	void StartCooldownTimer(class AItem* iRefItem);
 
 
 

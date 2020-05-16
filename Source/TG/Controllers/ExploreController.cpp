@@ -37,6 +37,8 @@ void AExploreController::SetupInputComponent()
 	InputComponent->BindAction("InventoryDOWN", IE_Pressed, this, &AExploreController::InventoryDOWN);
 	InputComponent->BindAction("InventoryLEFT", IE_Pressed, this, &AExploreController::InventoryLEFT);
 	InputComponent->BindAction("InventoryRIGHT", IE_Pressed, this, &AExploreController::InventoryRIGHT);
+	InputComponent->BindAction("InventoryUSE", IE_Pressed, this, &AExploreController::InventoryUseItem);
+	InputComponent->BindAction("InventoryDROP", IE_Pressed, this, &AExploreController::InventoryDropItem);
 
 
 
@@ -144,6 +146,16 @@ void AExploreController::InventoryRIGHT()
 {
 	currInventoryMoveDirection = EMoveDirections::RIGHT;
 	delegateInventoryMove.Broadcast(currInventoryMoveDirection);
+}
+
+void AExploreController::InventoryUseItem()
+{
+	delegateInventoryUseItem.Broadcast();
+}
+
+void AExploreController::InventoryDropItem()
+{
+	delegateInventoryDropItem.Broadcast();
 }
 
 void AExploreController::SelectDialogByIndex(int32 iIdx)

@@ -87,6 +87,7 @@ void AItem::BeginPlay()
 	SetDataTableItemDataRowNames();	
 }
 
+
 void AItem::SetDataTableItemDataRowNames()
 {
 	if (DataTableItemData != nullptr)
@@ -126,4 +127,5 @@ void AItem::PassDataFromTableToObjectVariables()
 {
 	this->SpriteComp->SetFlipbook(currentItemData.itemWorldFlipbook);
 }
+
 

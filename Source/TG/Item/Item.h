@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TG/Enumerations.h"
 #include "Engine/DataTable.h"
 #include "Item.generated.h"
 
@@ -23,9 +24,10 @@ enum class EItemRarity : uint8
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
-	CARD						UMETA(DisplayName = "Card"),
+	TOME						UMETA(DisplayName = "Card"),
 	TOKEN						UMETA(DisplayName = "Token"),
-	CURRENCY					UMETA(DisplayName = "Currency"),
+	SOUL					UMETA(DisplayName = "Soul"),
+	MYSTICAL					UMETA(DisplayName = "Mystical"),
 };
 
 USTRUCT(Blueprintable)
@@ -46,23 +48,29 @@ struct FItemDamage
 		float fire;
 };
 
+
 USTRUCT(Blueprintable)
-struct FItemDefense 
+struct FItemAbility
 {
 
 	GENERATED_BODY()
 
-		FItemDefense()
+		FItemAbility()
 		:
-		physical(0),
-		fire(0)
+		abilityType(EAbilityType::NONE),
+		magicType(ECardMagicTypes::NONE),
+		power(0)
 	{}
 
-		UPROPERTY(EditAnywhere)
-		float physical;
+	UPROPERTY(EditAnywhere)
+		EAbilityType abilityType;
 
 	UPROPERTY(EditAnywhere)
-		float fire;
+		ECardMagicTypes magicType;
+
+	UPROPERTY(EditAnywhere)
+		int32 power;
+	
 };
 
 USTRUCT(Blueprintable)
@@ -73,6 +81,9 @@ struct FItemData
 
 		FItemData()
 		: ID(0),
+		bIsOnCooldown(false),
+		bIsConsumedOnUse(false),
+		itemCooldown(5.0),
 		itemName(FText(FText::FromString("NONE"))),
 		itemRarity(EItemRarity::COMMON),
 		itemType(EItemType::TOKEN),
@@ -81,6 +92,15 @@ struct FItemData
 
 		UPROPERTY(EditAnywhere)
 		int32 ID;
+
+		UPROPERTY(EditAnywhere)
+			bool bIsOnCooldown;
+
+		UPROPERTY(EditAnywhere)
+			bool bIsConsumedOnUse;
+
+		UPROPERTY(EditAnywhere)
+			float itemCooldown;
 
 	UPROPERTY(EditAnywhere)
 		FText itemName;
@@ -100,11 +120,12 @@ struct FItemData
 	UPROPERTY(EditAnywhere)
 		class UPaperFlipbook* itemWorldFlipbook;
 
-	UPROPERTY(EditAnywhere)
-		FItemDamage itemDamage;
 
 	UPROPERTY(EditAnywhere)
-		FItemDefense itemDefense;
+		FItemAbility itemAbility;
+
+	UPROPERTY(EditAnywhere)
+		FItemDamage itemDamage;
 };
 
 USTRUCT(BlueprintType)
@@ -167,7 +188,6 @@ protected:
 						DATA
 	 ########################################################### */
 public:
-	FItemData GetCurrentItemData() { return currentItemData; }
 	void SetDataTableItemDataRowNames();
 protected:
 
@@ -184,10 +204,23 @@ protected:
 		TArray<FName> DataTableItemRowNames;
 
 
+public:
 
+	/*removed the getter and set this to public atm, because had some errors because of them and want to avoid
+	passing around way too many struct copies*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AData)
 		FItemData currentItemData;
 
 	 /* #########################END############################## */
 
+
+
+
+	/* ###########################################################
+						Game Functionality
+	 ########################################################### */
+public:
+
+
+	 /* #########################END############################## */
 };
