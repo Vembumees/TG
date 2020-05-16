@@ -167,7 +167,7 @@ protected:
 						DATA
 	 ########################################################### */
 public:
-
+	FItemData GetCurrentItemData() { return currentItemData; }
 	void SetDataTableItemDataRowNames();
 protected:
 

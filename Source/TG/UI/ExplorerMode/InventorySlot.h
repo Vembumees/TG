@@ -17,6 +17,7 @@ struct FInventorySlotData
 		slotType = EInventoryType::BAG;
 		slotIndex = 0;
 		bIsSelected = false;
+		refItem = nullptr;
 	}
 
 	UPROPERTY(EditAnywhere)
@@ -25,6 +26,8 @@ struct FInventorySlotData
 		int32 slotIndex;
 	UPROPERTY(EditAnywhere)
 		bool bIsSelected;
+	UPROPERTY(EditAnywhere)
+		class AItem* refItem;
 
 };
 
@@ -41,11 +44,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UBorder* refBorderSingleSlot;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refButtonSlot;
+		class UButton* refButtonSlot;	//slot icon
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UImage* refItemBackground;
+		class UImage* refItemBackground; //this is the item background, can use for rarity
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UImage* refItemIcon;
+		class UImage* refItemIcon;		// item icon
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class USizeBox* refSizeBoxSlotSize;
 

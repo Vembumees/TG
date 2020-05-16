@@ -12,6 +12,7 @@
 #include "TG/TGCharacter.h"
 #include "TG/Item/Item.h"
 #include "TG/Components/InventoryComponent.h"
+#include "PaperSprite.h"
 
 void UInventoryWidget::NativeConstruct()
 {
@@ -168,10 +169,19 @@ void UInventoryWidget::GetStartingSlot()
 void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlayerInventory)
 {
 	UE_LOG(LogTemp, Warning, TEXT(" UInventoryWidget::UpdateItemsFromPlayerInventory()"));
-// 	for (AItem& e : iPlayerInventory)
-// 	{
-// 		e->GetID();
-// 		//todo !! need to figure out how to get item data from id
-// 	}
+	TArray<UInventorySlot*> value;
+	mapRefInventorySlots.GenerateValueArray(value);
+	int32 ctr = 0;
+	for (auto& e : iPlayerInventory)
+	{
+		FSlateBrush brush;
+		brush.SetResourceObject(e->GetCurrentItemData().itemIcon);
+		for (int i = ctr; i <= iPlayerInventory.Num() - 1; i++)
+		{
+			value[i]->refItemIcon->SetBrush(brush);
+			value[i]->refItemIcon->SetBrushSize(FVector2D(45, 45));
+		}
+		ctr++;
+	}
 }
 
