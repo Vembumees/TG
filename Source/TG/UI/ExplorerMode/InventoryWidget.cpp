@@ -5,7 +5,6 @@
 #include "Components/UniformGridPanel.h"
 #include "InventorySlot.h"
 #include "TG/Libraries/InventoryLibrary.h"
-#include "TG/Libraries/AbilityFunctionLibrary.h"
 #include "Components/Border.h"
 #include "Components/Image.h"
 #include "Components/SizeBox.h"
@@ -16,6 +15,7 @@
 #include "Components/Border.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
+#include "TG/Components/AbilityComponent.h"
 
 void UInventoryWidget::NativeConstruct()
 {
@@ -180,7 +180,7 @@ void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlay
 	for (auto& e : iPlayerInventory)
 	{
 		FSlateBrush brush;
-		brush.SetResourceObject(e->GetCurrentItemData().itemIcon);
+		brush.SetResourceObject(e->currentItemData.itemIcon);
 		for (int i = loopCounter; i <= iPlayerInventory.Num() - 1; i++)
 		{
 			//update icon
@@ -214,7 +214,7 @@ void UInventoryWidget::UpdateTooltipData()
 		return;
 	}
 
-	FItemData l_selectedItemData = l_currInventorySlot->slotData.refItem->GetCurrentItemData();
+	FItemData l_selectedItemData = l_currInventorySlot->slotData.refItem->currentItemData;
 
 	
 		
@@ -264,115 +264,12 @@ void UInventoryWidget::UseSelectedItem()
 {
 	//lets find the selected slot data
 	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
-	if (l_currInventorySlot == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot == nullptr"));
-		return;
-	}
-
-	if (l_currInventorySlot->slotData.refItem == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot->slotData.refItem == nullptr"));
-		return;
-	}
-
-	FItemData l_selectedItemData = l_currInventorySlot->slotData.refItem->GetCurrentItemData();
-
-	if (l_selectedItemData.bIsOnCooldown == true)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("item on cd."));
-		return;
-	}
-
-	//gets the functionality depending on item type
-	switch (l_selectedItemData.itemType)
-	{
-	case EItemType::TOME:
-		UE_LOG(LogTemp, Warning, TEXT("Using itemtype TOME"));
-		
-		//check what magic type the tome is
-		switch (l_selectedItemData.itemAbility.magicType)
-		{
-		case ECardMagicTypes::NONE:
-			break;
-		case ECardMagicTypes::NATURE:
-			break;
-		case ECardMagicTypes::FIRE:
-			//in this demo we do fire magic tome
-
-			//for demo we just cast a spell and exhaust the item. Should the item get deleted or have cooldown?
-			//i think probably best if item gets cooldown, but is expensive to use?
-
-			break;
-		case ECardMagicTypes::LIGHTNING:
-			break;
-		case ECardMagicTypes::ICE:
-			break;
-		case ECardMagicTypes::DARK:
-			break;
-		case ECardMagicTypes::CHAOS:
-			break;
-		case ECardMagicTypes::MIND:
-			break;
-		case ECardMagicTypes::EVIL:
-			break;
-		case ECardMagicTypes::HATRED:
-			break;
-		case ECardMagicTypes::BLOOD:
-			break;
-		case ECardMagicTypes::ANCIENT:
-			break;
-		case ECardMagicTypes::DIMENSIONAL:
-			break;
-		case ECardMagicTypes::ELDRITCH:
-			break;
-		case ECardMagicTypes::CELESTIAL:
-			break;
-		case ECardMagicTypes::CURSED:
-			break;
-		case ECardMagicTypes::DEMONIC:
-			break;
-		case ECardMagicTypes::TIME:
-			break;
-		case ECardMagicTypes::BEAST:
-			break;
-		case ECardMagicTypes::ILLUSION:
-			break;
-		case ECardMagicTypes::ENCHANTMENT:
-			break;
-		case ECardMagicTypes::ETHER:
-			break;
-		case ECardMagicTypes::SOUL:
-			break;
-		case ECardMagicTypes::VIOLET:
-			break;
-		case ECardMagicTypes::ISTHAN:
-			break;
-		case ECardMagicTypes::MYDIAN:
-			break;
-		default:
-			break;
-		}
-
-		break;
-	case EItemType::TOKEN:
-		UE_LOG(LogTemp, Warning, TEXT("Using itemtype TOKEN"));
-		break;
-	case EItemType::SOUL:
-		UE_LOG(LogTemp, Warning, TEXT("Using itemtype SOUL"));
-		break;
-	case EItemType::MYSTICAL:
-		UE_LOG(LogTemp, Warning, TEXT("Using itemtype MYSTICAL"));
-		break;
-	}
-
-	StartCooldownTimer(l_currInventorySlot->slotData.refItem);
+	
+	refPlayerCharacter->GetAbilityComponent()->CastAbility(l_currInventorySlot->slotData.slotIndex);
 
 
-	if (l_selectedItemData.bIsConsumedOnUse)
-	{
-		//remove item from inventory and destroy it TODO !!
-	}
+
+
 }
 
 void UInventoryWidget::DropSelectedItem()
@@ -382,20 +279,6 @@ void UInventoryWidget::DropSelectedItem()
 
 
 
-void UInventoryWidget::TimerRemoveCooldown(class AItem* iRefItem)
-{
-	UE_LOG(LogTemp, Warning, TEXT("cdtimer end"));
-	iRefItem->currentItemData.bIsOnCooldown  = false;
-}
 
-void UInventoryWidget::StartCooldownTimer(class AItem* iRefItem)
-{
-	UE_LOG(LogTemp, Warning, TEXT("StartCDTImer"));
-	FTimerHandle cdTimerHandle;
-	FTimerDelegate cdTimerDelegate;
-	cdTimerDelegate.BindUFunction(this, FName("TimerRemoveCooldown"), iRefItem);
-	GetWorld()->GetTimerManager().SetTimer(cdTimerHandle, cdTimerDelegate, iRefItem->GetCurrentItemData().itemCooldown, false);
-	iRefItem->currentItemData.bIsOnCooldown = true;
-}
 
 

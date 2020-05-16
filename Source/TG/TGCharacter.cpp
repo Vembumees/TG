@@ -14,6 +14,7 @@
 #include "TG/GameInstance/TGGameInstance.h"
 #include "TG/NPCs/MasterNPC.h"
 #include "TG/Components/InventoryComponent.h"
+#include "Components/AbilityComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -104,7 +105,7 @@ ATGCharacter::ATGCharacter()
 
 
 	inventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComp"));
-
+	abilityComponent = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComponent"));
 	/* ###########################################################
 						DEFAULT VALUES
 	 ########################################################### */
@@ -401,6 +402,11 @@ class UInventoryComponent* ATGCharacter::GetInventoryComponent()
 	return inventoryComponent;
 }
 
+class UAbilityComponent* ATGCharacter::GetAbilityComponent()
+{
+	return abilityComponent;
+}
+
 void ATGCharacter::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
@@ -517,4 +523,9 @@ void ATGCharacter::CheckForDeath()
 
 		
 	}
+}
+
+void ATGCharacter::CastAbility()
+{
+
 }

@@ -16,13 +16,5 @@ class TG_API UAbilityFunctionLibrary : public UBlueprintFunctionLibrary
 
 public:
 
-		static void CastProjectileAbility();
-
-		static void CastSelfBuffAbility();
-
-		static void CastWorldAbility();
-
-		static void CastAreaAbility();
-
 	
 };

@@ -63,6 +63,8 @@ public:
 
 	class UInventoryComponent* GetInventoryComponent();
 
+	class UAbilityComponent* GetAbilityComponent();
+
 
 
 	virtual void OnConstruction(const FTransform& Transform) override;
@@ -78,6 +80,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AInventory)
 		class UInventoryComponent* inventoryComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AInventory)
+		class UAbilityComponent* abilityComponent;
+
 	/* ###########################################################
 						Animations
 	 ########################################################### */
@@ -178,7 +184,7 @@ public:
 	void Interact();
 	void CheckForDeath();
 
-
+	void CastAbility();
 
 
 

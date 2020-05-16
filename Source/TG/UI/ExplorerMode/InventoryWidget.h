@@ -119,10 +119,7 @@ protected:
 	UFUNCTION()
 		void DropSelectedItem();
 
-	UFUNCTION()
-	void TimerRemoveCooldown(class AItem* iRefItem);
 
-	void StartCooldownTimer(class AItem* iRefItem);
 
 
 
