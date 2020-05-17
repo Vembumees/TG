@@ -78,11 +78,11 @@ enum class EMoveDirections : uint8
 UENUM(BlueprintType)
 enum class ECardListFire : uint8
 {
-	FIREBALL						UMETA(DisplayName = "Fireball"),	//shoot a fireball
-	ENCHANTFIRE						UMETA(DisplayName = "EnchantFire"), //fire damage deals more damage next x seconds
-	LIVINGBOMB						UMETA(DisplayName = "Living Bomb"), //in 3 seconds explode self
-	FIREBLAST						UMETA(DisplayName = "Fire Blast"),  //fire explosion in front of the player
-	FIRESHIELD						UMETA(DisplayName = "Fire Shield"),  
+	FIREBALL = 0						UMETA(DisplayName = "Fireball"),	//shoot a fireball
+	ENCHANTFIRE = 1					UMETA(DisplayName = "EnchantFire"), //fire damage deals more damage next x seconds
+	LIVINGBOMB	= 2					UMETA(DisplayName = "Living Bomb"), //in 3 seconds explode self
+	FIREBLAST	= 3					UMETA(DisplayName = "Fire Blast"),  //fire explosion in front of the player
+	FIRESHIELD	= 4					UMETA(DisplayName = "Fire Shield"),  
 };
 
 UENUM(BlueprintType)

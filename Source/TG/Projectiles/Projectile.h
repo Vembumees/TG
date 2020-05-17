@@ -36,11 +36,9 @@ public:
 public:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
+	void SetHomingDistance(float iDistance);
 
-	//function to handle start of projectile motion
-	UFUNCTION()
-		void Start(ATGCharacter* iOwner);
-
+	void StopHoming();
 
 protected:
 
@@ -54,4 +52,6 @@ protected:
 
 private:
 	class ATGCharacter* refTGCharacter;
+
+
 };

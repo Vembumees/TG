@@ -5,6 +5,7 @@
 #include "TG/Components/InventoryComponent.h"
 #include "TG/TGCharacter.h"
 #include "TG/Item/Item.h"
+#include "TG/StaticLibrary.h"
 #include "TG/Projectiles/Projectile.h"
 
 // Sets default values for this component's properties
@@ -65,11 +66,34 @@ void UAbilityComponent::CastAbility(int32 iIndex)
 			//in this demo we do fire magic tome
 
 		{
-			FActorSpawnParameters params;
-			params.Owner = this->GetOwner();
-			AProjectile* fireBall = GetWorld()->SpawnActor<AProjectile>(defaultProjectile, refTGCharacter->GetActorLocation(), 
-				refTGCharacter->GetActorRotation(), params);
-			fireBall->Start(refTGCharacter); //false is left, just some projectile code i quickly got randomly off github xD
+			//getting random enum, idk yet if its good idea to hardcore all the abilities like this, but at least it 
+			//works pretty simply
+			TArray<ECardListFire> tEnum = UStaticLibrary::EnumGetList<ECardListFire>("ECardListFire");
+			ECardListFire fireCards = tEnum[FMath::RandRange(0, 4)];
+			switch (fireCards)
+			{
+			case ECardListFire::FIREBALL:
+				UE_LOG(LogTemp, Warning, TEXT("fireball"));
+				break;
+			case ECardListFire::ENCHANTFIRE:
+				UE_LOG(LogTemp, Warning, TEXT("enchantfire"));
+				break;
+			case ECardListFire::LIVINGBOMB:
+				UE_LOG(LogTemp, Warning, TEXT("livingbomb"));
+				break;
+			case ECardListFire::FIREBLAST:
+				UE_LOG(LogTemp, Warning, TEXT("fireblast"));
+				break;
+			case ECardListFire::FIRESHIELD:
+				UE_LOG(LogTemp, Warning, TEXT("fireshield"));
+				break;
+			}
+			
+		
+// 			FActorSpawnParameters params;
+// 			params.Owner = this->GetOwner();
+// 			AProjectile* fireBall = GetWorld()->SpawnActor<AProjectile>(defaultProjectile, refTGCharacter->GetActorLocation(), 
+// 				refTGCharacter->GetActorRotation(), params);
 			//quickly just make a projectile spawn 
 		}
 

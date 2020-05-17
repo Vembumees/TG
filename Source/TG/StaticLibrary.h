@@ -53,3 +53,12 @@ UStaticLibrary::EnumGetList(const FString& Name)
 	}
 	return Result;
 }
+
+template <typename EnumType>
+static FORCEINLINE EnumType GetEnumValueFromString(const FString& EnumName, const FString& String) {
+	UEnum* Enum = FindObject<UEnum>(ANY_PACKAGE, *EnumName, true);
+	if (!Enum) {
+		return EnumType(0);
+	}
+	return (EnumType)Enum->FindEnumIndex(FName(*String));
+}

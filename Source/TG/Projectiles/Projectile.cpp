@@ -46,10 +46,6 @@ void AProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	if (OtherActor == nullptr && OtherActor == refTGCharacter)
-	{
-		return;
-	}
 
 	spriteComp->SetFlipbook(projectileCollideAnim);
 	sphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -57,10 +53,3 @@ void AProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	this->SetLifeSpan(0.5);
 	
 }
-
-void AProjectile::Start(ATGCharacter* iOwner)
-{
-	refTGCharacter = iOwner;
-	
-}
-
