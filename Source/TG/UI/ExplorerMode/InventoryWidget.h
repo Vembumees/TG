@@ -41,6 +41,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UBorder* refBorderName;
 
+	//parent of the inventory grid panel
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UButton* refGridPanelBackgroundButton;
+
 	//textblock, item name 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UTextBlock* refTextItemName;

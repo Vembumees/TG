@@ -5,16 +5,16 @@
 #include "Components/UniformGridPanel.h"
 #include "InventorySlot.h"
 #include "TG/Libraries/InventoryLibrary.h"
-#include "Components/Border.h"
 #include "Components/Image.h"
+#include "Components/Button.h"
+#include "Components/Border.h"
+#include "Components/TextBlock.h"
+#include "Components/VerticalBox.h"
 #include "Components/SizeBox.h"
 #include "TG/Controllers/ExploreController.h"
 #include "TG/TGCharacter.h"
 #include "TG/Components/InventoryComponent.h"
 #include "PaperSprite.h"
-#include "Components/Border.h"
-#include "Components/TextBlock.h"
-#include "Components/VerticalBox.h"
 #include "TG/Components/AbilityComponent.h"
 #include "Components/BoxComponent.h"
 
@@ -25,11 +25,12 @@ void UInventoryWidget::NativeConstruct()
 	InitializeRefs();
 	AddDelegateBindings();
 	GetStartingSlot();
+	
 
 
 
-// 	FTimerHandle invWidgetInitializeWithTimer;
-// 	GetWorld()->GetTimerManager().SetTimer(invWidgetInitializeWithTimer, this, &UInventoryWidget::InitializeWithTimer, 0.5f, false);
+	FTimerHandle invWidgetInitializeWithTimer;
+	GetWorld()->GetTimerManager().SetTimer(invWidgetInitializeWithTimer, this, &UInventoryWidget::InitializeWithTimer, 0.5f, false);
 
 
 }
@@ -75,7 +76,7 @@ void UInventoryWidget::CreateInventorySlots()
 
 void UInventoryWidget::InitializeWithTimer()
 {
-
+	UpdateTooltipData();
 }
 
 void UInventoryWidget::AddDelegateBindings()
@@ -197,20 +198,20 @@ void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlay
 
 void UInventoryWidget::UpdateTooltipData()
 {
-	/*tooltip, so what do i need to implement?
-		tooltip should be visible, but after some inactivity play animation of going almost out of the screen
-		on selecting next inventoryslot, update all the data from the item ptr in the inventoryslot*/
+
 
 	//lets find the selected slot data
 	 UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
 	if (l_currInventorySlot == nullptr)
 	{
+		refTooltipBox->SetVisibility(ESlateVisibility::Hidden);
 		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot == nullptr"));
 		return;
 	}
 
 	if (l_currInventorySlot->slotData.refItem == nullptr)
 	{
+		refTooltipBox->SetVisibility(ESlateVisibility::Hidden);
 		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot->slotData.refItem == nullptr"));
 		return;
 	}
@@ -256,6 +257,8 @@ void UInventoryWidget::UpdateTooltipData()
 	}
 	//update refTextItemDescription
 	refTextItemDescription->SetText(FText::FromString(l_selectedItemData.itemDescription));
+
+	refTooltipBox->SetVisibility(ESlateVisibility::Visible);
 
 	//update refVerticalBoxItemEffects, here we add a child of another widget we create later TODO !!
 
@@ -308,9 +311,7 @@ void UInventoryWidget::DropSelectedItem()
 
 	
 	refPlayerCharacter->GetInventoryComponent()->DeleteItemFromInventory(l_currInventorySlot->slotData.refItem);
-
 	CreateInventorySlots();
-
 	UpdateItemsFromPlayerInventory(refPlayerCharacter->GetInventoryComponent()->GetItemInventory());
 	
 }
