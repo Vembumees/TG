@@ -265,6 +265,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool bDidJustBasicAttack;
+	
+
+public:
+	UPROPERTY(VisibleAnywhere)
+		bool bIsFacingRight;
 
 	 /* #########################END############################## */
 

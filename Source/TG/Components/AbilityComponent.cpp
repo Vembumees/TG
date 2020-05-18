@@ -23,7 +23,6 @@ UAbilityComponent::UAbilityComponent()
 void UAbilityComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 	InitializeRefs();
 	
 }
@@ -68,12 +67,38 @@ void UAbilityComponent::CastAbility(int32 iIndex)
 		{
 			//getting random enum, idk yet if its good idea to hardcore all the abilities like this, but at least it 
 			//works pretty simply
-			TArray<ECardListFire> tEnum = UStaticLibrary::EnumGetList<ECardListFire>("ECardListFire");
-			ECardListFire fireCards = tEnum[FMath::RandRange(0, 4)];
+
+			
+ 			TArray<ECardListFire> tEnum = UStaticLibrary::EnumGetList<ECardListFire>("ECardListFire");
+ 			ECardListFire fireCards = tEnum[FMath::RandRange(0, 0)]; // !! atm changed it to cast only fireball for testing
 			switch (fireCards)
 			{
 			case ECardListFire::FIREBALL:
 				UE_LOG(LogTemp, Warning, TEXT("fireball"));
+				{
+					//projectile fireball sound and impact sound shoudl be inside the projectile class
+
+					//should trigger character animation function inside the character class
+					//this->refChar->playAnimation()   playanimation->setflipbookx if finished set back to old
+
+					FVector loc;
+					loc = refTGCharacter->GetActorLocation();
+					if (refTGCharacter->bIsFacingRight)
+					{
+						loc.X += 20;
+					}
+					else
+					{
+						loc.X -= 20;
+					}
+					
+				FActorSpawnParameters params;
+				params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+				params.Owner = this->GetOwner();
+				AProjectile* fireBall = GetWorld()->SpawnActor<AProjectile>(defaultProjectile, loc,
+					refTGCharacter->GetActorRotation(), params);
+				
+				}
 				break;
 			case ECardListFire::ENCHANTFIRE:
 				UE_LOG(LogTemp, Warning, TEXT("enchantfire"));
@@ -90,11 +115,7 @@ void UAbilityComponent::CastAbility(int32 iIndex)
 			}
 			
 		
-// 			FActorSpawnParameters params;
-// 			params.Owner = this->GetOwner();
-// 			AProjectile* fireBall = GetWorld()->SpawnActor<AProjectile>(defaultProjectile, refTGCharacter->GetActorLocation(), 
-// 				refTGCharacter->GetActorRotation(), params);
-			//quickly just make a projectile spawn 
+
 		}
 
 			break;

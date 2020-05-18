@@ -283,10 +283,12 @@ void ATGCharacter::MoveRight(float Value)
 
 		if (Value < 0.0f)
 		{
+			bIsFacingRight = false;
 			Controller->SetControlRotation(FRotator(0.0, 180.0f, 0.0f));
 		}
 		else if (Value > 0.0f)
 		{
+			bIsFacingRight = true;
 			Controller->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
 		}
 		UpdateCharacter();

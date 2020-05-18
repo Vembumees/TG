@@ -13,13 +13,18 @@ AProjectile::AProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+	objectRootComp = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
+	objectRootComp->SetWorldScale3D(FVector(3, 3, 3));
+	this->RootComponent = objectRootComp;
+
 	sphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("boxCollision"));
-	sphereCollision->SetupAttachment(RootComponent);
 	sphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	sphereCollision->AttachToComponent(objectRootComp, FAttachmentTransformRules::KeepRelativeTransform);
+	sphereCollision->SetCollisionProfileName("WorldDynamic");
+	sphereCollision->SetConstraintMode(EDOFMode::XZPlane);
 
 	spriteComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("spriteComp"));
-	spriteComp->SetupAttachment(RootComponent);
+	spriteComp->SetupAttachment(objectRootComp);
 	spriteComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	spriteComp->SetFlipbook(projectileMoveAnim);
 
@@ -28,12 +33,14 @@ AProjectile::AProjectile()
 	projectileMovementComp->ProjectileGravityScale = 0.0f;
 	projectileMovementComp->InitialSpeed = 600;
 	projectileMovementComp->bRotationFollowsVelocity = true;
+
 }
 
 // Called when the game starts or when spawned
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 // Called every frame
@@ -45,11 +52,14 @@ void AProjectile::Tick(float DeltaTime)
 void AProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
-
-
+	if ((OtherActor == nullptr) && (OtherActor != this) && (OtherActor != this->GetOwner()))
+	{
 	spriteComp->SetFlipbook(projectileCollideAnim);
 	sphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	this->SetLifeSpan(1);	
+		
+	}
 
-	this->SetLifeSpan(0.5);
-	
+	this->SetLifeSpan(5);
+
 }

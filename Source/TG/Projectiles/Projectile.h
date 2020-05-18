@@ -23,6 +23,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UPaperFlipbookComponent* spriteComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = AMesh)
+		class USceneComponent* objectRootComp;
+
 protected:
 
 
