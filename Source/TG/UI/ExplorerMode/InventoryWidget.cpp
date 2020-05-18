@@ -16,6 +16,7 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "TG/Components/AbilityComponent.h"
+#include "Components/BoxComponent.h"
 
 void UInventoryWidget::NativeConstruct()
 {
@@ -263,6 +264,10 @@ void UInventoryWidget::UpdateTooltipData()
 void UInventoryWidget::UseSelectedItem()
 {
 	//lets find the selected slot data
+	if (!mapRefInventorySlots.Contains(currentlyActiveSlot))
+	{
+		return;
+	}
 	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
 	
 	refPlayerCharacter->GetAbilityComponent()->CastAbility(l_currInventorySlot->slotData.slotIndex);
@@ -274,7 +279,40 @@ void UInventoryWidget::UseSelectedItem()
 
 void UInventoryWidget::DropSelectedItem()
 {
+	if (!mapRefInventorySlots.Contains(currentlyActiveSlot))
+	{
+		return;
+	}
+	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
+	if (l_currInventorySlot == nullptr || l_currInventorySlot->slotData.refItem == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot == nullptr"));
+		return;
+	}
+	
+	FVector playerLoc =	refPlayerCharacter->GetActorLocation();
+	if (refPlayerCharacter->bIsFacingRight)
+	{
+		playerLoc.X += 100;
+	}
+	else
+	{
+		playerLoc.X -= 100;
+	}
 
+	//current problems - it's not removing the icon from inventory and the drop function still works (moves the item) if theres nothing
+	//in the slot
+	l_currInventorySlot->slotData.refItem->SetActorLocation(playerLoc, true);
+	l_currInventorySlot->slotData.refItem->SetActorHiddenInGame(false);
+	l_currInventorySlot->slotData.refItem->GetCollisionComp()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	
+	refPlayerCharacter->GetInventoryComponent()->DeleteItemFromInventory(l_currInventorySlot->slotData.refItem);
+
+	CreateInventorySlots();
+
+	UpdateItemsFromPlayerInventory(refPlayerCharacter->GetInventoryComponent()->GetItemInventory());
+	
 }
 
 

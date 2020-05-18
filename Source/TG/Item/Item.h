@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "TG/Enumerations.h"
 #include "Engine/DataTable.h"
+#include "TG/Interfaces/Interact.h"
 #include "Item.generated.h"
 
 /*Items are atm just set invisible when looted and their pointers stored in the character's 
@@ -93,8 +94,8 @@ struct FItemData
 		UPROPERTY(EditAnywhere)
 		int32 ID;
 
-		UPROPERTY(EditAnywhere)
-			bool bIsOnCooldown;
+		UPROPERTY()
+			bool bIsOnCooldown; //for gameplay logic
 
 		UPROPERTY(EditAnywhere)
 			bool bIsConsumedOnUse;
@@ -138,7 +139,7 @@ struct FItemAllData : public FTableRowBase
 };
 
 UCLASS()
-class TG_API AItem : public AActor
+class TG_API AItem : public AActor, public IInteract
 {
 	GENERATED_BODY()
 
@@ -151,6 +152,15 @@ public:
 
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+
+	virtual void OnEnterPlayerRadius(AActor* iPlayer) override;
+
+
+	virtual void OnLeavePlayerRadius(AActor* iPlayer) override;
+
+
+	virtual void Interact(AActor* iPlayer) override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = AData)
@@ -169,6 +179,8 @@ protected:
 		class UBoxComponent* collisionComp;
 
 public:
+
+	class UBoxComponent* GetCollisionComp() { return collisionComp; }
 
 
 

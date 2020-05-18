@@ -54,14 +54,29 @@ void AItem::OnConstruction(const FTransform& Transform)
 void AItem::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
+
+}
+
+void AItem::OnEnterPlayerRadius(AActor* iPlayer)
+{
+	//maybe make item glow here? or play sound TODO
+}
+
+void AItem::OnLeavePlayerRadius(AActor* iPlayer)
+{
+	
+}
+
+void AItem::Interact(AActor* iPlayer)
+{
 	UE_LOG(LogTemp, Warning, TEXT("AItem::NotifyActorBeginOverlap"));
-	ATGCharacter* player = Cast<ATGCharacter>(OtherActor);
+	ATGCharacter* player = Cast<ATGCharacter>(iPlayer);
 	if (player == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AItem::NotifyActorBeginOverlap cast fail"));
 		return;
 	}
-	
+
 	if (player->GetInventoryComponent()->AddItemToInventory(this))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AItem::NotifyActorBeginOverlap - adding item successful"));

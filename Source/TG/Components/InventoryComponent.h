@@ -30,7 +30,7 @@ public:
 
 	bool AddItemToInventory(class AItem* iItem);
 
-	void DeleteItemFromIndex(int32 iIndex);
+	void DeleteItemFromInventory(class AItem* iItem);
 	
 	TArray<class AItem*> GetItemInventory();
 

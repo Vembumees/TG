@@ -39,10 +39,6 @@ public:
 public:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
-	void SetHomingDistance(float iDistance);
-
-	void StopHoming();
-
 protected:
 
 	//animation when projectile is moving

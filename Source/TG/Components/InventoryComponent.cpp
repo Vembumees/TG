@@ -42,9 +42,14 @@ bool UInventoryComponent::AddItemToInventory(class AItem* iItem)
 	return true;
 }
 
-void UInventoryComponent::DeleteItemFromIndex(int32 iIndex)
+void UInventoryComponent::DeleteItemFromInventory(class AItem* iItem)
 {
-
+	if (iItem == nullptr)
+	{
+		return;
+	}
+	refItemInventory.Remove(iItem);
+	delegateInventoryUpdate.Broadcast(refItemInventory);
 }
 
 TArray<class AItem*> UInventoryComponent::GetItemInventory()
