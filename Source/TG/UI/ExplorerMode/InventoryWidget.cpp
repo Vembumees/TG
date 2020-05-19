@@ -82,8 +82,6 @@ void UInventoryWidget::CreateInventorySlots()
 			}
 		}
 
-
-
 		wInvSlot->slotData.slotIndex = i;
 		wInvSlot->slotData.slotType = EInventoryType::BAG;
 		wInvSlot->refSizeBoxSlotSize->SetWidthOverride(invSize);
