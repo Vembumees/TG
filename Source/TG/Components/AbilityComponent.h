@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "TG/Enumerations.h"
 #include "AbilityComponent.generated.h"
 
 

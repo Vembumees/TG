@@ -26,6 +26,8 @@ void UInventorySlot::UpdateInventoryButtonBackgroundType()
 	}
 }
 
+
+
 void UInventorySlot::NativeConstruct()
 {
 	Super::NativeConstruct();

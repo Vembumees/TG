@@ -7,6 +7,8 @@
 #include "TG/Enumerations.h"
 #include "InventorySlot.generated.h"
 
+
+
 USTRUCT(BlueprintType)
 struct FInventorySlotData
 {
@@ -17,6 +19,7 @@ struct FInventorySlotData
 		slotType = EInventoryType::BAG;
 		slotIndex = 0;
 		bIsSelected = false;
+		inventorySlotState = EInventorySlotState::EMPTY;
 		refItem = nullptr;
 	}
 
@@ -26,6 +29,8 @@ struct FInventorySlotData
 		int32 slotIndex;
 	UPROPERTY(EditAnywhere)
 		bool bIsSelected;
+	UPROPERTY(EditAnywhere)
+		EInventorySlotState inventorySlotState;
 	UPROPERTY(EditAnywhere)
 		class AItem* refItem;
 

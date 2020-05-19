@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryUpdate, TArray<class AItem*>, refItemInventory);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryUpdate, TArray<class UInventorySlot*>, refItemInventory);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TG_API UInventoryComponent : public UActorComponent
@@ -17,25 +17,31 @@ public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<class UInventorySlot*> refItemInventory;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<class AItem*> refItemInventory;
+
+
+	void InitializeReferences();
+	void InitializeInventory();
 
 public:	
 
 	bool AddItemToInventory(class AItem* iItem);
 
-	void DeleteItemFromInventory(class AItem* iItem);
+	void DeleteItemFromInventory(int32 iIdx);
 	
-	TArray<class AItem*> GetItemInventory();
+	TArray<class UInventorySlot*> GetItemInventory();
 
 	UPROPERTY(VisibleAnywhere)
 	int32 inventoryMaxSize;
+
+	class UInventoryWidget* refInventoryWidget;
 
 	FInventoryUpdate delegateInventoryUpdate;
 };

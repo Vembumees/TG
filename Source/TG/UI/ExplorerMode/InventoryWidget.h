@@ -86,8 +86,10 @@ protected:
 
 	virtual void NativePreConstruct() override;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 		void CreateInventorySlots();
+
+
 	void InitializeWithTimer();
 	void AddDelegateBindings();
 	void InitializeRefs();
@@ -112,7 +114,7 @@ protected:
 	void GetStartingSlot();
 
 	UFUNCTION()
-		void UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlayerInventory);
+		void UpdateItemsFromPlayerInventory(TArray<class UInventorySlot*> iPlayerInventory);
 
 	void UpdateTooltipData();
 
@@ -123,7 +125,8 @@ protected:
 	UFUNCTION()
 		void DropSelectedItem();
 
-
+public:
+	int32 GetFirstEmptyInventorySlotIndex();
 
 
 

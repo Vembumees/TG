@@ -7,6 +7,7 @@
 #include "TG/Item/Item.h"
 #include "TG/StaticLibrary.h"
 #include "TG/Projectiles/Projectile.h"
+#include "TG/UI/ExplorerMode/InventorySlot.h"
 
 // Sets default values for this component's properties
 UAbilityComponent::UAbilityComponent()
@@ -34,13 +35,13 @@ void UAbilityComponent::InitializeRefs()
 
 void UAbilityComponent::CastAbility(int32 iIndex)
 {
-	if (!refTGCharacter->GetInventoryComponent()->GetItemInventory().IsValidIndex(iIndex))
+	if (refTGCharacter->GetInventoryComponent()->refItemInventory[iIndex]->slotData.inventorySlotState == EInventorySlotState::EMPTY)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UAbilityComponent::CastAbility invalid index."));
+		UE_LOG(LogTemp, Warning, TEXT("UAbilityComponent::CastAbility on empty slot."));
 		return;
 	}
 
-	AItem* l_selectedItem = refTGCharacter->GetInventoryComponent()->GetItemInventory()[iIndex];
+	AItem* l_selectedItem = refTGCharacter->GetInventoryComponent()->GetItemInventory()[iIndex]->slotData.refItem;
 	
 	if (l_selectedItem->currentItemData.bIsOnCooldown == true)
 	{

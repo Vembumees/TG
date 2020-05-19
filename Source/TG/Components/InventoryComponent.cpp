@@ -2,6 +2,11 @@
 
 
 #include "InventoryComponent.h"
+#include "TG/Controllers/ExploreController.h"
+#include "TG/UI/TGHUD.h"
+#include "TG/UI/ExplorerMode/InventorySlot.h"
+#include "TG/UI/ExplorerMode/InventoryWidget.h"
+#include "TG/UI/ExplorerMode/ExplorerModeScreen.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -15,8 +20,17 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	InitializeReferences();
+
+}
+
+void UInventoryComponent::InitializeReferences()
+{
+	//get inventorywidget ref
+	ATGHUD* hud = Cast<ATGHUD>(Cast<AExploreController>(GetWorld()->GetFirstPlayerController())->GetHUD());
+	refInventoryWidget = hud->GetRefExplorerModeScreen()->refInventoryWidget;
+
+
 }
 
 bool UInventoryComponent::AddItemToInventory(class AItem* iItem)
@@ -27,32 +41,40 @@ bool UInventoryComponent::AddItemToInventory(class AItem* iItem)
 		return false;
 	}
 
-	if (refItemInventory.IsValidIndex(inventoryMaxSize))
+	if( refInventoryWidget->GetFirstEmptyInventorySlotIndex() == -1)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Inventory is full"));
 		return false;
-	}
-	 
-	refItemInventory.Add(iItem);
+	}	
+	int32 idx = refInventoryWidget->GetFirstEmptyInventorySlotIndex();
+	refItemInventory[idx]->slotData.refItem = iItem;
+	refItemInventory[idx]->slotData.inventorySlotState = EInventorySlotState::HASITEM;
+
 	UE_LOG(LogTemp, Error, TEXT("Added item successfully."));
 	//also update player UI via delegate
 	delegateInventoryUpdate.Broadcast(refItemInventory);
 
 
+
 	return true;
 }
 
-void UInventoryComponent::DeleteItemFromInventory(class AItem* iItem)
+void UInventoryComponent::DeleteItemFromInventory(int32 iIdx)
 {
-	if (iItem == nullptr)
+	//delete item
+	if (!refItemInventory.IsValidIndex(iIdx))
 	{
+		UE_LOG(LogTemp, Error, TEXT("deleteItemFromInventory - invalid index"));
 		return;
 	}
-	refItemInventory.Remove(iItem);
+
+
+	refItemInventory[iIdx]->slotData.refItem = nullptr;
+	refItemInventory[iIdx]->slotData.inventorySlotState = EInventorySlotState::EMPTY;
 	delegateInventoryUpdate.Broadcast(refItemInventory);
 }
 
-TArray<class AItem*> UInventoryComponent::GetItemInventory()
+TArray<class UInventorySlot*> UInventoryComponent::GetItemInventory()
 {
 	return refItemInventory;
 }

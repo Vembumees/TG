@@ -154,3 +154,10 @@ enum class EProjectileAbility : uint8
 	BOUNCINGPROJECTILE						UMETA(DisplayName = "Bouncing projectile"),
 	SHOTGUNPROJECTILE						UMETA(DisplayName = "Shotgun projectile"),
 };
+
+UENUM(BlueprintType)
+enum class EInventorySlotState : uint8
+{
+	EMPTY						UMETA(DisplayName = "Empty"),
+	HASITEM						UMETA(DisplayName = "Has Item"),
+};

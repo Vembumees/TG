@@ -26,7 +26,6 @@ public:
 						Ingame Menu
 	 ########################################################### */
 	void IngameMenuToggle();
-
 	void IngameMenuOpen();
 	void IngameMenuClose();
 	
@@ -38,6 +37,10 @@ public:
 	void IngameMenu_QuitButtonClicked();
 	 /* #########################END############################## */
 	
+	class UIngameMenu* GetRefIngameMenu() { return refIngameMenu; }
+	class UIngameInventoryMenu* GetRefIngameInventoryMenu() { return refIngameInventoryMenu; }
+	class UExplorerModeScreen* GetRefExplorerModeScreen() { return refExplorerModeScreen; }
+
 protected:
 	virtual void BeginPlay() override;
 

@@ -25,7 +25,7 @@ void UInventoryWidget::NativeConstruct()
 	InitializeRefs();
 	AddDelegateBindings();
 	GetStartingSlot();
-	
+
 
 
 
@@ -50,10 +50,12 @@ void UInventoryWidget::CreateInventorySlots()
 		UE_LOG(LogTemp, Error, TEXT("UInventoryWidget::CreateInventorySlots() refInventoryGridPanel == nullptr"));
 		return;
 	}
+	TArray<UInventorySlot*> slotOld = refPlayerCharacter->GetInventoryComponent()->refItemInventory;
 	int32 l_column = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns;
 	int32 l_rows = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows;
 	int32 l_nrOfSlots = (l_rows * l_column) - 1;
 	mapRefInventorySlots.Empty();
+	refPlayerCharacter->GetInventoryComponent()->refItemInventory.Empty();
 	refInventoryGridPanel->ClearChildren();
 	invSize = UInventoryLibrary::GetInventorySlotSize(EInventoryType::BAG);
 	for (int i = 0; i <= l_nrOfSlots; i++)
@@ -65,12 +67,32 @@ void UInventoryWidget::CreateInventorySlots()
 		refInventoryGridPanel->AddChildToUniformGrid(wInvSlot,
 			l_currColumn, l_currRow);
 		mapRefInventorySlots.Add(FVector2D(l_currColumn, l_currRow), wInvSlot);
+		wInvSlot->slotData.inventorySlotState = EInventorySlotState::EMPTY;
+		if (slotOld.IsValidIndex(1))
+		{
+			if (slotOld[i]->slotData.inventorySlotState == EInventorySlotState::EMPTY)
+			{
+				wInvSlot->slotData.inventorySlotState = EInventorySlotState::EMPTY;
+				wInvSlot->slotData.refItem = nullptr;
+			}
+			else
+			{
+				wInvSlot->slotData.inventorySlotState = EInventorySlotState::HASITEM;
+				wInvSlot->slotData.refItem = slotOld[i]->slotData.refItem;
+			}
+		}
+
+
+
 		wInvSlot->slotData.slotIndex = i;
 		wInvSlot->slotData.slotType = EInventoryType::BAG;
 		wInvSlot->refSizeBoxSlotSize->SetWidthOverride(invSize);
 		wInvSlot->refSizeBoxSlotSize->SetHeightOverride(invSize);
+
+		//add inventory slot reference to the player's inventory component
+		refPlayerCharacter->GetInventoryComponent()->refItemInventory.Add(wInvSlot);
 	}
-	
+
 	HighlightSelectedSlot();
 }
 
@@ -87,7 +109,7 @@ void UInventoryWidget::AddDelegateBindings()
 	refPlayerCharacter->GetInventoryComponent()->delegateInventoryUpdate.AddDynamic(this, &UInventoryWidget::UpdateItemsFromPlayerInventory);
 	refExplorePlayerController->delegateInventoryUseItem.AddDynamic(this, &UInventoryWidget::UseSelectedItem);
 	refExplorePlayerController->delegateInventoryDropItem.AddDynamic(this, &UInventoryWidget::DropSelectedItem);
-	
+
 }
 
 void UInventoryWidget::InitializeRefs()
@@ -126,7 +148,7 @@ void UInventoryWidget::MoveInInventory(EMoveDirections iMoveDir)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("direction where I wanted to move was invalid."));
 	}
-	
+
 }
 
 void UInventoryWidget::HighlightSelectedSlot()
@@ -157,40 +179,40 @@ void UInventoryWidget::GetStartingSlot()
 	//makes the selection start somewhere from the middle, not really accurate and well thought out, good enough
 	float l_column = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns;
 	float l_rows = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows;
-		l_column = FMath::RoundHalfToEven(l_column / 2);
-		l_rows = FMath::RoundHalfToEven(l_rows / 2);
-	
-		//this is just so that with 3x3 selection would be in the middle, there's probably a proper math formula for this
-		l_column -= 1; 
-		l_rows	 -= 1;
+	l_column = FMath::RoundHalfToEven(l_column / 2);
+	l_rows = FMath::RoundHalfToEven(l_rows / 2);
 
-		//clamp it so it doesnt go over the column/row sizes, this function needs const parameters so making temp consts
-		const int32 l_tmpClmn = l_column;
-		const int32 l_tmpRows = l_rows;				
-		l_column = FMath::Clamp(l_tmpClmn, 0, UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns);
-		l_rows = FMath::Clamp(l_tmpRows, 0, UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows);
+	//this is just so that with 3x3 selection would be in the middle, there's probably a proper math formula for this
+	l_column -= 1;
+	l_rows -= 1;
+
+	//clamp it so it doesnt go over the column/row sizes, this function needs const parameters so making temp consts
+	const int32 l_tmpClmn = l_column;
+	const int32 l_tmpRows = l_rows;
+	l_column = FMath::Clamp(l_tmpClmn, 0, UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns);
+	l_rows = FMath::Clamp(l_tmpRows, 0, UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows);
 	FVector2D midVec = FVector2D(l_column, l_rows);
 	currentlyActiveSlot = midVec; //replace this
 }
 
-void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class AItem*> iPlayerInventory)
+void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class UInventorySlot*> iPlayerInventory)
 {
 	UE_LOG(LogTemp, Warning, TEXT(" UInventoryWidget::UpdateItemsFromPlayerInventory()"));
-	TArray<UInventorySlot*> value;
-	mapRefInventorySlots.GenerateValueArray(value);
+	TArray<UInventorySlot*> mapValues;
+	mapRefInventorySlots.GenerateValueArray(mapValues);
 	int32 loopCounter = 0;
 	for (auto& e : iPlayerInventory)
 	{
-		FSlateBrush brush;
-		brush.SetResourceObject(e->currentItemData.itemIcon);
-		for (int i = loopCounter; i <= iPlayerInventory.Num() - 1; i++)
+		if (e->slotData.inventorySlotState == EInventorySlotState::HASITEM)
 		{
+			FSlateBrush brush;
+			brush.SetResourceObject(e->slotData.refItem->currentItemData.itemIcon);
 			//update icon
-			value[i]->refItemIcon->SetBrush(brush);
-			value[i]->refItemIcon->SetBrushSize(FVector2D(45, 45));
+			mapValues[loopCounter]->refItemIcon->SetBrush(brush);
+			mapValues[loopCounter]->refItemIcon->SetBrushSize(FVector2D(45, 45));
 
 			//add item pointer
-			value[i]->slotData.refItem = e;
+			mapValues[loopCounter]->slotData.refItem = e->slotData.refItem;
 		}
 		loopCounter++;
 	}
@@ -201,7 +223,7 @@ void UInventoryWidget::UpdateTooltipData()
 
 
 	//lets find the selected slot data
-	 UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
+	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
 	if (l_currInventorySlot == nullptr)
 	{
 		refTooltipBox->SetVisibility(ESlateVisibility::Hidden);
@@ -209,7 +231,7 @@ void UInventoryWidget::UpdateTooltipData()
 		return;
 	}
 
-	if (l_currInventorySlot->slotData.refItem == nullptr)
+	if (l_currInventorySlot->slotData.inventorySlotState == EInventorySlotState::EMPTY)
 	{
 		refTooltipBox->SetVisibility(ESlateVisibility::Hidden);
 		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot->slotData.refItem == nullptr"));
@@ -218,8 +240,8 @@ void UInventoryWidget::UpdateTooltipData()
 
 	FItemData l_selectedItemData = l_currInventorySlot->slotData.refItem->currentItemData;
 
-	
-		
+
+
 	//update refTextItemName
 	refTextItemName->SetText(l_selectedItemData.itemName);
 	//update refTextItemRarity && update refBorderName, border color
@@ -238,7 +260,7 @@ void UInventoryWidget::UpdateTooltipData()
 		refTextItemRarity->SetText(FText::FromString("UltrA"));
 		break;
 	}
-	
+
 	//update refTExtItemType
 	switch (l_selectedItemData.itemType)
 	{
@@ -272,7 +294,7 @@ void UInventoryWidget::UseSelectedItem()
 		return;
 	}
 	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
-	
+
 	refPlayerCharacter->GetAbilityComponent()->CastAbility(l_currInventorySlot->slotData.slotIndex);
 
 
@@ -292,8 +314,8 @@ void UInventoryWidget::DropSelectedItem()
 		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot == nullptr"));
 		return;
 	}
-	
-	FVector playerLoc =	refPlayerCharacter->GetActorLocation();
+
+	FVector playerLoc = refPlayerCharacter->GetActorLocation();
 	if (refPlayerCharacter->bIsFacingRight)
 	{
 		playerLoc.X += 100;
@@ -303,19 +325,35 @@ void UInventoryWidget::DropSelectedItem()
 		playerLoc.X -= 100;
 	}
 
-	//current problems - it's not removing the icon from inventory and the drop function still works (moves the item) if theres nothing
-	//in the slot
+	//current problem, i want the slot to stay empty until its filled with a new item, not the inventory to be reordered
+	//hmm, for that I think I need to keep the player character array filled with entries and check if the entry slot is empty or has item
+
 	l_currInventorySlot->slotData.refItem->SetActorLocation(playerLoc, true);
 	l_currInventorySlot->slotData.refItem->SetActorHiddenInGame(false);
 	l_currInventorySlot->slotData.refItem->GetCollisionComp()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	
-	refPlayerCharacter->GetInventoryComponent()->DeleteItemFromInventory(l_currInventorySlot->slotData.refItem);
+
+	refPlayerCharacter->GetInventoryComponent()->DeleteItemFromInventory(l_currInventorySlot->slotData.slotIndex);
 	CreateInventorySlots();
 	UpdateItemsFromPlayerInventory(refPlayerCharacter->GetInventoryComponent()->GetItemInventory());
-	
+
 }
 
+int32 UInventoryWidget::GetFirstEmptyInventorySlotIndex()
+{
+	TArray<UInventorySlot*> mapValues;
+	mapRefInventorySlots.GenerateValueArray(mapValues);
+	for (auto& e : mapValues)
+	{
+		if (e->slotData.inventorySlotState == EInventorySlotState::EMPTY)
+		{
+			return e->slotData.slotIndex;
+		}
+	}
+	//inventory apparently is full
+	return -1;
+
+}
 
 
 
