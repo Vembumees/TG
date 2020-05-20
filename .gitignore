@@ -54,7 +54,7 @@ Build/*
 
 # Startercontent
 Content/StarterContent/*
-Content/ParagonCountess/*
+Content/TG/Demo*
 
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/
