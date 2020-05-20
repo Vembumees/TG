@@ -13,6 +13,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include "Components/WidgetComponent.h"
 #include "DrawDebugHelpers.h"
+#include "TG/Controllers/EnemyAIController.h"
 
 ABaseEnemy::ABaseEnemy()
 {
@@ -165,7 +166,7 @@ void ABaseEnemy::CheckForDeath()
 	{
 
 		//play death animation and in 10 seconds fall through the ground and destroy self
-		enemyState = EEnemyCharacterState::DEAD::DEAD;
+		enemyState = EEnemyCharacterState::DEAD;
 		UpdateAnimation();
 
 		//give xp & drop loot?
@@ -271,6 +272,7 @@ void ABaseEnemy::UpdateCharacter()
 
 void ABaseEnemy::LoadAI()
 {
-
+	this->AIControllerClass = AEnemyAIController::StaticClass();
+	this->AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 

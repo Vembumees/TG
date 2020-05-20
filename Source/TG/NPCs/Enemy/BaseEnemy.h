@@ -44,8 +44,8 @@ public:
 
 	EEnemyCharacterState enemyState;
 
-// 	UPROPERTY(EditAnywhere, Category = "Behavior Tree")
-// 		class UBehaviorTree* behaviorTree;
+	UPROPERTY(EditAnywhere, Category = "Behavior Tree")
+		class UBehaviorTree* behaviorTree;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
 		float currentHealth;
