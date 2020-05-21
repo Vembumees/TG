@@ -5,6 +5,8 @@ so includes a bunch of spaghetti code. Currently only been working on it for few
 
 ![First16may2020](https://user-images.githubusercontent.com/38545913/82603706-d00e2900-9bbb-11ea-8158-0c7cc13ba2f3.jpg)
 
+Current features:
+
 basic npc that player can interact and have a dialogue with.
 
 damageable world objects
