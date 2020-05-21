@@ -4,6 +4,7 @@
 #include "BaseEnemy.h"
 #include "TG/TG.h"
 #include "PaperFlipbookComponent.h"
+#include "PaperFlipbook.h"
 #include "Particles/ParticleSystem.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/AudioComponent.h"
@@ -66,6 +67,14 @@ ABaseEnemy::ABaseEnemy()
 void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InitializeVariables();
+}
+
+void ABaseEnemy::InitializeVariables()
+{
+	enemyAI = Cast<AEnemyAIController>(GetController());
+	enemyAI->GetBlackboardComp()->SetValue<UBlackboardKeyType_Float>(enemyAI->waitTime, 1.0f);
 }
 
 void ABaseEnemy::BasicAttackCooldownTimer()
@@ -127,7 +136,16 @@ void ABaseEnemy::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
 
 	//move character a little in opposite direction
 
+
+	//atm have no get hit anim need to make it
+// 	float TimelineLength = hitAnimation->GetNumFrames() / (float)hitAnimation->GetFramesPerSecond();
+// 	FTimerHandle TimerHandle;
+// 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABaseEnemy::HandleHit, TimelineLength - 0.05f * TimelineLength, false);
+
+
+	/*enemyState = EEnemyCharacterState::HIT;*/
 	this->currentHealth -= iBaseDamage;
+	enemyAI->GetBrainComponent()->StopLogic("Hit");
 	UE_LOG(LogTemp, Warning, TEXT("enemy damaged, %i health remaining."), currentHealth);
 	CheckForDeath();
 }
@@ -136,6 +154,8 @@ void ABaseEnemy::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	UpdateCharacter();
+
+	enemyAI->GetBlackboardComp()->SetValue<UBlackboardKeyType_Float>(enemyAI->waitTime, FMath::RandRange(1.0f, 3.0f));
 }
 
 
@@ -146,13 +166,32 @@ void ABaseEnemy::Attack()
 	{
 		//play sound
 
-	
+		float TimelineLength = attackAnimation->GetNumFrames() / (float)attackAnimation->GetFramesPerSecond();
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &ABaseEnemy::HandleAttack, TimelineLength - 0.05f * TimelineLength, false);
+		
+		enemyAI->GetBlackboardComp()->SetValue<UBlackboardKeyType_Bool>(enemyAI->paused, true);
+		enemyState = EEnemyCharacterState::ATTACK;
+	}
+}
+
+void ABaseEnemy::HandleAttack()
+{
+	if (enemyState != EEnemyCharacterState::DEAD && enemyState != EEnemyCharacterState::HIT)
+	{
+		enemyState = EEnemyCharacterState::IDLE;
+		enemyAI->GetBlackboardComp()->SetValue<UBlackboardKeyType_Bool>(enemyAI->paused, false);
 	}
 }
 
 void ABaseEnemy::HandleHit()
 {
-
+	if (currentHealth >= 0.0f && enemyState != EEnemyCharacterState::DEAD)
+	{
+		enemyState = EEnemyCharacterState::IDLE;
+		enemyAI->GetBrainComponent()->RestartLogic();
+		enemyAI->GetBlackboardComp()->SetValue<UBlackboardKeyType_Bool>(enemyAI->paused, false);
+	}
 }
 
 void ABaseEnemy::HandleDestroy()
@@ -164,15 +203,20 @@ void ABaseEnemy::CheckForDeath()
 {
 	if (currentHealth <= 0)
 	{
-
+		this->SetActorEnableCollision(false);
 		//play death animation and in 10 seconds fall through the ground and destroy self
 		enemyState = EEnemyCharacterState::DEAD;
 		UpdateAnimation();
 
 		//give xp & drop loot?
 
-		//here we can add some effect in future for disappearing corpses
-
+		enemyAI->GetBrainComponent()->StopLogic("Dead");
+		GetController()->UnPossess();
+		bMarkedToDestroy = true;
+		float timelineLength = deathAnimation->GetNumFrames() / (float)deathAnimation->GetFramesPerSecond();
+		FTimerHandle baseEnemyTimerHandle;
+		GetWorldTimerManager().SetTimer(baseEnemyTimerHandle, this,
+			&ABaseEnemy::HandleDestroy, timelineLength - (0.05f * timelineLength), false);
 
 	}
 }
@@ -218,6 +262,12 @@ void ABaseEnemy::UpdateAnimation()
 
 		break;
 	}
+
+
+	if (GetSprite()->GetFlipbook() != desiredAnimation)
+	{
+		GetSprite()->SetFlipbook(desiredAnimation);
+	}
 }
 
 void ABaseEnemy::UpdateCharacter()
@@ -235,7 +285,7 @@ void ABaseEnemy::UpdateCharacter()
 
 	if (enemyState == EEnemyCharacterState::RUN || enemyState == EEnemyCharacterState::IDLE)
 	{
-		if (playerSpeedSqr < 0.0f)
+		if (playerSpeedSqr > 0.0f)
 		{
 			enemyState = EEnemyCharacterState::RUN;
 		}

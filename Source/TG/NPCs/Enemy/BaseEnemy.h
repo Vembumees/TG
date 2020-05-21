@@ -40,8 +40,14 @@ public:
 	UFUNCTION()
 		virtual	void Attack();
 
+	UFUNCTION()
+		void HandleAttack();
+
 	virtual void BeginPlay() override;
 
+	void InitializeVariables();
+
+	UPROPERTY(VisibleAnywhere)
 	EEnemyCharacterState enemyState;
 
 	UPROPERTY(EditAnywhere, Category = "Behavior Tree")
@@ -78,7 +84,7 @@ protected:
 
 	bool bMarkedToDestroy;
 
-	/*class ABasicEnemyAI* EnemyAI;*/
+	class AEnemyAIController* enemyAI;
 
 	bool bFacingRight;
 

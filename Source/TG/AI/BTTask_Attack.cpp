@@ -24,9 +24,9 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 
 	ABaseEnemy* refEnemy = Cast<ABaseEnemy>(basicEnemyAI->GetPawn());
 
-	if (refEnemy != nullptr)
+	if (refEnemy != nullptr && refPlayer != nullptr)
 	{
-a		if (refPlayer->GetActorLocation().X >= refEnemy->GetActorLocation().X)
+		if (refPlayer->GetActorLocation().X >= refEnemy->GetActorLocation().X)
 			basicEnemyAI->SetControlRotation(FRotator(0.0f, 180.0f, 0.0f));
 		else
 			basicEnemyAI->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
