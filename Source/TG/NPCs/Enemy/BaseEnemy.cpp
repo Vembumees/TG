@@ -137,7 +137,7 @@ void ABaseEnemy::OnGetDamaged(int32 iBaseDamage, AActor* iAttacker)
 	//move character a little in opposite direction
 
 
-	//atm have no get hit anim need to make it
+//	atm have no get hit anim need to make it
 // 	float TimelineLength = hitAnimation->GetNumFrames() / (float)hitAnimation->GetFramesPerSecond();
 // 	FTimerHandle TimerHandle;
 // 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABaseEnemy::HandleHit, TimelineLength - 0.05f * TimelineLength, false);
@@ -204,6 +204,7 @@ void ABaseEnemy::CheckForDeath()
 	if (currentHealth <= 0)
 	{
 		this->SetActorEnableCollision(false);
+		
 		//play death animation and in 10 seconds fall through the ground and destroy self
 		enemyState = EEnemyCharacterState::DEAD;
 		UpdateAnimation();
@@ -217,6 +218,8 @@ void ABaseEnemy::CheckForDeath()
 		FTimerHandle baseEnemyTimerHandle;
 		GetWorldTimerManager().SetTimer(baseEnemyTimerHandle, this,
 			&ABaseEnemy::HandleDestroy, timelineLength - (0.05f * timelineLength), false);
+
+		//
 
 	}
 }
@@ -241,7 +244,8 @@ void ABaseEnemy::UpdateAnimation()
 	case EEnemyCharacterState::DEAD:
 		if (bMarkedToDestroy)
 		{
-			desiredAnimation = flickeringDeathAnimation;
+			//flickeringdeath
+			desiredAnimation = deathAnimation;
 		}
 		else
 		{

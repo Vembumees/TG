@@ -4,21 +4,11 @@ TODO:
 	
 	
 Notes:
-	11.may 2020
-	So what is the current gameplan? 11.may 2020
-	small metrdoivania style area, Castle of a great powerful mage (Merlin?),
-	where powerful mages from around the world have come to battle eachother with 
-	unique arcane scrolls created by Merlin. Scrolls are found around the castle.
-	Castle is full of monsters, secret areas and mages. Normal magic is almost useless
-	against most of the monsters. Castle's mages are mostly nonhostile and can only be
-	fought in a duel with the scrolls with a dark pact, because that's the only way to
-	obtain their scroll.
 
-	Scrolls = cards.
 
 	
-	#################################################################################################3
-	Where I left off?
+
+Where I left off:
 	
 
 

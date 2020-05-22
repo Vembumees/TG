@@ -13,5 +13,27 @@ UCLASS()
 class TG_API ARangedEnemy : public ABaseEnemy
 {
 	GENERATED_BODY()
-	
+
+public:
+		ARangedEnemy();
+		
+		
+		
+		
+
+
+
+		virtual void Attack() override;
+
+protected:
+	virtual void Tick(float DeltaSeconds) override;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AProjectile> rangedProjectile;
+
+	virtual void LoadAI() override;
+
+
+	virtual void CheckForDeath() override;
+
 };

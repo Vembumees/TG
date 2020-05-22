@@ -102,7 +102,7 @@ protected:
 		void HandleDestroy();
 
 	UFUNCTION()
-		void CheckForDeath();
+		virtual void CheckForDeath();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
 		class USoundCue* footstepSound;
@@ -149,5 +149,5 @@ protected:
 	/** Updates character's basic states */
 	void UpdateCharacter();
 
-	void LoadAI();
+	virtual void LoadAI();
 };
