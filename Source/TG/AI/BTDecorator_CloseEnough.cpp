@@ -18,7 +18,6 @@ bool UBTDecorator_CloseEnough::CalculateRawConditionValue(UBehaviorTreeComponent
 {
 	AEnemyAIController* enemyAIController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
 	AActor* target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(enemyAIController->targetToFollow));
-
 	if (FVector(target->GetActorLocation() - enemyAIController->GetPawn()->GetActorLocation()).Size() >= acceptableDistance)
 	{
 		return true;
