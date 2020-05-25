@@ -25,7 +25,7 @@ public:
 
 		virtual void Attack() override;
 
-protected:
+protected: 
 	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(EditAnywhere)

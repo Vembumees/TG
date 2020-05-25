@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NPCs/Enemy/BaseEnemy.h"
+#include "TG/NPCs/Enemy/BaseEnemy.h"
 #include "flyingSkullRangedEnemy.generated.h"
 
 /**
