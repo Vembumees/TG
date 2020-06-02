@@ -25,10 +25,11 @@ enum class EItemRarity : uint8
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
-	TOME						UMETA(DisplayName = "Card"),
-	TOKEN						UMETA(DisplayName = "Token"),
+	TOME					UMETA(DisplayName = "Card"),
+	TOKEN					UMETA(DisplayName = "Token"),
+	ARTIFACT				UMETA(DisplayName = "Artifact"),
 	SOUL					UMETA(DisplayName = "Soul"),
-	MYSTICAL					UMETA(DisplayName = "Mystical"),
+	MYSTICAL				UMETA(DisplayName = "Mystical"),
 };
 
 USTRUCT(Blueprintable)

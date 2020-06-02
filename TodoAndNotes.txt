@@ -18,6 +18,9 @@ TODO:
 		*inventory slot destroy items on death
 		*inventory slot statuses, frozen, burning, corrupted etc stuff like that (might be cool if it could modify items)
 
+
+		*implement event messages and error messages for world/inventory etc. Like inventory is full. Entered new area and stuff.
+		 already have code in hexproject for this
 	
 	
 	duel mode:

@@ -62,6 +62,19 @@ enum class EInventoryType : uint8
 	SHOP					UMETA(DisplayName = "SHOP"),
 };
 
+UENUM(BlueprintType)
+enum class ESlotType : uint8
+{
+	NORMAL						UMETA(DisplayName = "NORMAL"),
+	ARTIFACT					UMETA(DisplayName = "ARTIFACT"),
+	SLOTTYPE2					UMETA(DisplayName = "SLOTTYPENONE"),
+	SLOTTYPE3					UMETA(DisplayName = "SLOTTYPENONE"),
+	SLOTTYPE4					UMETA(DisplayName = "SLOTTYPENONE"),
+	SLOTTYPE5					UMETA(DisplayName = "SLOTTYPENONE"),
+	SLOTTYPE6					UMETA(DisplayName = "SLOTTYPENONE"),
+};
+
+
 
 UENUM(BlueprintType)
 enum class EMoveDirections : uint8

@@ -83,15 +83,15 @@ void UInventoryWidget::CreateInventorySlots()
 			}
 		}
 		
-		//artifact slots 9-11, 16-18 with current layout (3x7)
+		/*artifact slots 9-11, 16-18 with current layout (3x7)*/
 		if ((i > 8 && i < 12) || (i > 15 && i < 19))
 		{
-			wInvSlot->slotData.bIsArtifactSlot = true;
+			wInvSlot->slotData.slotType = ESlotType::ARTIFACT;
 			wInvSlot->UpdateInventoryButtonBackgroundImage();
 		}
 		
 		wInvSlot->slotData.slotIndex = i;
-		wInvSlot->slotData.slotType = EInventoryType::BAG;
+		wInvSlot->slotData.inventoryType = EInventoryType::BAG;
 		wInvSlot->refSizeBoxSlotSize->SetWidthOverride(invSize);
 		wInvSlot->refSizeBoxSlotSize->SetHeightOverride(invSize);
 
@@ -307,13 +307,48 @@ void UInventoryWidget::UseSelectedItem()
 	}
 	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
 
-	UE_LOG(LogTemp, Warning, TEXT("\n SLOTDATA \n Index: %i \n ArtifactSlot: %i \n slotType: %s"),
+	UE_LOG(LogTemp, Warning, TEXT("\n SLOTDATA \n Index: %i \n slotType: %s \n slotType: %s"),
 		l_currInventorySlot->slotData.slotIndex,
-		l_currInventorySlot->slotData.bIsArtifactSlot,
-		*UStaticLibrary::GetEnumValueAsString("EInventoryType", l_currInventorySlot->slotData.slotType)
+		*UStaticLibrary::GetEnumValueAsString("ESlotType", l_currInventorySlot->slotData.slotType),
+		*UStaticLibrary::GetEnumValueAsString("EInventoryType", l_currInventorySlot->slotData.inventoryType)
 		);
 
-	refPlayerCharacter->GetAbilityComponent()->CastAbility(l_currInventorySlot->slotData.slotIndex);
+	if (l_currInventorySlot->slotData.refItem != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Item Name: %s"),
+			*l_currInventorySlot->slotData.refItem->currentItemData.itemName.ToString()
+		);
+	}
+
+	/*switch, different functionality based on slot types, normal slot, artifact slot, destroyed slot, frozen slot whatever i 
+	might implement in future if i actually keep developing this idea*/
+
+	switch (l_currInventorySlot->slotData.slotType)
+	{
+	case ESlotType::NORMAL:
+
+		/*the check for what kind of item we're using should be done in the abilitycomponent I think?
+		  technically i can make any item interaction into an ability, even reading a book, add skill points
+		  or whatever, but ill mess with that when it comes to it*/
+		
+		refPlayerCharacter->GetAbilityComponent()->CastAbility(l_currInventorySlot->slotData.slotIndex);
+
+
+		break;
+	case ESlotType::ARTIFACT:
+		break;
+	case ESlotType::SLOTTYPE2:
+		break;
+	case ESlotType::SLOTTYPE3:
+		break;
+	case ESlotType::SLOTTYPE4:
+		break;
+	case ESlotType::SLOTTYPE5:
+		break;
+	case ESlotType::SLOTTYPE6:
+		break;
+	}
+	
 
 }
 
@@ -360,7 +395,8 @@ int32 UInventoryWidget::GetFirstEmptyInventorySlotIndex()
 	mapRefInventorySlots.GenerateValueArray(mapValues);
 	for (auto& e : mapValues)
 	{
-		if (e->slotData.inventorySlotState == EInventorySlotState::EMPTY)
+		//will add item if slot is empty and slottype is normal, so we wouldn't add item to artifact or any other slot types
+		if (e->slotData.inventorySlotState == EInventorySlotState::EMPTY && e->slotData.slotType == ESlotType::NORMAL)
 		{
 			return e->slotData.slotIndex;
 		}

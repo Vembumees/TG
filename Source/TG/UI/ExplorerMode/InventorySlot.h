@@ -16,22 +16,22 @@ struct FInventorySlotData
 
 		FInventorySlotData()
 	{
-		slotType = EInventoryType::BAG;
+		inventoryType = EInventoryType::BAG;
+		slotType = ESlotType::NORMAL;
 		slotIndex = 0;
 		bIsSelected = false;
-		bIsArtifactSlot = false;
 		inventorySlotState = EInventorySlotState::EMPTY;
 		refItem = nullptr;
 	}
 
 	UPROPERTY(EditAnywhere)
-		EInventoryType slotType;
+		EInventoryType inventoryType;
+	UPROPERTY(EditAnywhere)
+		ESlotType slotType;
 	UPROPERTY(EditAnywhere)
 		int32 slotIndex;
 	UPROPERTY(EditAnywhere)
 		bool bIsSelected;
-	UPROPERTY(EditAnywhere)
-		bool bIsArtifactSlot;
 	UPROPERTY(EditAnywhere)
 		EInventorySlotState inventorySlotState;
 	UPROPERTY(EditAnywhere)

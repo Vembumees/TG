@@ -31,19 +31,34 @@ void UInventorySlot::UpdateInventoryButtonBackgroundType()
 void UInventorySlot::UpdateInventoryButtonBackgroundImage()
 {
 	FSlateBrush brush;
-	if (slotData.bIsArtifactSlot)
+	switch (slotData.slotType)
 	{
-	  //is artifact
-		brush.SetResourceObject(itemBackgroundImgArtifact);
-		brush.SetImageSize(FVector2D(55, 55));
-		refItemBackground->SetColorAndOpacity(imgBackgroundColorARTIFACT);
-	}
-	else
-	{
-		//normal
+	case ESlotType::NORMAL:
+
 		brush.SetResourceObject(itemBackgroundImgNormal);
 		brush.SetImageSize(FVector2D(42, 42));
 		refItemBackground->SetColorAndOpacity(imgBackgroundColorNormal);
+
+		break;
+	case ESlotType::ARTIFACT:
+
+		brush.SetResourceObject(itemBackgroundImgArtifact);
+		brush.SetImageSize(FVector2D(55, 55));
+		refItemBackground->SetColorAndOpacity(imgBackgroundColorARTIFACT);
+
+		break;
+	case ESlotType::SLOTTYPE2:
+		break;
+	case ESlotType::SLOTTYPE3:
+		break;
+	case ESlotType::SLOTTYPE4:
+		break;
+	case ESlotType::SLOTTYPE5:
+		break;
+	case ESlotType::SLOTTYPE6:
+		break;
+	default:
+		break;
 	}
 
 	
