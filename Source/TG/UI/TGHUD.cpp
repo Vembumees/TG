@@ -17,7 +17,9 @@ void ATGHUD::BeginPlay()
 
 
 
+
 }
+
 
 void ATGHUD::InitializeWidgets()
 {
@@ -70,14 +72,16 @@ void ATGHUD::InitializeReferences()
 
 void ATGHUD::InitializeIngameMenuComponents()
 {
-	UButton* IngameMenuReturnButton = this->refIngameMenu->refReturnGameButton;
+	IngameMenuReturnButton = this->refIngameMenu->refReturnGameButton;
 	IngameMenuReturnButton->OnClicked.AddDynamic(this, &ATGHUD::IngameMenu_ReturnButtonClicked);
+	
 
-	UButton* IngameMenuOptionsButton = this->refIngameMenu->refOptionsButton;
+	IngameMenuOptionsButton = this->refIngameMenu->refOptionsButton;
 	IngameMenuOptionsButton->OnClicked.AddDynamic(this, &ATGHUD::IngameMenu_OptionsButtonClicked);
 
-	UButton* IngameMenuQuitToMenuButton = this->refIngameMenu->refQuitGameButton;
+	IngameMenuQuitToMenuButton = this->refIngameMenu->refQuitGameButton;
 	IngameMenuQuitToMenuButton->OnClicked.AddDynamic(this, &ATGHUD::IngameMenu_QuitButtonClicked);
+
 }
 
 void ATGHUD::IngameMenuToggle()
@@ -96,9 +100,10 @@ void ATGHUD::IngameMenuOpen()
 	UE_LOG(LogTemp, Log, TEXT("OpenIngameMenu()"));
 	checkSlow(refIngameMenu->GetVisibility() == ESlateVisibility::Hidden); //only want to open from closed
 	refIngameMenu->SetVisibility(ESlateVisibility::Visible);
-		refExplorePlayerController->bShowMouseCursor = true;
 		FInputModeUIOnly InputMode;
 		refExplorePlayerController->SetInputMode(InputMode);
+		SetIsFocusable(true);
+		IngameMenuReturnButton->SetKeyboardFocus();
 		UGameplayStatics::SetGamePaused(this, true);
 
 		if (refExplorerModeScreen != nullptr)
@@ -116,9 +121,10 @@ void ATGHUD::IngameMenuClose()
 	checkSlow(refIngameMenu->GetVisibility() == ESlateVisibility::Visible); // only want to closed from open
 	refIngameMenu->SetVisibility(ESlateVisibility::Hidden);
 
-		refExplorePlayerController->bShowMouseCursor = false;
+
 		FInputModeGameOnly InputMode;
 		refExplorePlayerController->SetInputMode(InputMode);
+		SetIsFocusable(false);
 		UGameplayStatics::SetGamePaused(this, false);
 		
 		if (refExplorerModeScreen != nullptr)
@@ -136,6 +142,7 @@ void ATGHUD::IngameMenu_ReturnButtonClicked()
 void ATGHUD::IngameMenu_OptionsButtonClicked()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATGHUD::IngameMenu_OptionsButtonClicked()"));
+	SetIsFocusable(false);
 }
 
 void ATGHUD::IngameMenu_QuitButtonClicked()
@@ -145,4 +152,16 @@ void ATGHUD::IngameMenu_QuitButtonClicked()
 	UGameplayStatics::OpenLevel(
 		this->GetWorld(),
 		NextLevelName);
+
+	SetIsFocusable(false);
+}
+
+void ATGHUD::SetIsFocusable(bool ibIsFocusable)
+{
+	refIngameMenu->bIsFocusable = ibIsFocusable;
+
+	if (ibIsFocusable)
+	{
+		refIngameMenu->SetKeyboardFocus();
+	}
 }

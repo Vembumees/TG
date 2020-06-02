@@ -41,4 +41,6 @@ protected:
 	FName mapDemo = TEXT("MapDemoLevel");
 	FName mapLevel1 = TEXT("map_Level1");
 	FName mapLevel2 = TEXT("map_Level2");
+
+	void SetIsFocusable(bool ibIsFocusable);
 };

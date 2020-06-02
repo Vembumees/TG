@@ -54,9 +54,20 @@ protected:
 		TSubclassOf<class UExplorerModeScreen> ExplorerModeScreenClass;
 
 
+	void SetIsFocusable(bool ibIsFocusable);
+
+
 	/* ###########################################################
 						widgets refs
 	 ########################################################### */
+
+	class UButton* IngameMenuReturnButton;
+
+	class UButton* IngameMenuOptionsButton;
+
+	class UButton* IngameMenuQuitToMenuButton;
+
+
 
 	class UIngameMenu* refIngameMenu;
 	class UIngameInventoryMenu* refIngameInventoryMenu;
