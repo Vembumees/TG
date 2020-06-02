@@ -19,6 +19,7 @@ struct FInventorySlotData
 		slotType = EInventoryType::BAG;
 		slotIndex = 0;
 		bIsSelected = false;
+		bIsArtifactSlot = false;
 		inventorySlotState = EInventorySlotState::EMPTY;
 		refItem = nullptr;
 	}
@@ -29,6 +30,8 @@ struct FInventorySlotData
 		int32 slotIndex;
 	UPROPERTY(EditAnywhere)
 		bool bIsSelected;
+	UPROPERTY(EditAnywhere)
+		bool bIsArtifactSlot;
 	UPROPERTY(EditAnywhere)
 		EInventorySlotState inventorySlotState;
 	UPROPERTY(EditAnywhere)
@@ -64,8 +67,20 @@ public:
 	class UPaperSprite* itemBackgroundNormal;
 	UPROPERTY(EditAnywhere)
 	class UPaperSprite* itemBackgroundSelected;
+
+	UPROPERTY(EditAnywhere)
+		class UTexture2D* itemBackgroundImgNormal;
+	UPROPERTY(EditAnywhere)
+		class UTexture2D* itemBackgroundImgArtifact;
+
+	UPROPERTY(EditAnywhere)
+		FLinearColor imgBackgroundColorARTIFACT;
+	UPROPERTY(EditAnywhere)
+		FLinearColor imgBackgroundColorNormal;
 	
 	void UpdateInventoryButtonBackgroundType();
+
+	void UpdateInventoryButtonBackgroundImage();
 
 
 

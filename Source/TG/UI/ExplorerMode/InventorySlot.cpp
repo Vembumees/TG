@@ -28,11 +28,34 @@ void UInventorySlot::UpdateInventoryButtonBackgroundType()
 
 
 
+void UInventorySlot::UpdateInventoryButtonBackgroundImage()
+{
+	FSlateBrush brush;
+	if (slotData.bIsArtifactSlot)
+	{
+	  //is artifact
+		brush.SetResourceObject(itemBackgroundImgArtifact);
+		brush.SetImageSize(FVector2D(55, 55));
+		refItemBackground->SetColorAndOpacity(imgBackgroundColorARTIFACT);
+	}
+	else
+	{
+		//normal
+		brush.SetResourceObject(itemBackgroundImgNormal);
+		brush.SetImageSize(FVector2D(42, 42));
+		refItemBackground->SetColorAndOpacity(imgBackgroundColorNormal);
+	}
+
+	
+	refItemBackground->SetBrush(brush);
+}
+
 void UInventorySlot::NativeConstruct()
 {
 	Super::NativeConstruct();
 	InitializeRefsInBP();
 	UpdateInventoryButtonBackgroundType();
+	UpdateInventoryButtonBackgroundImage();
 }
 
 void UInventorySlot::NativePreConstruct()

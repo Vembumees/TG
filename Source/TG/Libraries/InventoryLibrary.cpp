@@ -26,12 +26,14 @@ float UInventoryLibrary::GetInventorySlotSize(EInventoryType iInventoryType)
 
 FInventoryGridRowsColumns UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType iInventoryType)
 {
+	//if i change these i also need to consider that getstartingslot doesnt divide properly with odd/even numbers and i need to change the
+	//formula there depending on odd or even or change the logic.
 	FInventoryGridRowsColumns l_invSize;
 	switch (iInventoryType)
 	{
 	case EInventoryType::BAG:
 		l_invSize.rows = 3;
-		l_invSize.columns = 3;
+		l_invSize.columns = 7;
 		break;
 	case EInventoryType::CHEST:
 		l_invSize.rows = 4;

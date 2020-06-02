@@ -230,6 +230,10 @@ protected:
 	/* ###########################################################
 						Debug 
 	 ########################################################### */
+	//if i use this stuff a lot i should make static console command for this
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bIsInDebugMode;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float InteractRange;

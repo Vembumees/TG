@@ -123,6 +123,7 @@ ATGCharacter::ATGCharacter()
 	BasicAttackTraceSpread = 0.5;
 	BasicAttackCooldown = 0.3f;
 	bDidJustBasicAttack = false;
+	bIsInDebugMode = false;
 
 
 	 /* #########################END############################## */
@@ -221,7 +222,7 @@ void ATGCharacter::DealDamage()
 		FCollisionQueryParams TraceParams;
 		TraceParams.AddIgnoredActor(this);
 		TraceParams.bTraceComplex = true;
-		DrawDebugLine(GetWorld(), Start, End, FColor::Green , false, 1.0f, 0, 3.0f);
+		
 		FHitResult HitResult = FHitResult(ForceInit);
 		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_WorldDynamic, TraceParams))
 		{
@@ -247,6 +248,11 @@ void ATGCharacter::DealDamage()
 					}
 				}
 			}
+		}
+
+		if (bIsInDebugMode)
+		{
+			DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 3.0f);
 		}
 	}
 }
@@ -482,7 +488,6 @@ void ATGCharacter::Interact()
 		FCollisionQueryParams TraceParams;
 		TraceParams.AddIgnoredActor(this);
 		TraceParams.bTraceComplex = true;
-		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 3.0f);
 		FHitResult HitResult = FHitResult(ForceInit);
 		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_WorldDynamic, TraceParams))
 		{
@@ -508,6 +513,11 @@ void ATGCharacter::Interact()
 					}
 				}
 			}
+		}
+
+		if (bIsInDebugMode)
+		{
+			DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 3.0f);
 		}
 	}
 }

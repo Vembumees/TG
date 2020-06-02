@@ -17,6 +17,7 @@
 #include "PaperSprite.h"
 #include "TG/Components/AbilityComponent.h"
 #include "Components/BoxComponent.h"
+#include "TG/StaticLibrary.h"
 
 void UInventoryWidget::NativeConstruct()
 {
@@ -45,7 +46,7 @@ void UInventoryWidget::NativePreConstruct()
 
 void UInventoryWidget::CreateInventorySlots()
 {
-	if (refInventoryGridPanel == nullptr)
+	if (refInventoryGridPanel == nullptr || refPlayerCharacter == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UInventoryWidget::CreateInventorySlots() refInventoryGridPanel == nullptr"));
 		return;
@@ -81,14 +82,23 @@ void UInventoryWidget::CreateInventorySlots()
 				wInvSlot->slotData.refItem = slotOld[i]->slotData.refItem;
 			}
 		}
-
+		
+		//artifact slots 9-11, 16-18 with current layout (3x7)
+		if ((i > 8 && i < 12) || (i > 15 && i < 19))
+		{
+			wInvSlot->slotData.bIsArtifactSlot = true;
+			wInvSlot->UpdateInventoryButtonBackgroundImage();
+		}
+		
 		wInvSlot->slotData.slotIndex = i;
 		wInvSlot->slotData.slotType = EInventoryType::BAG;
 		wInvSlot->refSizeBoxSlotSize->SetWidthOverride(invSize);
 		wInvSlot->refSizeBoxSlotSize->SetHeightOverride(invSize);
 
+		
 		//add inventory slot reference to the player's inventory component
 		refPlayerCharacter->GetInventoryComponent()->refItemInventory.Add(wInvSlot);
+		
 	}
 
 	HighlightSelectedSlot();
@@ -175,22 +185,26 @@ void UInventoryWidget::SelectNeighbourSlot(FVector2D iTarget)
 void UInventoryWidget::GetStartingSlot()
 {
 	//makes the selection start somewhere from the middle, not really accurate and well thought out, good enough
-	float l_column = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns;
-	float l_rows = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows;
-	l_column = FMath::RoundHalfToEven(l_column / 2);
-	l_rows = FMath::RoundHalfToEven(l_rows / 2);
+// 	float l_column = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns;
+// 	float l_rows = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows;
+// 	l_column = FMath::RoundHalfToEven(l_column / 2);
+// 	l_rows = FMath::RoundHalfToEven(l_rows / 2);
+// 
+// 	//this is just so that with 3x3 selection would be in the middle, there's probably a proper math formula for this
+// 	l_column -= 1;
+// 	l_rows -= 1;
+// 
+// 	//clamp it so it doesnt go over the column/row sizes, this function needs const parameters so making temp consts
+// 	const int32 l_tmpClmn = l_column;
+// 	const int32 l_tmpRows = l_rows;
+// 	l_column = FMath::Clamp(l_tmpClmn, 0, UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns);
+// 	l_rows = FMath::Clamp(l_tmpRows, 0, UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows);
+// 	FVector2D midVec = FVector2D(l_column, l_rows);
+// 	currentlyActiveSlot = midVec; //replace this
+	
 
-	//this is just so that with 3x3 selection would be in the middle, there's probably a proper math formula for this
-	l_column -= 1;
-	l_rows -= 1;
-
-	//clamp it so it doesnt go over the column/row sizes, this function needs const parameters so making temp consts
-	const int32 l_tmpClmn = l_column;
-	const int32 l_tmpRows = l_rows;
-	l_column = FMath::Clamp(l_tmpClmn, 0, UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns);
-	l_rows = FMath::Clamp(l_tmpRows, 0, UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows);
-	FVector2D midVec = FVector2D(l_column, l_rows);
-	currentlyActiveSlot = midVec; //replace this
+	//above stuff is attempt to make it start from middle but it breaks with certain sizes, fk it just starts in 0, simple
+	currentlyActiveSlot = FVector2D(0,0);
 }
 
 void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class UInventorySlot*> iPlayerInventory)
@@ -293,10 +307,13 @@ void UInventoryWidget::UseSelectedItem()
 	}
 	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
 
+	UE_LOG(LogTemp, Warning, TEXT("\n SLOTDATA \n Index: %i \n ArtifactSlot: %i \n slotType: %s"),
+		l_currInventorySlot->slotData.slotIndex,
+		l_currInventorySlot->slotData.bIsArtifactSlot,
+		*UStaticLibrary::GetEnumValueAsString("EInventoryType", l_currInventorySlot->slotData.slotType)
+		);
+
 	refPlayerCharacter->GetAbilityComponent()->CastAbility(l_currInventorySlot->slotData.slotIndex);
-
-
-
 
 }
 
