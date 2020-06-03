@@ -135,7 +135,7 @@ void UInventoryWidget::InitializeRefs()
 
 void UInventoryWidget::MoveInInventory(EMoveDirections iMoveDir)
 {
-	FVector2D l_targetDirection = currentlyActiveSlot;
+	FVector2D l_targetDirection = currentlyActiveSlotCoord;
 	switch (iMoveDir)
 	{
 	case EMoveDirections::UP:
@@ -168,22 +168,22 @@ void UInventoryWidget::MoveInInventory(EMoveDirections iMoveDir)
 
 void UInventoryWidget::HighlightSelectedSlot()
 {
-	UInventorySlot* l_ref = *mapRefInventorySlots.Find(currentlyActiveSlot);
+	UInventorySlot* l_ref = *mapRefInventorySlots.Find(currentlyActiveSlotCoord);
 	l_ref->slotData.bIsSelected = true;
 	l_ref->UpdateInventoryButtonBackgroundType();
 }
 
 void UInventoryWidget::DeHighlightLastSelectedSlot()
 {
-	UInventorySlot* l_ref = *mapRefInventorySlots.Find(lastActiveSlot);
+	UInventorySlot* l_ref = *mapRefInventorySlots.Find(lastActiveSlotCoord);
 	l_ref->slotData.bIsSelected = false;
 	l_ref->UpdateInventoryButtonBackgroundType();
 }
 
 void UInventoryWidget::SelectNeighbourSlot(FVector2D iTarget)
 {
-	lastActiveSlot = currentlyActiveSlot;
-	currentlyActiveSlot = iTarget;
+	lastActiveSlotCoord = currentlyActiveSlotCoord;
+	currentlyActiveSlotCoord = iTarget;
 	DeHighlightLastSelectedSlot();
 	HighlightSelectedSlot();
 	UpdateTooltipData();
@@ -211,7 +211,7 @@ void UInventoryWidget::GetStartingSlot()
 	
 
 	//above stuff is attempt to make it start from middle but it breaks with certain sizes, fk it just starts in 0, simple
-	currentlyActiveSlot = FVector2D(0,0);
+	currentlyActiveSlotCoord = FVector2D(0,0);
 }
 
 void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class UInventorySlot*> iPlayerInventory)
@@ -242,7 +242,7 @@ void UInventoryWidget::UpdateTooltipData()
 
 
 	//lets find the selected slot data
-	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
+	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlotCoord);
 	if (l_currInventorySlot == nullptr)
 	{
 		refTooltipBox->SetVisibility(ESlateVisibility::Hidden);
@@ -308,11 +308,11 @@ void UInventoryWidget::UpdateTooltipData()
 void UInventoryWidget::UseSelectedItem()
 {
 	//lets find the selected slot data
-	if (!mapRefInventorySlots.Contains(currentlyActiveSlot))
+	if (!mapRefInventorySlots.Contains(currentlyActiveSlotCoord))
 	{
 		return;
 	}
-	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
+	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlotCoord);
 
 	UE_LOG(LogTemp, Warning, TEXT("\n SLOTDATA \n Index: %i \n slotType: %s \n slotType: %s"),
 		l_currInventorySlot->slotData.slotIndex,
@@ -365,11 +365,11 @@ void UInventoryWidget::UseSelectedItem()
 
 void UInventoryWidget::DropSelectedItem()
 {
-	if (!mapRefInventorySlots.Contains(currentlyActiveSlot))
+	if (!mapRefInventorySlots.Contains(currentlyActiveSlotCoord))
 	{
 		return;
 	}
-	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
+	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlotCoord);
 	if (l_currInventorySlot == nullptr || l_currInventorySlot->slotData.refItem == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot == nullptr"));
@@ -403,13 +403,14 @@ void UInventoryWidget::DropSelectedItem()
 void UInventoryWidget::InventoryMoveActionSelectedItem()
 {
 	
-	if (!mapRefInventorySlots.Contains(currentlyActiveSlot))
+	if (!mapRefInventorySlots.Contains(currentlyActiveSlotCoord))
 	{
 		return;
 	}
 
-	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
-
+	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlotCoord);
+	UInventorySlot* l_lastInventorySlot = *mapRefInventorySlots.Find(lastSelectedItemForMoveSlotCoord);
+	
 	/*if we are not doing move action, select item to be moved*/
 	if (!bAreWeDoingAMoveAction)
 	{
@@ -419,6 +420,16 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 			UE_LOG(LogTemp, Warning, TEXT("There is nothing in slot"));
 			return;
 		}
+
+		//set selected item opacity lower
+		FLinearColor l_slotColor;
+		l_slotColor = l_currInventorySlot->refItemIcon->ColorAndOpacity;
+		l_oldSlotColor = l_slotColor;
+		l_slotColor = l_slotColor.CopyWithNewOpacity(0.2);
+		l_currInventorySlot->refItemIcon->SetColorAndOpacity(l_slotColor);
+
+		//store the coordinate of this selected slot, atm need it to switch the opacity back in the old slot
+		lastSelectedItemForMoveSlotCoord = currentlyActiveSlotCoord;
 
 		//store index of the slot we want to do the move action on
 		bAreWeDoingAMoveAction = true;
@@ -439,6 +450,7 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem() item we're attempting to move has been deleted/dropped"));
 			bAreWeDoingAMoveAction = false;
+			l_lastInventorySlot->refItemIcon->SetColorAndOpacity(l_oldSlotColor);
 			return;
 		}
 
@@ -449,7 +461,7 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem()  can't move item to inventory slot, return"));
 			bAreWeDoingAMoveAction = false;
-			//also disable the opacity when i do it later TODO !!
+			l_lastInventorySlot->refItemIcon->SetColorAndOpacity(l_oldSlotColor);
 			return;
 		}
 
@@ -464,6 +476,8 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 			refPlayerCharacter->GetInventoryComponent()->SwapItemInInventory(currentlySelectedItemForMoveIndex, destinationSlotIdx);
 			bAreWeDoingAMoveAction = false;
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem()  swapped item successfully"));
+			l_lastInventorySlot->refItemIcon->SetColorAndOpacity(l_oldSlotColor);
+			return;
 		}
 
 

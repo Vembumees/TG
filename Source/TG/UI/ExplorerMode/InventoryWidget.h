@@ -105,10 +105,11 @@ protected:
 	//inventory selection what do i need to do
 	//move up/down/left/right, add the selected img on selected one and normal one on last.
 
-	FVector2D currentlyActiveSlot;
-	FVector2D lastActiveSlot;
+	FVector2D currentlyActiveSlotCoord;
+	FVector2D lastActiveSlotCoord;
 
 	int32 currentlySelectedItemForMoveIndex;
+	FVector2D lastSelectedItemForMoveSlotCoord;
 
 	//Making 2 of these instead of one function with inputs because i think this is a little bit easier to understand
 	void HighlightSelectedSlot();
@@ -135,6 +136,6 @@ protected:
 public:
 	int32 GetFirstEmptyInventorySlotIndex();
 
-
-
+	private:
+		FLinearColor l_oldSlotColor;
 };
