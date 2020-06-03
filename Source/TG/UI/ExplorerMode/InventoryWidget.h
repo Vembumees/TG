@@ -80,6 +80,11 @@ public:
 	UPROPERTY()
 		class AExploreController* refExplorePlayerController;
 
+
+	int32 GetCurrentlySelectedItemForMoveIndex() { return currentlySelectedItemForMoveIndex; }
+	int32 GetCurrentlySelectedSlotIndex();
+	void RefreshInventorySlots();
+
 protected:
 	virtual void NativeConstruct() override;
 

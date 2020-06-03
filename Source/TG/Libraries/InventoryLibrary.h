@@ -11,10 +11,10 @@
 
 
 USTRUCT(BlueprintType)
-struct FInventoryGridRowsColumns
+struct FInventoryGridData
 {
 	GENERATED_BODY()
-		FInventoryGridRowsColumns() 
+		FInventoryGridData() 
 	{
 		columns = 0;
 		rows = 0;
@@ -24,6 +24,9 @@ struct FInventoryGridRowsColumns
 
 	UPROPERTY(EditAnywhere)
 		int32 rows;
+
+	UPROPERTY(EditAnywhere)
+		TArray<int32> artifactIndexes;
 };
 
 /**
@@ -39,6 +42,6 @@ public:
 		static float GetInventorySlotSize(EInventoryType iInventoryType);
 
 	UFUNCTION()
-		static FInventoryGridRowsColumns GetInventoryGridRowsColumns(EInventoryType iInventoryType);
+		static FInventoryGridData GetInventoryGridData(EInventoryType iInventoryType);
 
 };

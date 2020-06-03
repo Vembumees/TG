@@ -8,6 +8,7 @@
 #include "TG/StaticLibrary.h"
 #include "TG/Projectiles/Projectile.h"
 #include "TG/UI/ExplorerMode/InventorySlot.h"
+#include "TG/UI/ExplorerMode/InventoryWidget.h"
 
 // Sets default values for this component's properties
 UAbilityComponent::UAbilityComponent()
@@ -180,22 +181,11 @@ void UAbilityComponent::CastAbility(int32 iIndex)
 
 
 		/* when we actually make it into making a game, equiping artifacts should only be able to be done at a gameplay altar or npc,
-		but atm we make it a normal inventory interaction.
+		but atm we make it a normal inventory interaction.*/
+		UInventoryWidget* refInvWidget = refTGCharacter->GetInventoryComponent()->refInventoryWidget;
 		
-		equip item, so what it means is
-		  add the item to first available artifact slot
-		  if slots full, show message/log and do nothing.
-		  
-		  OR or BOTH
-
-		  manually move the item to the artifact slot
-		  select item
-		  select slot to move it to 
-		  and artifacts can only go to artifact slots or normal slots
-		  if chosen slot already has an item switch places with it
-		  
-		  i need to implement the second part anyways so we can do it now? or later?*/
-
+		refTGCharacter->GetInventoryComponent()->AddItemToArtifactSlot(refInvWidget->GetCurrentlySelectedSlotIndex());
+		refInvWidget->RefreshInventorySlots();
 
 		break;
 	}

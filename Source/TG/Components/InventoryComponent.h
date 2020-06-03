@@ -40,7 +40,9 @@ public:
 
 	void MoveItemToAnotherSlot(int32 iStartIdx, int32 iDestinationIdx);
 
-	bool CheckIfSlotItemIsStillValid(int32 iIdx);
+	bool CheckIfSlotHasItem(int32 iIdx);
+
+	void AddItemToArtifactSlot(int32 iIdx);
 	
 	TArray<class UInventorySlot*> GetItemInventory();
 

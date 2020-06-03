@@ -7,6 +7,7 @@
 #include "TG/UI/ExplorerMode/InventorySlot.h"
 #include "TG/UI/ExplorerMode/InventoryWidget.h"
 #include "TG/UI/ExplorerMode/ExplorerModeScreen.h"
+#include "TG/Libraries/InventoryLibrary.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -96,7 +97,7 @@ void UInventoryComponent::MoveItemToAnotherSlot(int32 iStartIdx, int32 iDestinat
 	delegateInventoryUpdate.Broadcast(refItemInventory);
 }
 
-bool UInventoryComponent::CheckIfSlotItemIsStillValid(int32 iIdx)
+bool UInventoryComponent::CheckIfSlotHasItem(int32 iIdx)
 {
 	if (refItemInventory[iIdx]->slotData.refItem == nullptr)
 	{
@@ -107,6 +108,30 @@ bool UInventoryComponent::CheckIfSlotItemIsStillValid(int32 iIdx)
 		return true;
 	}
 
+}
+
+void UInventoryComponent::AddItemToArtifactSlot(int32 iCurrentItemSlotIdx)
+{
+	TArray<int32> l_artifactIndexes = UInventoryLibrary::GetInventoryGridData(EInventoryType::BAG).artifactIndexes;
+	//get first free artifact slot
+	bool doOnce = true;
+	for (auto& e : l_artifactIndexes)
+	{		
+		if (!CheckIfSlotHasItem(e) && doOnce)
+		{
+			//move item to artifact slot
+			refItemInventory[e]->slotData.refItem = refItemInventory[iCurrentItemSlotIdx]->slotData.refItem;
+			refItemInventory[e]->slotData.inventorySlotState = EInventorySlotState::HASITEM;
+			doOnce = false;
+		}
+	}
+	
+	//delete old slot
+	refItemInventory[iCurrentItemSlotIdx]->slotData.refItem = nullptr;
+	refItemInventory[iCurrentItemSlotIdx]->slotData.inventorySlotState = EInventorySlotState::EMPTY;
+
+
+	delegateInventoryUpdate.Broadcast(refItemInventory);
 }
 
 TArray<class UInventorySlot*> UInventoryComponent::GetItemInventory()

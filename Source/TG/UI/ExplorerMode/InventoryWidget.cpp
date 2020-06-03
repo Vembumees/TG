@@ -19,6 +19,8 @@
 #include "Components/BoxComponent.h"
 #include "TG/StaticLibrary.h"
 
+
+
 void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -58,8 +60,9 @@ void UInventoryWidget::CreateInventorySlots()
 		return;
 	}
 	TArray<UInventorySlot*> slotOld = refPlayerCharacter->GetInventoryComponent()->refItemInventory;
-	int32 l_column = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).columns;
-	int32 l_rows = UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType::BAG).rows;
+	int32 l_column = UInventoryLibrary::GetInventoryGridData(EInventoryType::BAG).columns;
+	int32 l_rows = UInventoryLibrary::GetInventoryGridData(EInventoryType::BAG).rows;
+	TArray<int32> l_artifactIndexes = UInventoryLibrary::GetInventoryGridData(EInventoryType::BAG).artifactIndexes;
 	int32 l_nrOfSlots = (l_rows * l_column) - 1;
 	mapRefInventorySlots.Empty();
 	refPlayerCharacter->GetInventoryComponent()->refItemInventory.Empty();
@@ -89,25 +92,39 @@ void UInventoryWidget::CreateInventorySlots()
 			}
 		}
 		
-		/*artifact slots 9-11, 16-18 with current layout (3x7)*/
-		if ((i > 8 && i < 12) || (i > 15 && i < 19))
+		//gets hardcoded inventory slots from the library, i dont like the for here, but since the array should just have 0-10 entries
+		//i think its ok
+		for (auto& e : l_artifactIndexes)
 		{
-			wInvSlot->slotData.slotType = ESlotType::ARTIFACT;
-			wInvSlot->UpdateInventoryButtonBackgroundImage();
-
+			if (i == e)
+			{
+				wInvSlot->slotData.slotType = ESlotType::ARTIFACT;
+				wInvSlot->UpdateInventoryButtonBackgroundImage();
+			}
 		}
 		
 		wInvSlot->slotData.slotIndex = i;
 		wInvSlot->slotData.inventoryType = EInventoryType::BAG;
 		wInvSlot->refWSizeBoxSlotSize->SetWidthOverride(invSize);
 		wInvSlot->refWSizeBoxSlotSize->SetHeightOverride(invSize);
-
 		
 		//add inventory slot reference to the player's inventory component
 		refPlayerCharacter->GetInventoryComponent()->refItemInventory.Add(wInvSlot);
 	}
 
 	HighlightSelectedSlot();
+}
+
+int32 UInventoryWidget::GetCurrentlySelectedSlotIndex()
+{
+	UInventorySlot* l_invSlot = *mapRefInventorySlots.Find(currentlyActiveSlotCoord);
+	return l_invSlot->slotData.slotIndex;
+}
+
+void UInventoryWidget::RefreshInventorySlots()
+{
+	UE_LOG(LogTemp, Error, TEXT("UInventoryWidget::RefreshInventorySlots()"));
+	CreateInventorySlots();
 }
 
 void UInventoryWidget::InitializeWithTimer()
@@ -295,6 +312,11 @@ void UInventoryWidget::UpdateTooltipData()
 	case EItemType::MYSTICAL:
 		refTextItemType->SetText(FText::FromString("mystical"));
 		break;
+	case EItemType::ARTIFACT:
+		refTextItemType->SetText(FText::FromString("artifact"));
+		break;
+	default:
+		break;
 	}
 	//update refTextItemDescription
 	refTextItemDescription->SetText(FText::FromString(l_selectedItemData.itemDescription));
@@ -335,17 +357,12 @@ void UInventoryWidget::UseSelectedItem()
 	case ESlotType::NORMAL:
 
 		/*the check what kind of item we are using we're doing in the abilitycomp, including equiping items etc*/
-
-	
 		
 		refPlayerCharacter->GetAbilityComponent()->CastAbility(l_currInventorySlot->slotData.slotIndex);
 
 
 		break;
 	case ESlotType::ARTIFACT:
-
-		/*if artifact is usable, here goes the use call. I want to make that artifacts can be equippe or removed only in a gameplay
-		trigger like npc or altar so unneccesary to implement atm*/
 
 		break;
 	case ESlotType::SLOTTYPE2:
@@ -393,7 +410,7 @@ void UInventoryWidget::DropSelectedItem()
 	l_currInventorySlot->slotData.refItem->SetActorHiddenInGame(false);
 	l_currInventorySlot->slotData.refItem->GetCollisionComp()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	CreateInventorySlots();
+	RefreshInventorySlots();
 	refPlayerCharacter->GetInventoryComponent()->DeleteItemFromInventory(l_currInventorySlot->slotData.slotIndex);
 	
 	
@@ -447,7 +464,7 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		}
 
 		//check if item that we want to move has been removed from the inventory before the swap
-		if (!refPlayerCharacter->GetInventoryComponent()->CheckIfSlotItemIsStillValid(currentlySelectedItemForMoveIndex))
+		if (!refPlayerCharacter->GetInventoryComponent()->CheckIfSlotHasItem(currentlySelectedItemForMoveIndex))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem() item we're attempting to move has been deleted/dropped"));
 			bAreWeDoingAMoveAction = false;
@@ -469,10 +486,6 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		/*check if there already is an item in the slot, if there is, swap items*/
 		if (l_currInventorySlot->slotData.refItem != nullptr)
 		{
-			
-			//swap the item reference
-			
-
 			//does the swap logic inside the inventory component
 			refPlayerCharacter->GetInventoryComponent()->SwapItemInInventory(currentlySelectedItemForMoveIndex, destinationSlotIdx);
 			bAreWeDoingAMoveAction = false;
@@ -485,9 +498,9 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		/*if slot is empty, move item to the slot*/
 		if (l_currInventorySlot->slotData.refItem == nullptr)
 		{
+			RefreshInventorySlots();
 			refPlayerCharacter->GetInventoryComponent()->MoveItemToAnotherSlot(currentlySelectedItemForMoveIndex, destinationSlotIdx);
-			CreateInventorySlots();
-			refPlayerCharacter->GetInventoryComponent()->DeleteItemFromInventory(l_lastInventorySlot->slotData.slotIndex);
+			
 
 			bAreWeDoingAMoveAction = false;
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem() moved item successfully."));
@@ -496,8 +509,6 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		}
 
 
-		
-		
 	}
 
 }

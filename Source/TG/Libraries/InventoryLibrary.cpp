@@ -24,16 +24,29 @@ float UInventoryLibrary::GetInventorySlotSize(EInventoryType iInventoryType)
 	return l_slotSize;
 }
 
-FInventoryGridRowsColumns UInventoryLibrary::GetInventoryGridRowsColumns(EInventoryType iInventoryType)
+FInventoryGridData UInventoryLibrary::GetInventoryGridData(EInventoryType iInventoryType)
 {
 	//if i change these i also need to consider that getstartingslot doesnt divide properly with odd/even numbers and i need to change the
 	//formula there depending on odd or even or change the logic.
-	FInventoryGridRowsColumns l_invSize;
+	FInventoryGridData l_invSize;
 	switch (iInventoryType)
 	{
 	case EInventoryType::BAG:
 		l_invSize.rows = 3;
 		l_invSize.columns = 7;
+
+		//artifact/equipment indexes, if i actually want to make these slots modifyable this way i just have to replace magic numbers
+		for (int i = 9; i <= 11; i++)
+		{
+			l_invSize.artifactIndexes.Add(i);
+		}
+
+		for (int i = 16; i <= 18; i++)
+		{
+			l_invSize.artifactIndexes.Add(i);
+		}
+		
+
 		break;
 	case EInventoryType::CHEST:
 		l_invSize.rows = 4;
