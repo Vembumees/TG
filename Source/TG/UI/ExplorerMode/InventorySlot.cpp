@@ -16,13 +16,13 @@ void UInventorySlot::UpdateInventoryButtonBackgroundType()
 	{
 		//is selected
 		brush.SetResourceObject(itemBackgroundSelected);
-		refBorderSingleSlot->SetBrush(brush);
+		refWBorderSingleSlot->SetBrush(brush);
 	}
 	else
 	{
 		//normal
 		brush.SetResourceObject(itemBackgroundNormal);
-		refBorderSingleSlot->SetBrush(brush);
+		refWBorderSingleSlot->SetBrush(brush);
 	}
 }
 
@@ -37,14 +37,14 @@ void UInventorySlot::UpdateInventoryButtonBackgroundImage()
 
 		brush.SetResourceObject(itemBackgroundImgNormal);
 		brush.SetImageSize(FVector2D(42, 42));
-		refItemBackground->SetColorAndOpacity(imgBackgroundColorNormal);
+		refWItemBackground->SetColorAndOpacity(imgBackgroundColorNormal);
 
 		break;
 	case ESlotType::ARTIFACT:
 
 		brush.SetResourceObject(itemBackgroundImgArtifact);
 		brush.SetImageSize(FVector2D(55, 55));
-		refItemBackground->SetColorAndOpacity(imgBackgroundColorARTIFACT);
+		refWItemBackground->SetColorAndOpacity(imgBackgroundColorARTIFACT);
 
 		break;
 	case ESlotType::SLOTTYPE2:
@@ -62,7 +62,7 @@ void UInventorySlot::UpdateInventoryButtonBackgroundImage()
 	}
 
 	
-	refItemBackground->SetBrush(brush);
+	refWItemBackground->SetBrush(brush);
 }
 
 void UInventorySlot::NativeConstruct()

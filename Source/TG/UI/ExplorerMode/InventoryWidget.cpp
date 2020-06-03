@@ -99,8 +99,8 @@ void UInventoryWidget::CreateInventorySlots()
 		
 		wInvSlot->slotData.slotIndex = i;
 		wInvSlot->slotData.inventoryType = EInventoryType::BAG;
-		wInvSlot->refSizeBoxSlotSize->SetWidthOverride(invSize);
-		wInvSlot->refSizeBoxSlotSize->SetHeightOverride(invSize);
+		wInvSlot->refWSizeBoxSlotSize->SetWidthOverride(invSize);
+		wInvSlot->refWSizeBoxSlotSize->SetHeightOverride(invSize);
 
 		
 		//add inventory slot reference to the player's inventory component
@@ -227,8 +227,8 @@ void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class UInventorySlo
 			FSlateBrush brush;
 			brush.SetResourceObject(e->slotData.refItem->currentItemData.itemIcon);
 			//update icon
-			mapValues[loopCounter]->refItemIcon->SetBrush(brush);
-			mapValues[loopCounter]->refItemIcon->SetBrushSize(FVector2D(45, 45));
+			mapValues[loopCounter]->refWItemIcon->SetBrush(brush);
+			mapValues[loopCounter]->refWItemIcon->SetBrushSize(FVector2D(45, 45));
 
 			//add item pointer
 			mapValues[loopCounter]->slotData.refItem = e->slotData.refItem;
@@ -410,12 +410,13 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 
 	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlotCoord);
 	UInventorySlot* l_lastInventorySlot = *mapRefInventorySlots.Find(lastSelectedItemForMoveSlotCoord);
-	
+	int32 destinationSlotIdx = l_currInventorySlot->slotData.slotIndex;
+
 	/*if we are not doing move action, select item to be moved*/
 	if (!bAreWeDoingAMoveAction)
 	{
 		//if there is nothing in slot, return
-		if (l_currInventorySlot == nullptr || l_currInventorySlot->slotData.refItem == nullptr)
+		if (l_currInventorySlot == nullptr)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("There is nothing in slot"));
 			return;
@@ -423,10 +424,10 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 
 		//set selected item opacity lower
 		FLinearColor l_slotColor;
-		l_slotColor = l_currInventorySlot->refItemIcon->ColorAndOpacity;
+		l_slotColor = l_currInventorySlot->refWItemIcon->ColorAndOpacity;
 		l_oldSlotColor = l_slotColor;
 		l_slotColor = l_slotColor.CopyWithNewOpacity(0.2);
-		l_currInventorySlot->refItemIcon->SetColorAndOpacity(l_slotColor);
+		l_currInventorySlot->refWItemIcon->SetColorAndOpacity(l_slotColor);
 
 		//store the coordinate of this selected slot, atm need it to switch the opacity back in the old slot
 		lastSelectedItemForMoveSlotCoord = currentlyActiveSlotCoord;
@@ -450,7 +451,7 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem() item we're attempting to move has been deleted/dropped"));
 			bAreWeDoingAMoveAction = false;
-			l_lastInventorySlot->refItemIcon->SetColorAndOpacity(l_oldSlotColor);
+			l_lastInventorySlot->refWItemIcon->SetColorAndOpacity(l_oldSlotColor);
 			return;
 		}
 
@@ -461,14 +462,14 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem()  can't move item to inventory slot, return"));
 			bAreWeDoingAMoveAction = false;
-			l_lastInventorySlot->refItemIcon->SetColorAndOpacity(l_oldSlotColor);
+			l_lastInventorySlot->refWItemIcon->SetColorAndOpacity(l_oldSlotColor);
 			return;
 		}
 
 		/*check if there already is an item in the slot, if there is, swap items*/
 		if (l_currInventorySlot->slotData.refItem != nullptr)
 		{
-			int32 destinationSlotIdx = l_currInventorySlot->slotData.slotIndex;
+			
 			//swap the item reference
 			
 
@@ -476,17 +477,27 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 			refPlayerCharacter->GetInventoryComponent()->SwapItemInInventory(currentlySelectedItemForMoveIndex, destinationSlotIdx);
 			bAreWeDoingAMoveAction = false;
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem()  swapped item successfully"));
-			l_lastInventorySlot->refItemIcon->SetColorAndOpacity(l_oldSlotColor);
+			l_lastInventorySlot->refWItemIcon->SetColorAndOpacity(l_oldSlotColor);
 			return;
 		}
 
 
 		/*if slot is empty, move item to the slot*/
+		if (l_currInventorySlot->slotData.refItem == nullptr)
+		{
+			refPlayerCharacter->GetInventoryComponent()->MoveItemToAnotherSlot(currentlySelectedItemForMoveIndex, destinationSlotIdx);
+			CreateInventorySlots();
+			refPlayerCharacter->GetInventoryComponent()->DeleteItemFromInventory(l_lastInventorySlot->slotData.slotIndex);
 
+			bAreWeDoingAMoveAction = false;
+			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem() moved item successfully."));
+			l_lastInventorySlot->refWItemIcon->SetColorAndOpacity(l_oldSlotColor);
+			return;
+		}
 
 
 		
-		/*do the action?*/
+		
 	}
 
 }

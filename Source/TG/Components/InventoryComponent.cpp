@@ -78,11 +78,22 @@ void UInventoryComponent::SwapItemInInventory(int32 iStartIdx, int32 iDestinatio
 {
 	//Swap refs and update ui
 	AItem* tempItem = refItemInventory[iStartIdx]->slotData.refItem;
-	refItemInventory[iStartIdx]->slotData.refItem =
-		refItemInventory[iDestinationIdx]->slotData.refItem;
+	refItemInventory[iStartIdx]->slotData.refItem =	refItemInventory[iDestinationIdx]->slotData.refItem;
 	refItemInventory[iDestinationIdx]->slotData.refItem = tempItem;
 	delegateInventoryUpdate.Broadcast(refItemInventory);
+}
 
+void UInventoryComponent::MoveItemToAnotherSlot(int32 iStartIdx, int32 iDestinationIdx)
+{
+	//move item to destination slot and delete ref from old slot
+	refItemInventory[iDestinationIdx]->slotData.refItem = refItemInventory[iStartIdx]->slotData.refItem;
+	refItemInventory[iDestinationIdx]->slotData.inventorySlotState = EInventorySlotState::HASITEM;
+
+	refItemInventory[iStartIdx]->slotData.refItem = nullptr;
+	refItemInventory[iStartIdx]->slotData.inventorySlotState = EInventorySlotState::EMPTY;
+
+
+	delegateInventoryUpdate.Broadcast(refItemInventory);
 }
 
 bool UInventoryComponent::CheckIfSlotItemIsStillValid(int32 iIdx)

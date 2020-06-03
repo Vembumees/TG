@@ -50,15 +50,15 @@ public:
 		void InitializeRefsInBP();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UBorder* refBorderSingleSlot;
+		class UBorder* refWBorderSingleSlot;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refButtonSlot;	//slot icon
+		class UButton* refWButtonSlot;	//slot icon
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UImage* refItemBackground; //this is the item background, can use for rarity
+		class UImage* refWItemBackground; //this is the item background, can use for rarity
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UImage* refItemIcon;		// item icon
+		class UImage* refWItemIcon;		// item icon
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class USizeBox* refSizeBoxSlotSize;
+		class USizeBox* refWSizeBoxSlotSize;
 
 	FInventorySlotData slotData;
 

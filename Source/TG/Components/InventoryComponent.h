@@ -38,6 +38,8 @@ public:
 
 	void SwapItemInInventory(int32 iStartIdx, int32 iDestinationIdx);
 
+	void MoveItemToAnotherSlot(int32 iStartIdx, int32 iDestinationIdx);
+
 	bool CheckIfSlotItemIsStillValid(int32 iIdx);
 	
 	TArray<class UInventorySlot*> GetItemInventory();
