@@ -31,6 +31,12 @@ TODO:
 	
 Notes:
 
+	Mystery of RefreshInventorySlots() when moving items in inventory inside inventorywidget, idk why, but the references don't
+	seem to update properly somewhere for some reason. It isn't bad, but it's causing some clutter code I think which could be avoided,
+	I just don't understand	why this needs to be called before doing the logic to move the item otherwise the UI doesn't update properly.
+	I don't understand how my 100% my own written code works.
+	
+
 Bugs:
 
 

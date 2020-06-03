@@ -184,8 +184,8 @@ void UAbilityComponent::CastAbility(int32 iIndex)
 		but atm we make it a normal inventory interaction.*/
 		UInventoryWidget* refInvWidget = refTGCharacter->GetInventoryComponent()->refInventoryWidget;
 		
-		refTGCharacter->GetInventoryComponent()->AddItemToArtifactSlot(refInvWidget->GetCurrentlySelectedSlotIndex());
 		refInvWidget->RefreshInventorySlots();
+		refTGCharacter->GetInventoryComponent()->AddItemToArtifactSlot(refInvWidget->GetCurrentlySelectedSlotIndex());
 
 		break;
 	}

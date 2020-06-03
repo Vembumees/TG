@@ -138,6 +138,7 @@ protected:
 		void InventoryMoveActionSelectedItem();
 
 	bool bAreWeDoingAMoveAction;
+	bool bAreWeMovingFromArtifactSlot;
 public:
 	int32 GetFirstEmptyInventorySlotIndex();
 

@@ -40,6 +40,7 @@ void UInventoryWidget::NativeConstruct()
 	 ########################################################### */
 
 	bAreWeDoingAMoveAction = false;
+	bAreWeMovingFromArtifactSlot = false;
 
 	 /* #########################END############################## */
 }
@@ -345,8 +346,7 @@ void UInventoryWidget::UseSelectedItem()
 	if (l_currInventorySlot->slotData.refItem != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Item Name: %s"),
-			*l_currInventorySlot->slotData.refItem->currentItemData.itemName.ToString()
-		);
+			*l_currInventorySlot->slotData.refItem->currentItemData.itemName.ToString());
 	}
 
 	/*switch, different functionality based on slot types, normal slot, artifact slot, destroyed slot, frozen slot whatever i 
@@ -443,7 +443,7 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		FLinearColor l_slotColor;
 		l_slotColor = l_currInventorySlot->refWItemIcon->ColorAndOpacity;
 		l_oldSlotColor = l_slotColor;
-		l_slotColor = l_slotColor.CopyWithNewOpacity(0.2);
+		l_slotColor = l_slotColor.CopyWithNewOpacity(0.4);
 		l_currInventorySlot->refWItemIcon->SetColorAndOpacity(l_slotColor);
 
 		//store the coordinate of this selected slot, atm need it to switch the opacity back in the old slot
@@ -452,14 +452,21 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		//store index of the slot we want to do the move action on
 		bAreWeDoingAMoveAction = true;
 		currentlySelectedItemForMoveIndex = l_currInventorySlot->slotData.slotIndex;
+		//if we are moving an artifact inside artifact slot we want to be able to move/swap with artifacts inside artifact slot
+		if (l_currInventorySlot->slotData.slotType == ESlotType::ARTIFACT)
+		{
+			bAreWeMovingFromArtifactSlot = true;
+		}		
 	}
 	else
 	{
-
 		//if we are trying to move to the same slot, do nothing
 		if (l_currInventorySlot->slotData.slotIndex == currentlySelectedItemForMoveIndex)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem()  attempting move on the same slot, return"));
+			bAreWeDoingAMoveAction = false;
+			bAreWeMovingFromArtifactSlot = false;
+			l_lastInventorySlot->refWItemIcon->SetColorAndOpacity(l_oldSlotColor);
 			return;
 		}
 
@@ -468,6 +475,7 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem() item we're attempting to move has been deleted/dropped"));
 			bAreWeDoingAMoveAction = false;
+			bAreWeMovingFromArtifactSlot = false;
 			l_lastInventorySlot->refWItemIcon->SetColorAndOpacity(l_oldSlotColor);
 			return;
 		}
@@ -475,42 +483,43 @@ void UInventoryWidget::InventoryMoveActionSelectedItem()
 		/*check if we can actually move the item to the destination slot
 		example: we can't just move an item to the artifact slot, that is a special action 
 		(but we can move items out of the artifact slot)*/
-		if (l_currInventorySlot->slotData.slotType == ESlotType::ARTIFACT)
+
+		
+		if (l_currInventorySlot->slotData.slotType == ESlotType::ARTIFACT && !bAreWeMovingFromArtifactSlot)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem()  can't move item to inventory slot, return"));
 			bAreWeDoingAMoveAction = false;
+			bAreWeMovingFromArtifactSlot = false;
 			l_lastInventorySlot->refWItemIcon->SetColorAndOpacity(l_oldSlotColor);
 			return;
 		}
 
 		/*check if there already is an item in the slot, if there is, swap items*/
-		if (l_currInventorySlot->slotData.refItem != nullptr)
+		/*with artifacts need to make so cant swap with outside items*/
+		if (l_currInventorySlot->slotData.refItem != nullptr && l_currInventorySlot->slotData.slotType == ESlotType::ARTIFACT ||
+			l_currInventorySlot->slotData.refItem != nullptr && !bAreWeMovingFromArtifactSlot)
 		{
 			//does the swap logic inside the inventory component
 			refPlayerCharacter->GetInventoryComponent()->SwapItemInInventory(currentlySelectedItemForMoveIndex, destinationSlotIdx);
+			bAreWeMovingFromArtifactSlot = false;
 			bAreWeDoingAMoveAction = false;
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem()  swapped item successfully"));
 			l_lastInventorySlot->refWItemIcon->SetColorAndOpacity(l_oldSlotColor);
 			return;
 		}
 
-
 		/*if slot is empty, move item to the slot*/
 		if (l_currInventorySlot->slotData.refItem == nullptr)
 		{
 			RefreshInventorySlots();
 			refPlayerCharacter->GetInventoryComponent()->MoveItemToAnotherSlot(currentlySelectedItemForMoveIndex, destinationSlotIdx);
-			
-
+			bAreWeMovingFromArtifactSlot = false;
 			bAreWeDoingAMoveAction = false;
 			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem() moved item successfully."));
 			l_lastInventorySlot->refWItemIcon->SetColorAndOpacity(l_oldSlotColor);
 			return;
-		}
-
-
-	}
-
+		}		
+	}	
 }
 
 int32 UInventoryWidget::GetFirstEmptyInventorySlotIndex()
