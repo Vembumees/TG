@@ -35,6 +35,10 @@ public:
 	bool AddItemToInventory(class AItem* iItem);
 
 	void DeleteItemFromInventory(int32 iIdx);
+
+	void SwapItemInInventory(int32 iStartIdx, int32 iDestinationIdx);
+
+	bool CheckIfSlotItemIsStillValid(int32 iIdx);
 	
 	TArray<class UInventorySlot*> GetItemInventory();
 

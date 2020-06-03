@@ -33,7 +33,13 @@ void UInventoryWidget::NativeConstruct()
 	FTimerHandle invWidgetInitializeWithTimer;
 	GetWorld()->GetTimerManager().SetTimer(invWidgetInitializeWithTimer, this, &UInventoryWidget::InitializeWithTimer, 0.5f, false);
 
+	/* ###########################################################
+						Default values
+	 ########################################################### */
 
+	bAreWeDoingAMoveAction = false;
+
+	 /* #########################END############################## */
 }
 
 void UInventoryWidget::NativePreConstruct()
@@ -88,6 +94,7 @@ void UInventoryWidget::CreateInventorySlots()
 		{
 			wInvSlot->slotData.slotType = ESlotType::ARTIFACT;
 			wInvSlot->UpdateInventoryButtonBackgroundImage();
+
 		}
 		
 		wInvSlot->slotData.slotIndex = i;
@@ -98,7 +105,6 @@ void UInventoryWidget::CreateInventorySlots()
 		
 		//add inventory slot reference to the player's inventory component
 		refPlayerCharacter->GetInventoryComponent()->refItemInventory.Add(wInvSlot);
-		
 	}
 
 	HighlightSelectedSlot();
@@ -117,6 +123,7 @@ void UInventoryWidget::AddDelegateBindings()
 	refPlayerCharacter->GetInventoryComponent()->delegateInventoryUpdate.AddDynamic(this, &UInventoryWidget::UpdateItemsFromPlayerInventory);
 	refExplorePlayerController->delegateInventoryUseItem.AddDynamic(this, &UInventoryWidget::UseSelectedItem);
 	refExplorePlayerController->delegateInventoryDropItem.AddDynamic(this, &UInventoryWidget::DropSelectedItem);
+	refExplorePlayerController->delegateInventoryMoveItem.AddDynamic(this, &UInventoryWidget::InventoryMoveActionSelectedItem);
 
 }
 
@@ -327,15 +334,19 @@ void UInventoryWidget::UseSelectedItem()
 	{
 	case ESlotType::NORMAL:
 
-		/*the check for what kind of item we're using should be done in the abilitycomponent I think?
-		  technically i can make any item interaction into an ability, even reading a book, add skill points
-		  or whatever, but ill mess with that when it comes to it*/
+		/*the check what kind of item we are using we're doing in the abilitycomp, including equiping items etc*/
+
+	
 		
 		refPlayerCharacter->GetAbilityComponent()->CastAbility(l_currInventorySlot->slotData.slotIndex);
 
 
 		break;
 	case ESlotType::ARTIFACT:
+
+		/*if artifact is usable, here goes the use call. I want to make that artifacts can be equippe or removed only in a gameplay
+		trigger like npc or altar so unneccesary to implement atm*/
+
 		break;
 	case ESlotType::SLOTTYPE2:
 		break;
@@ -382,10 +393,87 @@ void UInventoryWidget::DropSelectedItem()
 	l_currInventorySlot->slotData.refItem->SetActorHiddenInGame(false);
 	l_currInventorySlot->slotData.refItem->GetCollisionComp()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-
-	refPlayerCharacter->GetInventoryComponent()->DeleteItemFromInventory(l_currInventorySlot->slotData.slotIndex);
 	CreateInventorySlots();
-	UpdateItemsFromPlayerInventory(refPlayerCharacter->GetInventoryComponent()->GetItemInventory());
+	refPlayerCharacter->GetInventoryComponent()->DeleteItemFromInventory(l_currInventorySlot->slotData.slotIndex);
+	
+	
+
+}
+
+void UInventoryWidget::InventoryMoveActionSelectedItem()
+{
+	
+	if (!mapRefInventorySlots.Contains(currentlyActiveSlot))
+	{
+		return;
+	}
+
+	UInventorySlot* l_currInventorySlot = *mapRefInventorySlots.Find(currentlyActiveSlot);
+
+	/*if we are not doing move action, select item to be moved*/
+	if (!bAreWeDoingAMoveAction)
+	{
+		//if there is nothing in slot, return
+		if (l_currInventorySlot == nullptr || l_currInventorySlot->slotData.refItem == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("There is nothing in slot"));
+			return;
+		}
+
+		//store index of the slot we want to do the move action on
+		bAreWeDoingAMoveAction = true;
+		currentlySelectedItemForMoveIndex = l_currInventorySlot->slotData.slotIndex;
+	}
+	else
+	{
+
+		//if we are trying to move to the same slot, do nothing
+		if (l_currInventorySlot->slotData.slotIndex == currentlySelectedItemForMoveIndex)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem()  attempting move on the same slot, return"));
+			return;
+		}
+
+		//check if item that we want to move has been removed from the inventory before the swap
+		if (!refPlayerCharacter->GetInventoryComponent()->CheckIfSlotItemIsStillValid(currentlySelectedItemForMoveIndex))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem() item we're attempting to move has been deleted/dropped"));
+			bAreWeDoingAMoveAction = false;
+			return;
+		}
+
+		/*check if we can actually move the item to the destination slot
+		example: we can't just move an item to the artifact slot, that is a special action 
+		(but we can move items out of the artifact slot)*/
+		if (l_currInventorySlot->slotData.slotType == ESlotType::ARTIFACT)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem()  can't move item to inventory slot, return"));
+			bAreWeDoingAMoveAction = false;
+			//also disable the opacity when i do it later TODO !!
+			return;
+		}
+
+		/*check if there already is an item in the slot, if there is, swap items*/
+		if (l_currInventorySlot->slotData.refItem != nullptr)
+		{
+			int32 destinationSlotIdx = l_currInventorySlot->slotData.slotIndex;
+			//swap the item reference
+			
+
+			//does the swap logic inside the inventory component
+			refPlayerCharacter->GetInventoryComponent()->SwapItemInInventory(currentlySelectedItemForMoveIndex, destinationSlotIdx);
+			bAreWeDoingAMoveAction = false;
+			UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::InventoryActionSelectedItem()  swapped item successfully"));
+		}
+
+
+		/*if slot is empty, move item to the slot*/
+
+
+
+		
+		/*do the action?*/
+	}
 
 }
 

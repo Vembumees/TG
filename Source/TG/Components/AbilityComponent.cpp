@@ -53,7 +53,6 @@ void UAbilityComponent::CastAbility(int32 iIndex)
 	switch (l_selectedItem->currentItemData.itemType)
 	{
 	case EItemType::TOME:
-		UE_LOG(LogTemp, Warning, TEXT("Using itemtype TOME"));
 
 		//check what magic type the tome is
 		switch (l_selectedItem->currentItemData.itemAbility.magicType)
@@ -172,13 +171,32 @@ void UAbilityComponent::CastAbility(int32 iIndex)
 
 		break;
 	case EItemType::TOKEN:
-		UE_LOG(LogTemp, Warning, TEXT("Using itemtype TOKEN"));
 		break;
 	case EItemType::SOUL:
-		UE_LOG(LogTemp, Warning, TEXT("Using itemtype SOUL"));
 		break;
 	case EItemType::MYSTICAL:
-		UE_LOG(LogTemp, Warning, TEXT("Using itemtype MYSTICAL"));
+		break;
+	case EItemType::ARTIFACT:
+
+
+		/* when we actually make it into making a game, equiping artifacts should only be able to be done at a gameplay altar or npc,
+		but atm we make it a normal inventory interaction.
+		
+		equip item, so what it means is
+		  add the item to first available artifact slot
+		  if slots full, show message/log and do nothing.
+		  
+		  OR or BOTH
+
+		  manually move the item to the artifact slot
+		  select item
+		  select slot to move it to 
+		  and artifacts can only go to artifact slots or normal slots
+		  if chosen slot already has an item switch places with it
+		  
+		  i need to implement the second part anyways so we can do it now? or later?*/
+
+
 		break;
 	}
 	StartCooldownTimer(l_selectedItem);

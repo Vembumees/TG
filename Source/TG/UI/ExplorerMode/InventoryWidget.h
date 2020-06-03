@@ -93,6 +93,7 @@ protected:
 	void InitializeWithTimer();
 	void AddDelegateBindings();
 	void InitializeRefs();
+	
 
 	UFUNCTION()
 		void MoveInInventory(EMoveDirections iMoveDir);
@@ -106,6 +107,8 @@ protected:
 
 	FVector2D currentlyActiveSlot;
 	FVector2D lastActiveSlot;
+
+	int32 currentlySelectedItemForMoveIndex;
 
 	//Making 2 of these instead of one function with inputs because i think this is a little bit easier to understand
 	void HighlightSelectedSlot();
@@ -125,6 +128,10 @@ protected:
 	UFUNCTION()
 		void DropSelectedItem();
 
+	UFUNCTION()
+		void InventoryMoveActionSelectedItem();
+
+	bool bAreWeDoingAMoveAction;
 public:
 	int32 GetFirstEmptyInventorySlotIndex();
 

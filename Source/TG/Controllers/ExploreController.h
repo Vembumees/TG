@@ -10,6 +10,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryMove, EMoveDirections, currInventoryMoveDirection);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryUseItem);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryDropItem);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryMoveItem);
 
 UCLASS()
 class TG_API AExploreController : public APlayerController
@@ -44,6 +45,7 @@ protected:
 	void InventoryRIGHT();
 	void InventoryUseItem();
 	void InventoryDropItem();
+	void InventoryMoveItemAction();
 
 	//this is super spaghetti !!
 	void SelectDialogByIndex(int32 iIdx);
@@ -53,6 +55,7 @@ public:
 	FInventoryMove delegateInventoryMove;
 	FInventoryUseItem delegateInventoryUseItem;
 	FInventoryDropItem delegateInventoryDropItem;
+	FInventoryMoveItem delegateInventoryMoveItem;
 
 	/* ###########################################################
 						references
