@@ -8,6 +8,7 @@
 #include "TG/UI/ExplorerMode/InventoryWidget.h"
 #include "TG/UI/ExplorerMode/ExplorerModeScreen.h"
 #include "TG/Libraries/InventoryLibrary.h"
+#include "TG/Item/Item.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -22,6 +23,8 @@ void UInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeReferences();
+	FTimerHandle invCompInitializeTimer;
+	GetWorld()->GetTimerManager().SetTimer(invCompInitializeTimer, this, &UInventoryComponent::CreateStartingItems, 0.5, false);
 
 }
 
@@ -130,8 +133,22 @@ void UInventoryComponent::AddItemToArtifactSlot(int32 iCurrentItemSlotIdx)
 	refItemInventory[iCurrentItemSlotIdx]->slotData.refItem = nullptr;
 	refItemInventory[iCurrentItemSlotIdx]->slotData.inventorySlotState = EInventorySlotState::EMPTY;
 
-
 	delegateInventoryUpdate.Broadcast(refItemInventory);
+}
+
+
+
+void UInventoryComponent::CreateStartingItems()
+{
+	TArray<AItem*> l_items;
+	l_items.Emplace(AItem::SpawnItem(this->GetWorld(), this->GetOwner()->GetActorLocation(), 0, true));
+	l_items.Emplace(AItem::SpawnItem(this->GetWorld(), this->GetOwner()->GetActorLocation(), 2, true));
+	l_items.Emplace(AItem::SpawnItem(this->GetWorld(), this->GetOwner()->GetActorLocation(), 3, true));
+	for (auto& e : l_items)
+	{
+		//add items to the inventory
+		AddItemToInventory(e);
+	}	
 }
 
 TArray<class UInventorySlot*> UInventoryComponent::GetItemInventory()

@@ -393,6 +393,12 @@ void UInventoryWidget::DropSelectedItem()
 		return;
 	}
 
+	//cant drop hearth/soul item
+	if (l_currInventorySlot->slotData.refItem->currentItemData.itemType == EItemType::SOUL)
+	{
+		return;
+	}
+
 	FVector playerLoc = refPlayerCharacter->GetActorLocation();
 	if (refPlayerCharacter->bIsFacingRight)
 	{
@@ -402,19 +408,12 @@ void UInventoryWidget::DropSelectedItem()
 	{
 		playerLoc.X -= 100;
 	}
-
-	//current problem, i want the slot to stay empty until its filled with a new item, not the inventory to be reordered
-	//hmm, for that I think I need to keep the player character array filled with entries and check if the entry slot is empty or has item
-
 	l_currInventorySlot->slotData.refItem->SetActorLocation(playerLoc, true);
 	l_currInventorySlot->slotData.refItem->SetActorHiddenInGame(false);
 	l_currInventorySlot->slotData.refItem->GetCollisionComp()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	RefreshInventorySlots();
 	refPlayerCharacter->GetInventoryComponent()->DeleteItemFromInventory(l_currInventorySlot->slotData.slotIndex);
-	
-	
-
 }
 
 void UInventoryWidget::InventoryMoveActionSelectedItem()

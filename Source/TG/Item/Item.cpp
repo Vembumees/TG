@@ -37,6 +37,7 @@ AItem::AItem()
 	collisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("collisionComp "));
 	collisionComp->SetupAttachment(itemRootComp);
 	collisionComp->SetCollisionObjectType(ECC_GameTraceChannel1);
+	collisionComp->SetCollisionResponseToAllChannels(ECR_Block);
 }
 
 
@@ -143,4 +144,19 @@ void AItem::PassDataFromTableToObjectVariables()
 	this->SpriteComp->SetFlipbook(currentItemData.itemWorldFlipbook);
 }
 
+AItem* AItem::SpawnItem(UWorld* iWorld, FVector iLocation, int32 iItemIdx, bool ibAreWeAddingToInventory)
+{
+	AItem* spawnedItem = iWorld->SpawnActor<AItem>(iLocation, FRotator::ZeroRotator);
+	spawnedItem->DTItemDataRowNumber = iItemIdx;
+
+	if (ibAreWeAddingToInventory)
+	{
+		//set parameters same as when item is dropped
+		spawnedItem->collisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		spawnedItem->SetActorHiddenInGame(true);
+	}
+
+
+	return spawnedItem;
+}
 

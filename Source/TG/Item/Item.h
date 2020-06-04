@@ -202,6 +202,8 @@ protected:
 	 ########################################################### */
 public:
 	void SetDataTableItemDataRowNames();
+
+
 protected:
 
 	void StartInitializeTimer();
@@ -226,6 +228,24 @@ public:
 
 	 /* #########################END############################## */
 
+
+	/* ###########################################################
+						ITEM CREATION STUFF
+	 ########################################################### */
+	/*static function here that spawns an item at requested location, at least atm I don't think that 
+	  I need a separate item manager specifically for this, I can just call this function to spawn the item
+	  and store the reference in the class that spawns it - the class's inventory component
+	  */
+
+	  /*iWorld - worldcontext,
+		iLocation - where we want to spawn the item
+	    iItemIdx - index number of the item data in item datatable, errorprone but simple
+		ibAreWeAddingToInventory - if we spawn item to inventory we want to set the parameters of item for that*/
+	UFUNCTION()
+	static AItem* SpawnItem(UWorld* iWorld, FVector iLocation, int32 iItemIdx, bool ibAreWeAddingToInventory);
+
+
+	 /* #########################END############################## */
 
 
 

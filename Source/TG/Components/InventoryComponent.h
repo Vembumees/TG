@@ -43,7 +43,9 @@ public:
 	bool CheckIfSlotHasItem(int32 iIdx);
 
 	void AddItemToArtifactSlot(int32 iIdx);
-	
+
+	void CreateStartingItems();
+
 	TArray<class UInventorySlot*> GetItemInventory();
 
 	UPROPERTY(VisibleAnywhere)

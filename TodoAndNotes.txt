@@ -37,6 +37,9 @@ Notes:
 	I don't understand how my 100% my own written code works.
 	
 
+	small interesting idea: make items have exp/level up (well poe does it with xp), simple and easy idea, but could be explored 
+	in combination with other things (or just cut out later xD)
+
 Bugs:
 
 
