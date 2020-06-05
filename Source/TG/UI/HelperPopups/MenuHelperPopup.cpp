@@ -4,7 +4,6 @@
 #include "MenuHelperPopup.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
-#include "Components/Button.h"
 #include "Engine/DataTable.h"
 
 
@@ -28,9 +27,6 @@ void UMenuHelperPopup::ReadData(int32 iDataRowNumber)
 
 	if (row != nullptr)
 	{
-		row->helperTitle;
-		row->helperDescription;
-		
 		//helperimage
 		FSlateBrush brush;
 		brush.SetResourceObject(row->helperImg);

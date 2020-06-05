@@ -44,10 +44,8 @@ public:
 		class UTextBlock* refHelperTextDescription;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UImage* refHelperImage; 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refHelperCloseButton;
 
-
+	//TODO: !! I need to add "press X button to close this"
 
 protected:
 	virtual void NativeConstruct() override;
