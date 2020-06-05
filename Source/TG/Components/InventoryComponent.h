@@ -54,4 +54,7 @@ public:
 	class UInventoryWidget* refInventoryWidget;
 
 	FInventoryUpdate delegateInventoryUpdate;
+
+private:
+	void RefreshInventorySlots();
 };

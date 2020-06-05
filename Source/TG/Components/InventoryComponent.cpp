@@ -26,6 +26,7 @@ void UInventoryComponent::BeginPlay()
 	FTimerHandle invCompInitializeTimer;
 	GetWorld()->GetTimerManager().SetTimer(invCompInitializeTimer, this, &UInventoryComponent::CreateStartingItems, 0.5, false);
 
+
 }
 
 void UInventoryComponent::InitializeReferences()
@@ -149,6 +150,10 @@ void UInventoryComponent::CreateStartingItems()
 		//add items to the inventory
 		AddItemToInventory(e);
 	}	
+	//this is to fix a bug where icons for some reason stay white until a refresh item inventory is made, for some reason
+	//the refresh in this function doesn't work
+	FTimerHandle invCompInitializeTimer2;
+	GetWorld()->GetTimerManager().SetTimer(invCompInitializeTimer2, this, &UInventoryComponent::RefreshInventorySlots, 0.2, false);
 }
 
 TArray<class UInventorySlot*> UInventoryComponent::GetItemInventory()
@@ -156,4 +161,8 @@ TArray<class UInventorySlot*> UInventoryComponent::GetItemInventory()
 	return refItemInventory;
 }
 
+void UInventoryComponent::RefreshInventorySlots()
+{
+	delegateInventoryUpdate.Broadcast(refItemInventory);
+}
 
