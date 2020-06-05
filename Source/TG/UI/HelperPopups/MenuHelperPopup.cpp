@@ -5,34 +5,42 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
+#include "Engine/DataTable.h"
 
 
 void UMenuHelperPopup::NativeConstruct()
 {
 	Super::NativeConstruct();
 	InitializeRefsInBP();
+	ReadData(1);
 }
 
-void UMenuHelperPopup::UpdateAllHelperData()
-{
-	UpdateHelperImage();
-	UpdateHelperTextDescription();
-	UpdateHelperTextTitle();
-}
-
-void UMenuHelperPopup::UpdateHelperImage()
-{
-// 	FSlateBrush brush;		
-// 	brush.SetResourceObject(image);
-// 	refHelperImage->SetBrush(brush);
-}
-
-void UMenuHelperPopup::UpdateHelperTextTitle()
+void UMenuHelperPopup::ReadData(int32 iDataRowNumber)
 {
 
-}
+	UDataTable* menuHelperDT = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/TG/BP/Data/DT_HelperPopupData.DT_HelperPopupData'")));
+	if (menuHelperDT == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("menuHelperDT not found "));
+	}
+	dtRowNames = menuHelperDT->GetRowNames();
+	FHelperPopupData* row = menuHelperDT->FindRow<FHelperPopupData>(dtRowNames[iDataRowNumber - 1], TEXT("LookupHelperData"));
 
-void UMenuHelperPopup::UpdateHelperTextDescription()
-{
+	if (row != nullptr)
+	{
+		row->helperTitle;
+		row->helperDescription;
+		
+		//helperimage
+		FSlateBrush brush;
+		brush.SetResourceObject(row->helperImg);
+		refHelperImage->SetBrush(brush);
 
+
+		//helperTextTitle
+		refHelperTextTitle->SetText(row->helperTitle);
+
+		//helper text description
+		refHelperTextDescription->SetText(row->helperDescription);
+	}
 }

@@ -4,16 +4,30 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Engine/DataTable.h"
 #include "MenuHelperPopup.generated.h"
 
 /**
  * This should be the class that has few images and text and shows what buttons do what. Like when player interacts with a new
    object for the first time. Should be able to be disabled in the menu.
 
-
-   not gonna finish it now, atm I think i need to make a singleton that receives the data, so i can call it from here and get the 
-   data inside the widget, since widgets dont have constructors i cant use constructorhelpers to get the Datatable.
+   This beauty class
  */
+
+
+USTRUCT(BlueprintType)
+struct FHelperPopupData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere)
+		UTexture2D* helperImg;
+	UPROPERTY(EditAnywhere)
+		FText helperTitle;
+	UPROPERTY(EditAnywhere)
+		FText helperDescription;
+};
+
 UCLASS()
 class TG_API UMenuHelperPopup : public UUserWidget
 {
@@ -32,14 +46,17 @@ public:
 		class UImage* refHelperImage; 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UButton* refHelperCloseButton;
+
+
+
 protected:
 	virtual void NativeConstruct() override;
 
-	void UpdateAllHelperData();
+	//already doing the - 1 in the function
+	void ReadData(int32 iDataRowNumber);
 
-	void UpdateHelperImage();
-	void UpdateHelperTextTitle();
-	void UpdateHelperTextDescription();
+	UPROPERTY()
+		TArray<FName> dtRowNames;
 
 	
 };
