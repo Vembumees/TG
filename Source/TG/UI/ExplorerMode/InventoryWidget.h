@@ -117,15 +117,15 @@ protected:
 	FVector2D lastSelectedItemForMoveSlotCoord;
 
 	//Making 2 of these instead of one function with inputs because i think this is a little bit easier to understand
-	void HighlightSelectedSlot();
-	void DeHighlightLastSelectedSlot();
-	void SelectNeighbourSlot(FVector2D iTarget);
-	void GetStartingSlot();
+		void HighlightSelectedSlot();
+		void DeHighlightLastSelectedSlot();
+		void SelectNeighbourSlot(FVector2D iTarget);
+		void GetStartingSlot();
 
 	UFUNCTION()
 		void UpdateItemsFromPlayerInventory(TArray<class UInventorySlot*> iPlayerInventory);
 
-	void UpdateTooltipData();
+		void UpdateTooltipData();
 
 
 	UFUNCTION()

@@ -174,3 +174,11 @@ enum class EInventorySlotState : uint8
 	EMPTY						UMETA(DisplayName = "Empty"),
 	HASITEM						UMETA(DisplayName = "Has Item"),
 };
+
+UENUM(BlueprintType)
+enum class EMenuType : uint8
+{
+	MAINMENU						UMETA(DisplayName = "Main Menu"),
+	OPTIONSMENU						UMETA(DisplayName = "Options Menu"),
+	QUESTSELECT						UMETA(DisplayName = "Quest Select"),
+};

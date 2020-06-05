@@ -31,7 +31,6 @@ void UInventoryWidget::NativeConstruct()
 
 
 
-
 	FTimerHandle invWidgetInitializeWithTimer;
 	GetWorld()->GetTimerManager().SetTimer(invWidgetInitializeWithTimer, this, &UInventoryWidget::InitializeWithTimer, 0.5f, false);
 

@@ -12,10 +12,7 @@ TODO:
 		*inventory
 		*enemy inventory
 		*player equipment
-		*enemy equipment
 		*enemy drop stuff from inventory on death
-		*inventory slot health/damage (this is probably gonna be huge and mega confusing/hard/buggy I imagine for me at least)
-		*inventory slot destroy items on death
 		*inventory slot statuses, frozen, burning, corrupted etc stuff like that (might be cool if it could modify items)
 
 

@@ -99,9 +99,7 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-
 	virtual void NativePreConstruct() override;
-
 
 private:
 	int32 randVal = 0;

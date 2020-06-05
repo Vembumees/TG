@@ -24,13 +24,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void InitializeBPReferences();
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refPlayGameButton;
+		class UButton* refMenuBtnBackground;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refOptionsButton;
+		class UTextBlock* refMenuTitleText;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refAboutButton;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UButton* refExitGameButton;
+		class UUniformGridPanel* refMenuUniformGridPanel;
 
 
 	class AExploreController* refExploreController;
@@ -39,8 +37,6 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	UFUNCTION(BlueprintImplementableEvent)
-		void InitializeRefsInBP();
 
 
 
