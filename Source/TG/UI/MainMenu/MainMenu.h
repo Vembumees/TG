@@ -39,6 +39,9 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void InitializeRefsInBP();
+
 
 
 };

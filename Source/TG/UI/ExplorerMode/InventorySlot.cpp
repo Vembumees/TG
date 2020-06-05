@@ -11,17 +11,62 @@ void UInventorySlot::UpdateInventoryButtonBackgroundType()
 {
 
 	FSlateBrush brush;
-
+	
+	//also randomly selects a random number which picks which image to have, so our slots look a bit different
 	if (slotData.bIsSelected)
 	{
 		//is selected
-		brush.SetResourceObject(itemBackgroundSelected);
+		if (!bHasAlreadySetButtonBackground)
+		{
+			randVal = FMath::RandRange(0, 3);
+			bHasAlreadySetButtonBackground = true;
+		}
+
+		switch (randVal)
+		{
+		case 0:
+			brush.SetResourceObject(itemBackgroundSelected);
+			break;
+		case 1:
+			brush.SetResourceObject(itemBackgroundSelected2);
+
+			break;
+		case 2:
+			brush.SetResourceObject(itemBackgroundSelected3);
+
+			break;
+		case 3:
+			brush.SetResourceObject(itemBackgroundSelected4);			
+
+			break;
+		}	
+
 		refWBorderSingleSlot->SetBrush(brush);
 	}
 	else
 	{
 		//normal
-		brush.SetResourceObject(itemBackgroundNormal);
+
+		switch (randVal)
+		{
+		case 0:
+			brush.SetResourceObject(itemBackgroundNormal);
+			
+			break;
+		case 1:
+			brush.SetResourceObject(itemBackgroundNormal2);
+
+			break;
+		case 2:
+			brush.SetResourceObject(itemBackgroundNormal3);
+
+			break;
+		case 3:
+			brush.SetResourceObject(itemBackgroundNormal4);
+
+			break;
+		}
+
 		refWBorderSingleSlot->SetBrush(brush);
 	}
 }
@@ -34,16 +79,13 @@ void UInventorySlot::UpdateInventoryButtonBackgroundImage()
 	switch (slotData.slotType)
 	{
 	case ESlotType::NORMAL:
-
-		brush.SetResourceObject(itemBackgroundImgNormal);
-		brush.SetImageSize(FVector2D(42, 42));
-		refWItemBackground->SetColorAndOpacity(imgBackgroundColorNormal);
-
+		
+				
 		break;
 	case ESlotType::ARTIFACT:
 
 		brush.SetResourceObject(itemBackgroundImgArtifact);
-		brush.SetImageSize(FVector2D(55, 55));
+		brush.SetImageSize(FVector2D(50, 50));
 		refWItemBackground->SetColorAndOpacity(imgBackgroundColorARTIFACT);
 
 		break;

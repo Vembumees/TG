@@ -38,19 +38,19 @@ void AMainMenuHUD::InitializeWidgets()
 
 void AMainMenuHUD::InitializeIngameMenuComponents()
 {
-	UButton* MainMenuPlayButton = this->refMainMenu->refPlayGameButton;
-	MainMenuPlayButton->OnClicked.AddDynamic(this, &AMainMenuHUD::MainMenu_PlayButtonClicked);
-	MainMenuPlayButton->SetKeyboardFocus();
-
-	UButton* MainMenuOptionsButton = this->refMainMenu->refOptionsButton;
-	MainMenuOptionsButton->OnClicked.AddDynamic(this, &AMainMenuHUD::MainMenu_OptionsButtonClicked);
-
-
-	UButton* MainMenuAboutButton = this->refMainMenu->refAboutButton;
-	MainMenuAboutButton->OnClicked.AddDynamic(this, &AMainMenuHUD::MainMenu_AboutButtonClicked);
-
-	UButton* MainMenuExitButton = this->refMainMenu->refExitGameButton;
-	MainMenuExitButton->OnClicked.AddDynamic(this, &AMainMenuHUD::MainMenu_ExitButtonClicked);
+// 	UButton* MainMenuPlayButton = this->refMainMenu->refPlayGameButton;
+// 	MainMenuPlayButton->OnClicked.AddDynamic(this, &AMainMenuHUD::MainMenu_PlayButtonClicked);
+// 	MainMenuPlayButton->SetKeyboardFocus();
+// 
+// 	UButton* MainMenuOptionsButton = this->refMainMenu->refOptionsButton;
+// 	MainMenuOptionsButton->OnClicked.AddDynamic(this, &AMainMenuHUD::MainMenu_OptionsButtonClicked);
+// 
+// 
+// 	UButton* MainMenuAboutButton = this->refMainMenu->refAboutButton;
+// 	MainMenuAboutButton->OnClicked.AddDynamic(this, &AMainMenuHUD::MainMenu_AboutButtonClicked);
+// 
+// 	UButton* MainMenuExitButton = this->refMainMenu->refExitGameButton;
+// 	MainMenuExitButton->OnClicked.AddDynamic(this, &AMainMenuHUD::MainMenu_ExitButtonClicked);
 
 }
 
@@ -64,13 +64,12 @@ void AMainMenuHUD::InitializePlayerInput()
 		{
 			FInputModeUIOnly InputMode;
 			refMainMenuController->SetInputMode(InputMode);
-			SetIsFocusable(true);
 			UGameplayStatics::SetGamePaused(this, true);
 		}
 	}
 }
 
-void AMainMenuHUD::MainMenu_PlayButtonClicked()
+void AMainMenuHUD::MainMenu_PlayButtonClickedDEPRECATED()
 {
 	UE_LOG(LogTemp, Log, TEXT("AMainMenuHUD::MainMenu_PlayButtonClicked()"));
 	this->refMainMenu->RemoveFromParent();
@@ -83,24 +82,24 @@ void AMainMenuHUD::MainMenu_PlayButtonClicked()
 	//todo !! make level select widget
 }	
 
-void AMainMenuHUD::MainMenu_OptionsButtonClicked()
+void AMainMenuHUD::MainMenu_OptionsButtonClickedDEPRECATED()
 {
 	UE_LOG(LogTemp, Log, TEXT("AMainMenuHUD::MainMenu_OptionsButtonClicked())"));
-	SetIsFocusable(false);
+	SetIsFocusableDEPRECATED(false);
 }
 
-void AMainMenuHUD::MainMenu_AboutButtonClicked()
+void AMainMenuHUD::MainMenu_AboutButtonClickedDEPRECATED()
 {
 	UE_LOG(LogTemp, Log, TEXT("AMainMenuHUD::MainMenu_AboutButtonClicked()"));
 }
 
-void AMainMenuHUD::MainMenu_ExitButtonClicked()
+void AMainMenuHUD::MainMenu_ExitButtonClickedDEPRECATED()
 {
 	UE_LOG(LogTemp, Log, TEXT("AMainMenuHUD::MainMenu_ExitButtonClicked()"));
 	UKismetSystemLibrary::QuitGame(GetWorld(), this->PlayerOwner, EQuitPreference::Quit, false);
 }
 
-void AMainMenuHUD::SetIsFocusable(bool ibIsFocusable)
+void AMainMenuHUD::SetIsFocusableDEPRECATED(bool ibIsFocusable)
 {
 	refMainMenu->bIsFocusable = ibIsFocusable;
 

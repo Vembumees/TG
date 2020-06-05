@@ -67,6 +67,18 @@ public:
 	class UPaperSprite* itemBackgroundNormal;
 	UPROPERTY(EditAnywhere)
 	class UPaperSprite* itemBackgroundSelected;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundNormal2;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundSelected2;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundNormal3;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundSelected3;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundNormal4;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundSelected4;
 
 	UPROPERTY(EditAnywhere)
 		class UTexture2D* itemBackgroundImgNormal;
@@ -90,4 +102,8 @@ protected:
 
 	virtual void NativePreConstruct() override;
 
+
+private:
+	int32 randVal = 0;
+	bool bHasAlreadySetButtonBackground = false;;
 };

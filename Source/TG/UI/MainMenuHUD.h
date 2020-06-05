@@ -21,13 +21,13 @@ public:
 	void InitializePlayerInput();
 
 	UFUNCTION()
-		void MainMenu_PlayButtonClicked();
+		void MainMenu_PlayButtonClickedDEPRECATED();
 	UFUNCTION()
-		void MainMenu_OptionsButtonClicked();
+		void MainMenu_OptionsButtonClickedDEPRECATED();
 	UFUNCTION()
-		void MainMenu_AboutButtonClicked();
+		void MainMenu_AboutButtonClickedDEPRECATED();
 	UFUNCTION()
-		void MainMenu_ExitButtonClicked();
+		void MainMenu_ExitButtonClickedDEPRECATED();
 protected:
 	virtual void BeginPlay() override;
 
@@ -42,5 +42,5 @@ protected:
 	FName mapLevel1 = TEXT("map_Level1");
 	FName mapLevel2 = TEXT("map_Level2");
 
-	void SetIsFocusable(bool ibIsFocusable);
+	void SetIsFocusableDEPRECATED(bool ibIsFocusable);
 };
