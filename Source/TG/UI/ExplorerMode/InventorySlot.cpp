@@ -26,6 +26,7 @@ void UInventorySlot::UpdateInventoryButtonBackgroundType()
 		{
 		case 0:
 			brush.SetResourceObject(itemBackgroundSelected);
+
 			break;
 		case 1:
 			brush.SetResourceObject(itemBackgroundSelected2);
@@ -36,7 +37,7 @@ void UInventorySlot::UpdateInventoryButtonBackgroundType()
 
 			break;
 		case 3:
-			brush.SetResourceObject(itemBackgroundSelected4);			
+			brush.SetResourceObject(itemBackgroundSelected4);
 
 			break;
 		}	

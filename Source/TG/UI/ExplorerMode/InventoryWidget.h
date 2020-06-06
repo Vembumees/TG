@@ -110,8 +110,8 @@ protected:
 	//inventory selection what do i need to do
 	//move up/down/left/right, add the selected img on selected one and normal one on last.
 
-	FVector2D currentlyActiveSlotCoord;
-	FVector2D lastActiveSlotCoord;
+	FVector2D currentlySelectedSlotCoord;
+	FVector2D lastSelectedSlotCoord;
 
 	int32 currentlySelectedItemForMoveIndex;
 	FVector2D lastSelectedItemForMoveSlotCoord;

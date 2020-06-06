@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "TG/Enumerations.h"
 #include "MainMenuSlot.generated.h"
 
 
@@ -17,7 +18,7 @@ struct FMenuSlotData
 		menuType = EMenuType::MAINMENU;
 		slotIndex = 0;
 		bIsSelected = false;
-
+		menuInventorySlotState = EInventorySlotState::EMPTY;
 	}
 
 	UPROPERTY(EditAnywhere)
@@ -26,7 +27,35 @@ struct FMenuSlotData
 		int32 slotIndex;
 	UPROPERTY(EditAnywhere)
 		bool bIsSelected;
+	UPROPERTY(EditAnywhere)
+		EInventorySlotState menuInventorySlotState;
+	UPROPERTY(EditAnywhere)
+		class AMenuItem* refMenuItem;
 
+};
+
+
+USTRUCT(BlueprintType)
+struct FMenuIconBackgroundSlotTextures
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundNormal;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundSelected;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundNormal2;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundSelected2;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundNormal3;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundSelected3;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundNormal4;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemBackgroundSelected4;
 };
 
 UCLASS()
@@ -43,12 +72,13 @@ public:
 		class UButton* refWButtonSlot;	//slot icon
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class USizeBox* refWSizeBoxSlotSize;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UImage* refSlotItemIcon;
 
 	FMenuSlotData menuSlotData;
-
-	//temp fix, dnt forget to update these in bp
+	
 	UPROPERTY(EditAnywhere)
-		class UTexture2D* iconBackground;
+	FMenuIconBackgroundSlotTextures menuIconBackgroundSlotTextures;
 
 	UPROPERTY(EditAnywhere)
 		FLinearColor imgColorSelected;
@@ -56,6 +86,7 @@ public:
 		FLinearColor imgColorNormal;
 
 	void UpdateInventoryButtonBackgroundType();
+	void SetSlotSize();
 
 protected:
 

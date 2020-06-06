@@ -5,14 +5,15 @@
 #include "Components/Border.h"
 #include "Components/Button.h"
 #include "Components/SizeBox.h"
-
+#include "MenuItem.h"
+#include "PaperSprite.h"
 
 void UMainMenuSlot::NativeConstruct()
 {
 	Super::NativeConstruct();
 	InitializeRefsInBP();
 	UpdateInventoryButtonBackgroundType();
-	UpdateInventoryButtonBackgroundImage();
+	SetSlotSize();
 }
 
 void UMainMenuSlot::UpdateInventoryButtonBackgroundType()
@@ -23,12 +24,20 @@ void UMainMenuSlot::UpdateInventoryButtonBackgroundType()
 	{
 		//is selected
 		brush.TintColor = imgColorSelected;
+		brush.SetResourceObject(menuIconBackgroundSlotTextures.itemBackgroundSelected);
 	}
 	else
 	{
 		//normal
 		brush.TintColor = imgColorNormal;
+		brush.SetResourceObject(menuIconBackgroundSlotTextures.itemBackgroundNormal);
 	}
-	brush.SetResourceObject(iconBackground);
+
 	refWBorderSingleSlot->SetBrush(brush);
+}
+
+void UMainMenuSlot::SetSlotSize()
+{
+	refWSizeBoxSlotSize->SetHeightOverride(100);
+	refWSizeBoxSlotSize->SetWidthOverride(100);
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "TG/Enumerations.h"
 #include "MainMenu.generated.h"
 
 /**
@@ -30,14 +31,57 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UUniformGridPanel* refMenuUniformGridPanel;
 
-
 	class AExploreController* refExploreController;
 
 	/* #########################END############################## */
+
+
+	UPROPERTY(EditAnywhere)
+		float menuInvSize;
+
+	UPROPERTY(EditAnywhere)
+		TMap<FVector2D, class UMainMenuSlot*> mapRefMenuSlots;
+
+	FVector2D currentlySelectedSlotCoord;
+	FVector2D lastSelectedSlotCoord;
+
+	UPROPERTY()
+		class AMainMenuPlayerController* refMainMenuPlayerController;
+
+	int32 GetCurrentlySelectedSlotIndex();
+	void RefreshMenuSlots();
+
 protected:
+
+	void AddDelegateBindings();
+	void InitializeRefs();
+
 	virtual void NativeConstruct() override;
 
+	UFUNCTION()
+		void CreateMenuSlots();
 
+	UFUNCTION()
+		void UseSelectedSlot();
+	
+	void HighlightSelectedSlot();
+	void DeHighlightSelectedSlot();
+	void SelectNeightbourSlot(FVector2D iTarget);
+	void GetStartingSlot();
+
+	/*unrelated to menu, but really what would be cool i think if you could*/
+	int32 GetFirstEmptyInventorySlotIndex();
+	UFUNCTION()
+		void MoveInMenu(EMoveDirections iMoveDir);
+
+	//dont forget to update the class in WBP with the BP one
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<UMainMenuSlot> mainMenuSlotClass;
+	
+
+	virtual void NativePreConstruct() override;
+
+public:
 
 
 };
