@@ -78,7 +78,7 @@ void UInventoryWidget::CreateInventorySlots()
 			l_currColumn, l_currRow);
 		mapRefInventorySlots.Add(FVector2D(l_currColumn, l_currRow), wInvSlot);
 		wInvSlot->slotData.inventorySlotState = EInventorySlotState::EMPTY;
-		if (slotOld.IsValidIndex(1))
+		if (slotOld.IsValidIndex(1)) //TODO !! idk i have no idea how this doesnt or yet hasnt caused a bug
 		{
 			if (slotOld[i]->slotData.inventorySlotState == EInventorySlotState::EMPTY)
 			{

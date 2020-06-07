@@ -19,6 +19,7 @@ struct FMenuSlotData
 		slotIndex = 0;
 		bIsSelected = false;
 		menuInventorySlotState = EInventorySlotState::EMPTY;
+		refMenuItem = nullptr;
 	}
 
 	UPROPERTY(EditAnywhere)

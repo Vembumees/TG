@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "TG/Enumerations.h"
+
 #include "MainMenu.generated.h"
 
 /**
@@ -31,8 +32,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UUniformGridPanel* refMenuUniformGridPanel;
 
-	class AExploreController* refExploreController;
-
 	/* #########################END############################## */
 
 
@@ -41,6 +40,13 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		TMap<FVector2D, class UMainMenuSlot*> mapRefMenuSlots;
+
+	UPROPERTY(EditAnywhere)
+		TArray<class UMainMenuSlot*> mainMenuSlotsInventory;
+	UPROPERTY(EditAnywhere)
+		TArray<class UMainMenuSlot*> optionsMenuSlotsInventory;
+	UPROPERTY(EditAnywhere)
+		TArray<class UMainMenuSlot*> QuestSelectSlotsInventory;
 
 	FVector2D currentlySelectedSlotCoord;
 	FVector2D lastSelectedSlotCoord;
@@ -76,7 +82,7 @@ protected:
 
 	//dont forget to update the class in WBP with the BP one
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<UMainMenuSlot> mainMenuSlotClass;
+		TSubclassOf<UMainMenuSlot> menuSlotClass;
 	
 
 	virtual void NativePreConstruct() override;
