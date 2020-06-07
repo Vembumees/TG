@@ -8,6 +8,7 @@
 #include "Components/UniformGridPanel.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "TG/Libraries/InventoryLibrary.h"
 
 
 
@@ -53,6 +54,8 @@ void UMainMenu::InitializeRefs()
 
 }
 
+
+
 void UMainMenu::CreateMenuSlots()
 {
 	/*if i miracelously get this to working then add stuff to the uinventorylibrary, sizes and all kinds of stats for the different
@@ -62,13 +65,14 @@ void UMainMenu::CreateMenuSlots()
 		return;
 	}
 	TArray<UMainMenuSlot*> slotOld = mainMenuSlotsInventory;
-	int32 l_column = 8;
-	int32 l_rows = 5;
+	int32 l_column = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).columns;
+	int32 l_rows = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).rows;
+	TArray<int32> l_hiddenSlotIndexes = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).hiddenIndexes;
 	int32 l_nrOfSlots = (l_rows * l_column) - 1;
 	mapRefMenuSlots.Empty();
 	mainMenuSlotsInventory.Empty();
 	refMenuUniformGridPanel->ClearChildren();
-	menuInvSize = 100;
+	menuInvSize = UInventoryLibrary::GetMenuInventorySlotSize(EMenuType::MAINMENU);
 	for (int i = 0; i <= l_nrOfSlots; i++)
 	{
 		/*dnt forget to update the class in wbp*/
@@ -78,17 +82,35 @@ void UMainMenu::CreateMenuSlots()
 		refMenuUniformGridPanel->AddChildToUniformGrid(wMenuInvSlot, l_currColumn, l_currRow);
 		mapRefMenuSlots.Add(FVector2D(l_currColumn, l_currRow), wMenuInvSlot);
 		wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::EMPTY;
+		
 		if (slotOld.IsValidIndex(1))	//TODO !! idk i have no idea how this doesnt or yet hasnt caused a bug
 		{
-			if (slotOld[i]->menuSlotData.menuInventorySlotState == EInventorySlotState::EMPTY)
+			switch (slotOld[i]->menuSlotData.menuInventorySlotState)
 			{
+			case EInventorySlotState::EMPTY:
 				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::EMPTY;
 				wMenuInvSlot->menuSlotData.refMenuItem = nullptr;
-			}
-			else
-			{
+				break;
+			case EInventorySlotState::HASITEM:
 				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HASITEM;
 				wMenuInvSlot->menuSlotData.refMenuItem = slotOld[i]->menuSlotData.refMenuItem;
+				break;
+			case EInventorySlotState::HIDDEN:
+				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HIDDEN;
+				break;
+			case EInventorySlotState::DISABLED:
+				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::DISABLED;
+				break;
+			}
+		}
+
+		for (auto& e : l_hiddenSlotIndexes)
+		{
+			if (i == e)
+			{
+				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HIDDEN;
+				//set opacity of the slot to 0
+				wMenuInvSlot->SetRenderOpacity(0);
 			}
 		}
 
@@ -105,9 +127,11 @@ void UMainMenu::CreateMenuSlots()
 	HighlightSelectedSlot();
 }
 
+
+
 void UMainMenu::UseSelectedSlot()
 {
-
+	
 }
 
 void UMainMenu::HighlightSelectedSlot()
@@ -137,6 +161,15 @@ void UMainMenu::GetStartingSlot()
 	currentlySelectedSlotCoord = FVector2D(0, 0);
 }
 
+void UMainMenu::GetRowIndexes(int32 iRow)
+{
+	//check if we can get that row that we asked for
+
+	//calculate the row indexes
+
+
+}
+
 void UMainMenu::MoveInMenu(EMoveDirections iMoveDir)
 {
 	FVector2D l_targetDirection = currentlySelectedSlotCoord;
@@ -159,13 +192,25 @@ void UMainMenu::MoveInMenu(EMoveDirections iMoveDir)
 		UE_LOG(LogTemp, Warning, TEXT("RIGHT"));
 		break;
 	} 
+	//if slot is not valid or is hidden then dont move
 	if (mapRefMenuSlots.Find(l_targetDirection))
 	{
-		SelectNeightbourSlot(l_targetDirection);
+		UMainMenuSlot* l_slot = *mapRefMenuSlots.Find(l_targetDirection);
+		if (l_slot->menuSlotData.menuInventorySlotState != EInventorySlotState::HIDDEN &&
+			l_slot->menuSlotData.menuInventorySlotState != EInventorySlotState::DISABLED)
+		{
+			SelectNeightbourSlot(l_targetDirection);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("direction where I wanted to move is hidden."));
+		}
+
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("direction where I wanted to move was invalid."));
+		UE_LOG(LogTemp, Warning, TEXT("direction where I wanted to move is invalid."));
 	}
+	
 }
 

@@ -66,4 +66,51 @@ FInventoryGridData UInventoryLibrary::GetInventoryGridData(EInventoryType iInven
 }
 
 
+float UInventoryLibrary::GetMenuInventorySlotSize(EMenuType iMenuType)
+{
+	int32 l_slotSize;
+	switch (iMenuType)
+	{
+	case EMenuType::MAINMENU:
+		l_slotSize = 100;
+		break;
+	case EMenuType::OPTIONSMENU:
+		l_slotSize = 100;
+		break;
+	case EMenuType::QUESTSELECT:
+		l_slotSize = 100;
+		break;
+	}
+	return l_slotSize;
+}
+
+FMenuInventoryGridData UInventoryLibrary::GetMenuInventoryGridData(EMenuType iMenuType)
+{
+	FMenuInventoryGridData l_menuData;
+	switch (iMenuType)
+	{
+	case EMenuType::MAINMENU:
+		l_menuData.rows = 5;
+		l_menuData.columns = 17;
+
+		//set hidden indexes
+		for (int i = 40; i < 45; i++)
+		{
+			l_menuData.hiddenIndexes.Add(i);
+		}
+		//set disabled indexes
+		
+
+
+		break;
+	case EMenuType::OPTIONSMENU:
+		
+		break;
+	case EMenuType::QUESTSELECT:
+		
+		break;
+	}
+
+	return l_menuData;
+}
 

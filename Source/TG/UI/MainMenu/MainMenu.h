@@ -46,7 +46,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		TArray<class UMainMenuSlot*> optionsMenuSlotsInventory;
 	UPROPERTY(EditAnywhere)
-		TArray<class UMainMenuSlot*> QuestSelectSlotsInventory;
+		TArray<class UMainMenuSlot*> questSelectSlotsInventory;
 
 	FVector2D currentlySelectedSlotCoord;
 	FVector2D lastSelectedSlotCoord;
@@ -64,8 +64,9 @@ protected:
 
 	virtual void NativeConstruct() override;
 
-	UFUNCTION()
+		
 		void CreateMenuSlots();
+
 
 	UFUNCTION()
 		void UseSelectedSlot();
@@ -74,6 +75,8 @@ protected:
 	void DeHighlightSelectedSlot();
 	void SelectNeightbourSlot(FVector2D iTarget);
 	void GetStartingSlot();
+	void GetRowIndexes(int32 iRow);
+
 
 	/*unrelated to menu, but really what would be cool i think if you could*/
 	int32 GetFirstEmptyInventorySlotIndex();

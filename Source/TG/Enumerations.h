@@ -173,6 +173,8 @@ enum class EInventorySlotState : uint8
 {
 	EMPTY						UMETA(DisplayName = "Empty"),
 	HASITEM						UMETA(DisplayName = "Has Item"),
+	HIDDEN						UMETA(DisplayName = "Is Hidden"),
+	DISABLED						UMETA(DisplayName = "Is Disabled"),
 };
 
 UENUM(BlueprintType)
