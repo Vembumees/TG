@@ -10,7 +10,6 @@ AMenuItem::AMenuItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -30,9 +29,18 @@ void AMenuItem::ReadDataTable()
 	{
 		UE_LOG(LogTemp, Error, TEXT("MenuItemData not found!"));
 	}
-	FItemMenuAllData* row = itemInfo->FindRow<FItemMenuAllData>(dataTableItemRowNames[dtItemDataRowNumber], TEXT("LookupMenuItemData"));
+	dataTableItemRowNames = itemInfo->GetRowNames();
+	FItemMenuAllData* row = itemInfo->FindRow<FItemMenuAllData>(dataTableItemRowNames[dtItemDataRowNumber + 1], TEXT("LookupMenuItemData"));
 	if (row != nullptr)
 	{
 		currentMenuItemData = row->itemData;
 	}
+}
+
+class AMenuItem* AMenuItem::SpawnItem(UWorld* iWorld, int32 iItemIdx)
+{
+	FActorSpawnParameters spawnParams;
+	AMenuItem* spawnedItem = iWorld->SpawnActor<AMenuItem>(spawnParams);
+	spawnedItem->dtItemDataRowNumber = iItemIdx;
+	return spawnedItem;
 }

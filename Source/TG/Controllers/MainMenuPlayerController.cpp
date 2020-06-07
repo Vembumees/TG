@@ -18,6 +18,7 @@ void AMainMenuPlayerController::SetupInputComponent()
 	InputComponent->BindAction("MenuLEFT", IE_Pressed, this, &AMainMenuPlayerController::MenuLEFT);
 	InputComponent->BindAction("MenuRIGHT", IE_Pressed, this, &AMainMenuPlayerController::MenuRIGHT);
 	InputComponent->BindAction("MenuUSESELECTED", IE_Pressed, this, &AMainMenuPlayerController::MenuUSESELECTED);
+	InputComponent->BindAction("DEBUGAddItem", IE_Pressed, this, &AMainMenuPlayerController::DebugAdditem);
 }
 
 
@@ -54,4 +55,9 @@ void AMainMenuPlayerController::InitializeRefs()
 {
 		/*HUD*/
 	refMainMenuHUD = Cast<AMainMenuHUD>(this->GetHUD());
+}
+
+void AMainMenuPlayerController::DebugAdditem()
+{
+	delegateDebugAddItem.Broadcast();
 }

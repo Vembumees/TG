@@ -9,6 +9,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMenuMove, EMoveDirections, currMenuMoveDirection);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMenuUseSelected);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDebugAdditem);
 
 
 UCLASS()
@@ -27,6 +28,7 @@ protected:
 	void MenuRIGHT();
 	void MenuUSESELECTED();
 	void InitializeRefs();
+	void DebugAdditem();
 
 
 
@@ -36,6 +38,7 @@ public:
 	EMoveDirections     currMenuMoveDirection;
 	FMenuMove	   		delegateMenuMove;
 	FMenuUseSelected    delegateMenuUse;
+	FDebugAdditem		delegateDebugAddItem;
 
 	/* ###########################################################
 					references

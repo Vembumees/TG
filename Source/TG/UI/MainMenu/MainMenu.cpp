@@ -9,7 +9,12 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "TG/Libraries/InventoryLibrary.h"
-
+#include "Kismet/KismetSystemLibrary.h"
+#include "TG/StaticLibrary.h"
+#include "TG/UI/MainMenu/MenuItem.h"
+#include "Kismet/GameplayStatics.h"
+#include "PaperSprite.h"
+#include "Components/Image.h"
 
 
 void UMainMenu::NativeConstruct()
@@ -20,12 +25,50 @@ void UMainMenu::NativeConstruct()
 	CreateMenuSlots();
 	AddDelegateBindings();
 	GetStartingSlot();
+	CreateMenuStartingItems();
+
+	FTimerHandle timerx;
+	GetWorld()->GetTimerManager().SetTimer(timerx, this, &UMainMenu::UpdateItemsWithTimer, 1);
 	
 }
 
 void UMainMenu::NativePreConstruct()
 {
 	Super::NativePreConstruct();	 
+}
+
+void UMainMenu::CreateMenuStartingItems()
+{
+	TArray<AMenuItem*> l_items;
+	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 0));
+	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 1));
+	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 2));
+	for (auto& e : l_items)
+	{
+		AddItemToInventory(e);
+	}
+
+}
+
+bool UMainMenu::AddItemToInventory(class AMenuItem* iItem)
+{
+	if (iItem == nullptr)
+	{
+		return false;
+	}
+
+	if (this->GetFirstEmptyInventorySlotIndex() == -1)
+	{
+		UE_LOG(LogTemp, Error, TEXT("MenuInventory is full"));
+		return false;
+	}
+	int32 idx = this->GetFirstEmptyInventorySlotIndex();
+	mainMenuSlotsInventory[idx]->menuSlotData.refMenuItem = iItem;
+	mainMenuSlotsInventory[idx]->menuSlotData.menuInventorySlotState = EInventorySlotState::HASITEM;
+	UE_LOG(LogTemp, Error, TEXT("Added menu item successfully."));
+	
+	UpdateItemsFromMenuInventory(mainMenuSlotsInventory);
+	return true;
 }
 
 int32 UMainMenu::GetCurrentlySelectedSlotIndex()
@@ -42,11 +85,45 @@ void UMainMenu::RefreshMenuSlots()
 	CreateMenuSlots();
 }
 
+void UMainMenu::UpdateItemsFromMenuInventory(TArray<class UMainMenuSlot*> iMenuInventory)
+{
+	TArray<UMainMenuSlot*> mapValues;
+	mapRefMenuSlots.GenerateValueArray(mapValues);
+	int32 loopCounter = 0;
+	for (auto& e : iMenuInventory)
+	{
+		if (e->menuSlotData.menuInventorySlotState == EInventorySlotState::HASITEM)
+		{
+			FSlateBrush brush;
+			brush.SetResourceObject(e->menuSlotData.refMenuItem->currentMenuItemData.itemIcon);
+			//update icon
+			mapValues[loopCounter]->refSlotItemIcon->SetBrush(brush);
+			mapValues[loopCounter]->refSlotItemIcon->SetBrushSize(FVector2D(45,45)); //magic numbers
+
+			//add item pointer
+			mapValues[loopCounter]->menuSlotData.refMenuItem = e->menuSlotData.refMenuItem;
+		}
+	}
+}
+
+void UMainMenu::UpdateItemsWithTimer()
+{
+	RefreshMenuSlots();
+	UpdateItemsFromMenuInventory(mainMenuSlotsInventory);
+	RefreshMenuSlots();
+}
+
+void UMainMenu::DebugAddItemToInventory()
+{
+	AddItemToInventory(AMenuItem::SpawnItem(this->GetWorld(), 0));
+}
+
 void UMainMenu::AddDelegateBindings()
 {
 	refMainMenuPlayerController = Cast<AMainMenuPlayerController>(GetWorld()->GetFirstPlayerController());
 	refMainMenuPlayerController->delegateMenuMove.AddDynamic(this, &UMainMenu::MoveInMenu);
 	refMainMenuPlayerController->delegateMenuUse.AddDynamic(this, &UMainMenu::UseSelectedSlot);
+	refMainMenuPlayerController->delegateDebugAddItem.AddDynamic(this, &UMainMenu::DebugAddItemToInventory);
 }
 
 void UMainMenu::InitializeRefs()
@@ -88,7 +165,7 @@ void UMainMenu::CreateMenuSlots()
 		wMenuInvSlot->refWSizeBoxSlotSize->SetHeightOverride(menuInvSize);
 		wMenuInvSlot->refWSizeBoxSlotSize->SetWidthOverride(menuInvSize);
 
-		if (slotOld.IsValidIndex(1))	//TODO !! idk i have no idea how this doesnt or yet hasnt caused a bug
+		if (slotOld.IsValidIndex(0)) //just checks if the thing is empty or not
 		{
 			switch (slotOld[i]->menuSlotData.menuInventorySlotState)
 			{
@@ -133,7 +210,68 @@ void UMainMenu::CreateMenuSlots()
 
 void UMainMenu::UseSelectedSlot()
 {
-	
+	if (!mapRefMenuSlots.Contains(currentlySelectedSlotCoord))
+	{
+		return;
+	}
+	UMainMenuSlot* l_currMenuSlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
+	if (l_currMenuSlot->menuSlotData.refMenuItem == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("no item in slot"));
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("\n SLOTDATA \n slotIndex: %i \n itemName: %s \n menuType: %s \n menuInventorySlotState: %s"),
+		l_currMenuSlot->menuSlotData.slotIndex,
+		*l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.itemName,
+		*UStaticLibrary::GetEnumValueAsString("EMenuType", l_currMenuSlot->menuSlotData.menuType ),
+		*UStaticLibrary::GetEnumValueAsString("EInventorySlotState", l_currMenuSlot->menuSlotData.menuInventorySlotState)
+	);
+
+	switch (l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.itemType)
+	{
+	case EMenuItemFunction::NONE:
+		break;
+	case EMenuItemFunction::STARTGAME:
+		//open quest select
+
+		UGameplayStatics::OpenLevel(
+			this->GetWorld(),
+			TEXT("MapDemoLevel"));
+
+		break;
+	case EMenuItemFunction::OPENSETTINGS:
+		//open settings bars
+		break;
+	case EMenuItemFunction::QUITGAME:
+
+		UKismetSystemLibrary::QuitGame(GetWorld(), this->GetOwningPlayer(), EQuitPreference::Quit, false);
+
+		break;
+	case EMenuItemFunction::D:
+		break;
+	case EMenuItemFunction::E:
+		break;
+	case EMenuItemFunction::F:
+		break;
+	case EMenuItemFunction::G:
+		break;
+	case EMenuItemFunction::H:
+		break;
+	case EMenuItemFunction::I:
+		break;
+	case EMenuItemFunction::J:
+		break;
+	case EMenuItemFunction::K:
+		break;
+	case EMenuItemFunction::L:
+		break;
+	case EMenuItemFunction::M:
+		break;
+	default:
+		break;
+
+	}
+
 }
 
 void UMainMenu::HighlightSelectedSlot()
@@ -183,6 +321,24 @@ void UMainMenu::GetRowIndexes(int32 iRow)
 
 }
 
+int32 UMainMenu::GetFirstEmptyInventorySlotIndex()
+{
+	TArray<UMainMenuSlot*> mapValues;
+	mapRefMenuSlots.GenerateValueArray(mapValues);
+	for (auto& e : mapValues)
+	{
+		//will add item if slot is empty
+		if (e->menuSlotData.menuInventorySlotState == EInventorySlotState::EMPTY)
+		{
+			return e->menuSlotData.slotIndex;
+		}
+	}
+
+	//inv full
+	return -1;
+
+}
+
 void UMainMenu::MoveInMenu(EMoveDirections iMoveDir)
 {
 	FVector2D l_targetDirection = currentlySelectedSlotCoord;
@@ -213,6 +369,7 @@ void UMainMenu::MoveInMenu(EMoveDirections iMoveDir)
 			l_slot->menuSlotData.menuInventorySlotState != EInventorySlotState::DISABLED)
 		{
 			SelectNeightbourSlot(l_targetDirection);
+
 		}
 		else
 		{

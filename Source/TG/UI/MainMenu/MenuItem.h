@@ -12,20 +12,21 @@ struct FMenuItemData
 	GENERATED_BODY()
 		FMenuItemData()
 		: ID(0),
-		itemName(FText(FText::FromString("NONE"))),
+		itemName(TEXT("None")),
 		itemDescription(TEXT("Default item, use with caution"))
 		{}
 
 	UPROPERTY(EditAnywhere)
 		int32 ID;
 	UPROPERTY(EditAnywhere)
-		FText itemName;
+		FString itemName;
 	UPROPERTY(EditAnywhere)
 		FString itemDescription;
 	UPROPERTY(EditAnywhere)
-		class UPaperFlipbook* itemIcon;
-
-
+		class UPaperSprite* itemIcon;
+	//item function
+	UPROPERTY(EditAnywhere)
+		EMenuItemFunction itemType;
 };
 
 USTRUCT(BlueprintType)
@@ -76,6 +77,10 @@ protected:
 	UPROPERTY()
 		TArray<FName> dataTableItemRowNames;
 	
+public:
+	UFUNCTION()
+		static AMenuItem* SpawnItem(UWorld* iWorld, int32 iItemIdx);
+
 	/* #########################END############################## */
 
 

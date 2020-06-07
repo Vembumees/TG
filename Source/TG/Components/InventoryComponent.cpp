@@ -59,8 +59,6 @@ bool UInventoryComponent::AddItemToInventory(class AItem* iItem)
 	//also update player UI via delegate
 	delegateInventoryUpdate.Broadcast(refItemInventory);
 
-
-
 	return true;
 }
 

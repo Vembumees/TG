@@ -53,6 +53,11 @@ public:
 	int32 GetCurrentlySelectedSlotIndex();
 	
 	void RefreshMenuSlots();
+	void UpdateItemsFromMenuInventory(TArray<class UMainMenuSlot*> iMenuInventory);
+	void UpdateItemsWithTimer();
+
+	UFUNCTION()
+	void DebugAddItemToInventory();
 
 protected:
 
@@ -86,6 +91,8 @@ protected:
 	
 
 	virtual void NativePreConstruct() override;
+	void CreateMenuStartingItems();
+	bool AddItemToInventory(class AMenuItem* iItem);
 
 public:
 

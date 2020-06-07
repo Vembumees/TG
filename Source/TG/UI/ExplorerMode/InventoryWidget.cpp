@@ -245,7 +245,7 @@ void UInventoryWidget::UpdateItemsFromPlayerInventory(TArray<class UInventorySlo
 			brush.SetResourceObject(e->slotData.refItem->currentItemData.itemIcon);
 			//update icon
 			mapValues[loopCounter]->refWItemIcon->SetBrush(brush);
-			mapValues[loopCounter]->refWItemIcon->SetBrushSize(FVector2D(45, 45));
+			mapValues[loopCounter]->refWItemIcon->SetBrushSize(FVector2D(45, 45)); //magic numbers
 
 			//add item pointer
 			mapValues[loopCounter]->slotData.refItem = e->slotData.refItem;
@@ -358,7 +358,6 @@ void UInventoryWidget::UseSelectedItem()
 		/*the check what kind of item we are using we're doing in the abilitycomp, including equiping items etc*/
 		
 		refPlayerCharacter->GetAbilityComponent()->CastAbility(l_currInventorySlot->slotData.slotIndex);
-
 
 		break;
 	case ESlotType::ARTIFACT:
