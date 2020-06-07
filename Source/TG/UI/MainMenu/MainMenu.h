@@ -28,7 +28,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UButton* refMenuBtnBackground;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UTextBlock* refMenuTitleText;
+		class UTextBlock* refMenuTooltipText;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UUniformGridPanel* refMenuUniformGridPanel;
 
@@ -43,10 +43,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		TArray<class UMainMenuSlot*> mainMenuSlotsInventory;
-	UPROPERTY(EditAnywhere)
-		TArray<class UMainMenuSlot*> optionsMenuSlotsInventory;
-	UPROPERTY(EditAnywhere)
-		TArray<class UMainMenuSlot*> questSelectSlotsInventory;
 
 	FVector2D currentlySelectedSlotCoord;
 	FVector2D lastSelectedSlotCoord;
@@ -55,6 +51,7 @@ public:
 		class AMainMenuPlayerController* refMainMenuPlayerController;
 
 	int32 GetCurrentlySelectedSlotIndex();
+	
 	void RefreshMenuSlots();
 
 protected:

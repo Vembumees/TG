@@ -68,7 +68,7 @@ FInventoryGridData UInventoryLibrary::GetInventoryGridData(EInventoryType iInven
 
 float UInventoryLibrary::GetMenuInventorySlotSize(EMenuType iMenuType)
 {
-	int32 l_slotSize;
+	int32 l_slotSize = 0;
 	switch (iMenuType)
 	{
 	case EMenuType::MAINMENU:
@@ -87,14 +87,23 @@ float UInventoryLibrary::GetMenuInventorySlotSize(EMenuType iMenuType)
 FMenuInventoryGridData UInventoryLibrary::GetMenuInventoryGridData(EMenuType iMenuType)
 {
 	FMenuInventoryGridData l_menuData;
+	int32 l_totalNrOfSlots = 0;
 	switch (iMenuType)
 	{
 	case EMenuType::MAINMENU:
 		l_menuData.rows = 5;
 		l_menuData.columns = 17;
+		l_totalNrOfSlots = (l_menuData.rows * l_menuData.columns) - 1;
+		
+		//set starting hidden indexes
 
-		//set hidden indexes
-		for (int i = 40; i < 45; i++)
+		//top
+		for (int i = 0; i <= 55; i++)
+		{
+			l_menuData.hiddenIndexes.Add(i);
+		}
+		//bottom
+		for (int i = 63; i <= l_totalNrOfSlots; i++)
 		{
 			l_menuData.hiddenIndexes.Add(i);
 		}
@@ -104,10 +113,16 @@ FMenuInventoryGridData UInventoryLibrary::GetMenuInventoryGridData(EMenuType iMe
 
 		break;
 	case EMenuType::OPTIONSMENU:
-		
+		l_menuData.rows = 1;
+		l_menuData.columns = 1;
+		l_totalNrOfSlots = (l_menuData.rows * l_menuData.columns) - 1;
+
 		break;
 	case EMenuType::QUESTSELECT:
-		
+		l_menuData.rows = 1;
+		l_menuData.columns = 1;
+		l_totalNrOfSlots = (l_menuData.rows * l_menuData.columns) - 1;
+
 		break;
 	}
 

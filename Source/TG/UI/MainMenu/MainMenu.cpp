@@ -25,7 +25,7 @@ void UMainMenu::NativeConstruct()
 
 void UMainMenu::NativePreConstruct()
 {
-	Super::NativePreConstruct();
+	Super::NativePreConstruct();	 
 }
 
 int32 UMainMenu::GetCurrentlySelectedSlotIndex()
@@ -81,8 +81,13 @@ void UMainMenu::CreateMenuSlots()
 		int32 l_currRow = i - ((i / l_column) * l_column);
 		refMenuUniformGridPanel->AddChildToUniformGrid(wMenuInvSlot, l_currColumn, l_currRow);
 		mapRefMenuSlots.Add(FVector2D(l_currColumn, l_currRow), wMenuInvSlot);
+		wMenuInvSlot->menuSlotData.slotCoords = FVector2D(l_currColumn, l_currRow);
+		wMenuInvSlot->menuSlotData.slotIndex = i;
 		wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::EMPTY;
-		
+		wMenuInvSlot->menuSlotData.menuType = EMenuType::MAINMENU;
+		wMenuInvSlot->refWSizeBoxSlotSize->SetHeightOverride(menuInvSize);
+		wMenuInvSlot->refWSizeBoxSlotSize->SetWidthOverride(menuInvSize);
+
 		if (slotOld.IsValidIndex(1))	//TODO !! idk i have no idea how this doesnt or yet hasnt caused a bug
 		{
 			switch (slotOld[i]->menuSlotData.menuInventorySlotState)
@@ -114,10 +119,7 @@ void UMainMenu::CreateMenuSlots()
 			}
 		}
 
-		wMenuInvSlot->menuSlotData.slotIndex = i;
-		wMenuInvSlot->menuSlotData.menuType = EMenuType::MAINMENU;
-		wMenuInvSlot->refWSizeBoxSlotSize->SetHeightOverride(menuInvSize);
-		wMenuInvSlot->refWSizeBoxSlotSize->SetWidthOverride(menuInvSize);
+		
 
 		mainMenuSlotsInventory.Add(wMenuInvSlot);
 
@@ -158,7 +160,18 @@ void UMainMenu::SelectNeightbourSlot(FVector2D iTarget)
 
 void UMainMenu::GetStartingSlot()
 {
-	currentlySelectedSlotCoord = FVector2D(0, 0);
+	for (auto& e : mainMenuSlotsInventory)
+	{
+		if (e->menuSlotData.menuInventorySlotState != EInventorySlotState::HIDDEN &&
+			e->menuSlotData.menuInventorySlotState != EInventorySlotState::DISABLED)
+		{
+			
+			currentlySelectedSlotCoord = e->menuSlotData.slotCoords;
+			HighlightSelectedSlot();
+			break;
+		}
+	}
+
 }
 
 void UMainMenu::GetRowIndexes(int32 iRow)

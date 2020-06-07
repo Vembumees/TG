@@ -17,6 +17,7 @@ struct FMenuSlotData
 	{
 		menuType = EMenuType::MAINMENU;
 		slotIndex = 0;
+		slotCoords = FVector2D(0,0);
 		bIsSelected = false;
 		menuInventorySlotState = EInventorySlotState::EMPTY;
 		refMenuItem = nullptr;
@@ -27,6 +28,8 @@ struct FMenuSlotData
 		EMenuType menuType;
 	UPROPERTY(EditAnywhere)
 		int32 slotIndex;
+	UPROPERTY(EditAnywhere)
+		FVector2D slotCoords;
 	UPROPERTY(EditAnywhere)
 		bool bIsSelected;
 	UPROPERTY(EditAnywhere)
