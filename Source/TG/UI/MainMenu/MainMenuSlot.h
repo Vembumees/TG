@@ -13,13 +13,14 @@ struct FMenuSlotData
 {
 	GENERATED_BODY()
 
-		FMenuSlotData()
+	FMenuSlotData()
 	{
 		menuType = EMenuType::MAINMENU;
 		slotIndex = 0;
 		bIsSelected = false;
 		menuInventorySlotState = EInventorySlotState::EMPTY;
 		refMenuItem = nullptr;
+		
 	}
 
 	UPROPERTY(EditAnywhere)

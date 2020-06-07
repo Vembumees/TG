@@ -10,7 +10,7 @@ AMainMenuPlayerController::AMainMenuPlayerController()
 }
 
 void AMainMenuPlayerController::SetupInputComponent()
-{
+{	
 	Super::SetupInputComponent();
 
 	InputComponent->BindAction("MenuUP", IE_Pressed, this, &AMainMenuPlayerController::MenuUP);

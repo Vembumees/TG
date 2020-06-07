@@ -62,9 +62,8 @@ void AMainMenuHUD::InitializePlayerInput()
 		refMainMenuController = Cast<AMainMenuPlayerController>(World->GetFirstPlayerController());
 		if (refMainMenuController)
 		{
-			FInputModeUIOnly InputMode;
+			FInputModeGameOnly InputMode;
 			refMainMenuController->SetInputMode(InputMode);
-			UGameplayStatics::SetGamePaused(this, true);
 		}
 	}
 }

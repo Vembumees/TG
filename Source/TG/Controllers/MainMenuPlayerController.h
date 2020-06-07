@@ -19,6 +19,7 @@ public:
 	AMainMenuPlayerController();
 
 protected:
+	virtual void SetupInputComponent() override;
 
 	void MenuUP();
 	void MenuDOWN();
@@ -28,7 +29,7 @@ protected:
 	void InitializeRefs();
 
 
-	virtual void SetupInputComponent() override;
+
 
 public:
 

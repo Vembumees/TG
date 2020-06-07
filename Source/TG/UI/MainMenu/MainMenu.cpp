@@ -17,13 +17,14 @@ void UMainMenu::NativeConstruct()
 
 	InitializeBPReferences();
 	CreateMenuSlots();
+	AddDelegateBindings();
+	GetStartingSlot();
 	
 }
 
 void UMainMenu::NativePreConstruct()
 {
 	Super::NativePreConstruct();
-	InitializeBPReferences();
 }
 
 int32 UMainMenu::GetCurrentlySelectedSlotIndex()
@@ -61,8 +62,8 @@ void UMainMenu::CreateMenuSlots()
 		return;
 	}
 	TArray<UMainMenuSlot*> slotOld = mainMenuSlotsInventory;
-	int32 l_column = 10;
-	int32 l_rows = 1;
+	int32 l_column = 8;
+	int32 l_rows = 5;
 	int32 l_nrOfSlots = (l_rows * l_column) - 1;
 	mapRefMenuSlots.Empty();
 	mainMenuSlotsInventory.Empty();
@@ -126,6 +127,9 @@ void UMainMenu::DeHighlightSelectedSlot()
 void UMainMenu::SelectNeightbourSlot(FVector2D iTarget)
 {
 	lastSelectedSlotCoord = currentlySelectedSlotCoord;
+	currentlySelectedSlotCoord = iTarget;
+	DeHighlightSelectedSlot();
+	HighlightSelectedSlot();
 }
 
 void UMainMenu::GetStartingSlot()
