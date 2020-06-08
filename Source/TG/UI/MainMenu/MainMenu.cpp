@@ -16,6 +16,7 @@
 #include "PaperSprite.h"
 #include "Components/Image.h"
 
+#define MAINMENU_ICONSIZE FVector2D(90, 90)
 
 void UMainMenu::NativeConstruct()
 {
@@ -102,7 +103,7 @@ void UMainMenu::UpdateItemsFromMenuInventory(TArray<class UMainMenuSlot*> iMenuI
 			brush.SetResourceObject(e->menuSlotData.refMenuItem->currentMenuItemData.itemIcon);
 			//update icon
 			mapValues[loopCounter]->refSlotItemIcon->SetBrush(brush);
-			mapValues[loopCounter]->refSlotItemIcon->SetBrushSize(FVector2D(50,50)); //magic numbers
+			mapValues[loopCounter]->refSlotItemIcon->SetBrushSize(MAINMENU_ICONSIZE);
 
 			//add item pointer
 			mapValues[loopCounter]->menuSlotData.refMenuItem = e->menuSlotData.refMenuItem;
@@ -121,7 +122,8 @@ void UMainMenu::AddDelegateBindings()
 {
 	refMainMenuPlayerController = Cast<AMainMenuPlayerController>(GetWorld()->GetFirstPlayerController());
 	refMainMenuPlayerController->delegateMenuMove.AddDynamic(this, &UMainMenu::MoveInMenu);
-	refMainMenuPlayerController->delegateMenuUse.AddDynamic(this, &UMainMenu::UseSelectedSlot);
+	refMainMenuPlayerController->delegateMenuUsePRESSED.AddDynamic(this, &UMainMenu::UseSelectedSlotPressed);
+	refMainMenuPlayerController->delegateMenuUseRELEASED.AddDynamic(this, &UMainMenu::UseSelectedSlot);
 	refMainMenuPlayerController->delegateDebugAddItem.AddDynamic(this, &UMainMenu::DebugAddItemToInventory);
 }
 
@@ -207,6 +209,27 @@ void UMainMenu::CreateMenuSlots()
 
 
 
+void UMainMenu::UseSelectedSlotPressed()
+{
+	if (!mapRefMenuSlots.Contains(currentlySelectedSlotCoord))
+	{
+		return;
+	}
+	UMainMenuSlot* l_currMenuSlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
+	if (l_currMenuSlot->menuSlotData.refMenuItem == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("no item in slot"));
+		return;
+	}
+	//sets the icon to pressed
+	FSlateBrush brush;
+	brush.SetResourceObject(l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.itemIconPressed);
+	//update icon
+	l_currMenuSlot->refSlotItemIcon->SetBrush(brush);
+	l_currMenuSlot->refSlotItemIcon->SetBrushSize(MAINMENU_ICONSIZE);
+
+}
+
 void UMainMenu::UseSelectedSlot()
 {
 	if (!mapRefMenuSlots.Contains(currentlySelectedSlotCoord))
@@ -225,6 +248,13 @@ void UMainMenu::UseSelectedSlot()
 		*UStaticLibrary::GetEnumValueAsString("EMenuType", l_currMenuSlot->menuSlotData.menuType ),
 		*UStaticLibrary::GetEnumValueAsString("EInventorySlotState", l_currMenuSlot->menuSlotData.menuInventorySlotState)
 	);
+
+	//sets the icon to normal from pressed
+	FSlateBrush brush;
+	brush.SetResourceObject(l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.itemIcon);
+	//update icon
+	l_currMenuSlot->refSlotItemIcon->SetBrush(brush);
+	l_currMenuSlot->refSlotItemIcon->SetBrushSize(MAINMENU_ICONSIZE);
 
 	switch (l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.itemType)
 	{
@@ -289,6 +319,15 @@ void UMainMenu::DeHighlightSelectedSlot()
 
 void UMainMenu::SelectNeightbourSlot(FVector2D iTarget)
 {
+	//sets the icon back to normal from pressed
+	UMainMenuSlot* l_currMenuSlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
+	//sets the icon to pressed
+	FSlateBrush brush;
+	brush.SetResourceObject(l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.itemIcon);
+	//update icon
+	l_currMenuSlot->refSlotItemIcon->SetBrush(brush);
+	l_currMenuSlot->refSlotItemIcon->SetBrushSize(MAINMENU_ICONSIZE);
+
 	lastSelectedSlotCoord = currentlySelectedSlotCoord;
 	currentlySelectedSlotCoord = iTarget;
 	DeHighlightSelectedSlot();

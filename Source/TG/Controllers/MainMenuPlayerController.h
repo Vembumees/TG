@@ -8,7 +8,8 @@
 #include "MainMenuPlayerController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMenuMove, EMoveDirections, currMenuMoveDirection);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMenuUseSelected);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMenuUseSelectedPRESSED);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMenuUseSelectedRELEASED);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDebugAdditem);
 
 
@@ -26,7 +27,8 @@ protected:
 	void MenuDOWN();
 	void MenuLEFT();
 	void MenuRIGHT();
-	void MenuUSESELECTED();
+	void MenuUSESELECTEDPRESSED();
+	void MenuUSESELECTEDRELEASED();
 	void InitializeRefs();
 	void DebugAdditem();
 
@@ -37,7 +39,8 @@ public:
 
 	EMoveDirections     currMenuMoveDirection;
 	FMenuMove	   		delegateMenuMove;
-	FMenuUseSelected    delegateMenuUse;
+	FMenuUseSelectedPRESSED    delegateMenuUsePRESSED;
+	FMenuUseSelectedRELEASED    delegateMenuUseRELEASED;
 	FDebugAdditem		delegateDebugAddItem;
 
 	/* ###########################################################

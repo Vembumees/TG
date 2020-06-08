@@ -69,8 +69,10 @@ protected:
 		void CreateMenuSlots();
 
 
-	UFUNCTION()
-		void UseSelectedSlot();
+		UFUNCTION()
+			void UseSelectedSlotPressed();
+		UFUNCTION()
+			void UseSelectedSlot();
 	
 	void HighlightSelectedSlot();
 	void DeHighlightSelectedSlot();

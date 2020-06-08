@@ -24,6 +24,8 @@ struct FMenuItemData
 		FString itemDescription;
 	UPROPERTY(EditAnywhere)
 		class UPaperSprite* itemIcon;
+	UPROPERTY(EditAnywhere)
+		class UPaperSprite* itemIconPressed;
 	//item function
 	UPROPERTY(EditAnywhere)
 		EMenuItemFunction itemType;

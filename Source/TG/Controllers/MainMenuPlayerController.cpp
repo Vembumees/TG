@@ -17,7 +17,8 @@ void AMainMenuPlayerController::SetupInputComponent()
 	InputComponent->BindAction("MenuDOWN", IE_Pressed, this, &AMainMenuPlayerController::MenuDOWN);
 	InputComponent->BindAction("MenuLEFT", IE_Pressed, this, &AMainMenuPlayerController::MenuLEFT);
 	InputComponent->BindAction("MenuRIGHT", IE_Pressed, this, &AMainMenuPlayerController::MenuRIGHT);
-	InputComponent->BindAction("MenuUSESELECTED", IE_Pressed, this, &AMainMenuPlayerController::MenuUSESELECTED);
+	InputComponent->BindAction("MenuUSESELECTED", IE_Pressed, this, &AMainMenuPlayerController::MenuUSESELECTEDPRESSED);
+	InputComponent->BindAction("MenuUSESELECTED", IE_Released, this, &AMainMenuPlayerController::MenuUSESELECTEDRELEASED);
 	InputComponent->BindAction("DEBUGAddItem", IE_Pressed, this, &AMainMenuPlayerController::DebugAdditem);
 }
 
@@ -46,9 +47,14 @@ void AMainMenuPlayerController::MenuRIGHT()
 	delegateMenuMove.Broadcast(currMenuMoveDirection);
 }
 
-void AMainMenuPlayerController::MenuUSESELECTED()
+void AMainMenuPlayerController::MenuUSESELECTEDPRESSED()
 {
-	delegateMenuUse.Broadcast();
+	delegateMenuUsePRESSED.Broadcast();
+}
+
+void AMainMenuPlayerController::MenuUSESELECTEDRELEASED()
+{
+	delegateMenuUseRELEASED.Broadcast();
 }
 
 void AMainMenuPlayerController::InitializeRefs()
