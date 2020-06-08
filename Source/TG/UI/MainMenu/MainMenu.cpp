@@ -300,6 +300,10 @@ void UMainMenu::UseSelectedSlot()
 
 	}
 
+
+	//Play sfx
+	UGameplayStatics::PlaySound2D(GetWorld(), l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.sfxUseItem);
+
 }
 
 void UMainMenu::HighlightSelectedSlot()
@@ -332,6 +336,10 @@ void UMainMenu::SelectNeightbourSlot(FVector2D iTarget)
 	DeHighlightSelectedSlot();
 	HighlightSelectedSlot();
 	UpdateTooltipText();
+
+	//Play sfx
+	UGameplayStatics::PlaySound2D(GetWorld(), l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.sfxHoverItem);
+
 }
 
 void UMainMenu::GetStartingSlot()

@@ -82,6 +82,8 @@ protected:
 	void UpdateTooltipText();
 
 
+
+
 	/*unrelated to menu, but really what would be cool i think if you could*/
 	int32 GetFirstEmptyInventorySlotIndex();
 	UFUNCTION()

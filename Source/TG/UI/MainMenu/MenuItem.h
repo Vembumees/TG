@@ -29,6 +29,10 @@ struct FMenuItemData
 	//item function
 	UPROPERTY(EditAnywhere)
 		EMenuItemFunction itemType;
+	UPROPERTY(EditAnywhere)
+		USoundBase* sfxHoverItem;
+	UPROPERTY(EditAnywhere)
+		USoundBase* sfxUseItem;
 };
 
 USTRUCT(BlueprintType)
