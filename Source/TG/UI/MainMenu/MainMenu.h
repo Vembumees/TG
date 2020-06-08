@@ -79,6 +79,7 @@ protected:
 	void SelectNeightbourSlot(FVector2D iTarget);
 	void GetStartingSlot();
 	void GetRowIndexes(int32 iRow);
+	void UpdateTooltipText();
 
 
 	/*unrelated to menu, but really what would be cool i think if you could*/

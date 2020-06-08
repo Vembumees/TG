@@ -27,7 +27,7 @@ void UMainMenu::NativeConstruct()
 	AddDelegateBindings();
 	GetStartingSlot();
 	CreateMenuStartingItems();
-
+	UpdateTooltipText();
 	
 }
 
@@ -227,7 +227,6 @@ void UMainMenu::UseSelectedSlotPressed()
 	//update icon
 	l_currMenuSlot->refSlotItemIcon->SetBrush(brush);
 	l_currMenuSlot->refSlotItemIcon->SetBrushSize(MAINMENU_ICONSIZE);
-
 }
 
 void UMainMenu::UseSelectedSlot()
@@ -332,6 +331,7 @@ void UMainMenu::SelectNeightbourSlot(FVector2D iTarget)
 	currentlySelectedSlotCoord = iTarget;
 	DeHighlightSelectedSlot();
 	HighlightSelectedSlot();
+	UpdateTooltipText();
 }
 
 void UMainMenu::GetStartingSlot()
@@ -357,6 +357,31 @@ void UMainMenu::GetRowIndexes(int32 iRow)
 	//calculate the row indexes
 
 
+}
+
+void UMainMenu::UpdateTooltipText()
+{
+	//lets find the selected slot data
+	UMainMenuSlot* l_currMenuInventorySlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
+	if (l_currMenuInventorySlot == nullptr)
+	{
+		refMenuTooltipText->SetVisibility(ESlateVisibility::Hidden);
+		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot == nullptr"));
+		return;
+	}
+
+	if (l_currMenuInventorySlot->menuSlotData.menuInventorySlotState == EInventorySlotState::EMPTY)
+	{
+		refMenuTooltipText->SetVisibility(ESlateVisibility::Hidden);
+		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot->slotData.refItem == nullptr"));
+		return;
+	}
+
+	FMenuItemData l_selectedMenuItemData = l_currMenuInventorySlot->menuSlotData.refMenuItem->currentMenuItemData;
+	
+	//update item name
+	refMenuTooltipText->SetText(FText::FromString(l_selectedMenuItemData.itemName));
+	refMenuTooltipText->SetVisibility(ESlateVisibility::Visible);
 }
 
 int32 UMainMenu::GetFirstEmptyInventorySlotIndex()
