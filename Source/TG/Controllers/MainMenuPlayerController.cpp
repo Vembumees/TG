@@ -19,7 +19,8 @@ void AMainMenuPlayerController::SetupInputComponent()
 	InputComponent->BindAction("MenuRIGHT", IE_Pressed, this, &AMainMenuPlayerController::MenuRIGHT);
 	InputComponent->BindAction("MenuUSESELECTED", IE_Pressed, this, &AMainMenuPlayerController::MenuUSESELECTEDPRESSED);
 	InputComponent->BindAction("MenuUSESELECTED", IE_Released, this, &AMainMenuPlayerController::MenuUSESELECTEDRELEASED);
-	InputComponent->BindAction("DEBUGAddItem", IE_Pressed, this, &AMainMenuPlayerController::DebugAdditem);
+	InputComponent->BindAction("DEBUGAction1", IE_Pressed, this, &AMainMenuPlayerController::DebugAction1);
+	InputComponent->BindAction("DEBUGAction2", IE_Pressed, this, &AMainMenuPlayerController::DebugAction2);
 }
 
 
@@ -63,7 +64,12 @@ void AMainMenuPlayerController::InitializeRefs()
 	refMainMenuHUD = Cast<AMainMenuHUD>(this->GetHUD());
 }
 
-void AMainMenuPlayerController::DebugAdditem()
+void AMainMenuPlayerController::DebugAction1()
 {
-	delegateDebugAddItem.Broadcast();
+	delegateDebugAction1.Broadcast();
+}
+
+void AMainMenuPlayerController::DebugAction2()
+{
+	delegateDebugAction2.Broadcast();
 }

@@ -56,7 +56,9 @@ public:
 	void UpdateItemsFromMenuInventory(TArray<class UMainMenuSlot*> iMenuInventory);
 
 	UFUNCTION()
-	void DebugAddItemToInventory();
+	void DebugAction1();
+	UFUNCTION()
+		void DebugAction2();
 
 protected:
 
@@ -78,7 +80,8 @@ protected:
 	void DeHighlightSelectedSlot();
 	void SelectNeightbourSlot(FVector2D iTarget);
 	void GetStartingSlot();
-	void GetRowIndexes(int32 iRow);
+	void GetCurrentSelectedRowIndexes(FVector2D iCurrentlySelectedSlot);
+	void GetCurrentSelectedColumnIndexes(FVector2D iCurrentlySelectedSlot);
 	void UpdateTooltipText();
 
 

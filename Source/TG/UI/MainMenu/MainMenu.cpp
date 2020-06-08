@@ -113,9 +113,18 @@ void UMainMenu::UpdateItemsFromMenuInventory(TArray<class UMainMenuSlot*> iMenuI
 }
 
 
-void UMainMenu::DebugAddItemToInventory()
+void UMainMenu::DebugAction1()
 {
-	AddItemToInventory(AMenuItem::SpawnItem(this->GetWorld(), 0));
+	//using this just to debug whatever crap i need currently
+	
+	/*AddItemToInventory(AMenuItem::SpawnItem(this->GetWorld(), 0));*/
+
+	GetCurrentSelectedRowIndexes(currentlySelectedSlotCoord);
+}
+
+void UMainMenu::DebugAction2()
+{
+	GetCurrentSelectedColumnIndexes(currentlySelectedSlotCoord);
 }
 
 void UMainMenu::AddDelegateBindings()
@@ -124,7 +133,8 @@ void UMainMenu::AddDelegateBindings()
 	refMainMenuPlayerController->delegateMenuMove.AddDynamic(this, &UMainMenu::MoveInMenu);
 	refMainMenuPlayerController->delegateMenuUsePRESSED.AddDynamic(this, &UMainMenu::UseSelectedSlotPressed);
 	refMainMenuPlayerController->delegateMenuUseRELEASED.AddDynamic(this, &UMainMenu::UseSelectedSlot);
-	refMainMenuPlayerController->delegateDebugAddItem.AddDynamic(this, &UMainMenu::DebugAddItemToInventory);
+	refMainMenuPlayerController->delegateDebugAction1.AddDynamic(this, &UMainMenu::DebugAction1);
+	refMainMenuPlayerController->delegateDebugAction2.AddDynamic(this, &UMainMenu::DebugAction2);
 }
 
 void UMainMenu::InitializeRefs()
@@ -227,6 +237,9 @@ void UMainMenu::UseSelectedSlotPressed()
 	//update icon
 	l_currMenuSlot->refSlotItemIcon->SetBrush(brush);
 	l_currMenuSlot->refSlotItemIcon->SetBrushSize(MAINMENU_ICONSIZE);
+
+	//Play sfx
+	UGameplayStatics::PlaySound2D(GetWorld(), l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.sfxUseItem);
 }
 
 void UMainMenu::UseSelectedSlot()
@@ -301,8 +314,7 @@ void UMainMenu::UseSelectedSlot()
 	}
 
 
-	//Play sfx
-	UGameplayStatics::PlaySound2D(GetWorld(), l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.sfxUseItem);
+
 
 }
 
@@ -358,13 +370,62 @@ void UMainMenu::GetStartingSlot()
 
 }
 
-void UMainMenu::GetRowIndexes(int32 iRow)
+
+
+void UMainMenu::GetCurrentSelectedRowIndexes(FVector2D iCurrentlySelectedSlot)
 {
-	//check if we can get that row that we asked for
+	//lets find the selected slot data
+	UMainMenuSlot* l_currMenuInventorySlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
+	if (l_currMenuInventorySlot == nullptr)
+	{
+		refMenuTooltipText->SetVisibility(ESlateVisibility::Hidden);
+		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot == nullptr"));
+		return;
+	}
 
-	//calculate the row indexes
+	//so, for finding row, we just need to +1 or -1 X. For COlumn 
+	FVector2D l_currCoord = currentlySelectedSlotCoord;
+	//add +1 to X.
+	//if the coordinate is valid, add the valid slots index to array
+	//if coordinate isn't valid, break loop and do the same loop for -1 to x.
 
+	int yCoord = l_currCoord.Y;
+	for (int xCoord = l_currCoord.X; mapRefMenuSlots.Find(FVector2D(xCoord, yCoord)) != nullptr; xCoord++)
+	{
+		auto& l_slots = *mapRefMenuSlots.Find(FVector2D(xCoord, yCoord));
+		UE_LOG(LogTemp, Warning, TEXT("GetCurrentlySelectedRowIndexes();  FVector(%s), index %i"),
+			*l_slots->menuSlotData.slotCoords.ToString(),
+			l_slots->menuSlotData.slotIndex);
 
+	}
+}
+
+void UMainMenu::GetCurrentSelectedColumnIndexes(FVector2D iCurrentlySelectedSlot)
+{
+	//lets find the selected slot data
+	UMainMenuSlot* l_currMenuInventorySlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
+	if (l_currMenuInventorySlot == nullptr)
+	{
+		refMenuTooltipText->SetVisibility(ESlateVisibility::Hidden);
+		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot == nullptr"));
+		return;
+	}
+
+	//so, for finding row, we just need to +1 or -1 X. For COlumn 
+	FVector2D l_currCoord = currentlySelectedSlotCoord;
+	//add +1 to X.
+	//if the coordinate is valid, add the valid slots index to array
+	//if coordinate isn't valid, break loop and do the same loop for -1 to x.
+
+	int xCoord = l_currCoord.X;
+	for (int yCoord = l_currCoord.Y; mapRefMenuSlots.Find(FVector2D(xCoord, yCoord)) != nullptr; yCoord++)
+	{
+		auto& l_slots = *mapRefMenuSlots.Find(FVector2D(xCoord, yCoord));
+		UE_LOG(LogTemp, Warning, TEXT("GetCurrentlySelectedColumnIndexes();  FVector(%s), index %i"),
+			*l_slots->menuSlotData.slotCoords.ToString(),
+			l_slots->menuSlotData.slotIndex);
+
+	}
 }
 
 void UMainMenu::UpdateTooltipText()
@@ -440,7 +501,6 @@ void UMainMenu::MoveInMenu(EMoveDirections iMoveDir)
 			l_slot->menuSlotData.menuInventorySlotState != EInventorySlotState::DISABLED)
 		{
 			SelectNeightbourSlot(l_targetDirection);
-
 		}
 		else
 		{
