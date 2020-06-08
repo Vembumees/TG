@@ -27,8 +27,6 @@ void UMainMenu::NativeConstruct()
 	GetStartingSlot();
 	CreateMenuStartingItems();
 
-	FTimerHandle timerx;
-	GetWorld()->GetTimerManager().SetTimer(timerx, this, &UMainMenu::UpdateItemsWithTimer, 1);
 	
 }
 
@@ -43,6 +41,10 @@ void UMainMenu::CreateMenuStartingItems()
 	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 0));
 	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 1));
 	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 2));
+	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 3));
+	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 3));
+	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 3));
+	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 3));
 	for (auto& e : l_items)
 	{
 		AddItemToInventory(e);
@@ -66,8 +68,9 @@ bool UMainMenu::AddItemToInventory(class AMenuItem* iItem)
 	mainMenuSlotsInventory[idx]->menuSlotData.refMenuItem = iItem;
 	mainMenuSlotsInventory[idx]->menuSlotData.menuInventorySlotState = EInventorySlotState::HASITEM;
 	UE_LOG(LogTemp, Error, TEXT("Added menu item successfully."));
-	
-	UpdateItemsFromMenuInventory(mainMenuSlotsInventory);
+	//if i dont do this with timer and above 0.1 seconds timer icons are for some reason white
+	FTimerHandle addItemRefreshSlots;
+	GetWorld()->GetTimerManager().SetTimer(addItemRefreshSlots, this, &UMainMenu::RefreshMenuSlots, 0.15);
 	return true;
 }
 
@@ -83,6 +86,7 @@ void UMainMenu::RefreshMenuSlots()
 {
 	UE_LOG(LogTemp, Error, TEXT("UMainMenu::RefreshMenuSlots()"));
 	CreateMenuSlots();
+	UpdateItemsFromMenuInventory(mainMenuSlotsInventory);
 }
 
 void UMainMenu::UpdateItemsFromMenuInventory(TArray<class UMainMenuSlot*> iMenuInventory)
@@ -98,20 +102,15 @@ void UMainMenu::UpdateItemsFromMenuInventory(TArray<class UMainMenuSlot*> iMenuI
 			brush.SetResourceObject(e->menuSlotData.refMenuItem->currentMenuItemData.itemIcon);
 			//update icon
 			mapValues[loopCounter]->refSlotItemIcon->SetBrush(brush);
-			mapValues[loopCounter]->refSlotItemIcon->SetBrushSize(FVector2D(45,45)); //magic numbers
+			mapValues[loopCounter]->refSlotItemIcon->SetBrushSize(FVector2D(50,50)); //magic numbers
 
 			//add item pointer
 			mapValues[loopCounter]->menuSlotData.refMenuItem = e->menuSlotData.refMenuItem;
 		}
+		loopCounter++;
 	}
 }
 
-void UMainMenu::UpdateItemsWithTimer()
-{
-	RefreshMenuSlots();
-	UpdateItemsFromMenuInventory(mainMenuSlotsInventory);
-	RefreshMenuSlots();
-}
 
 void UMainMenu::DebugAddItemToInventory()
 {

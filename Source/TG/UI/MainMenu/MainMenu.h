@@ -54,7 +54,6 @@ public:
 	
 	void RefreshMenuSlots();
 	void UpdateItemsFromMenuInventory(TArray<class UMainMenuSlot*> iMenuInventory);
-	void UpdateItemsWithTimer();
 
 	UFUNCTION()
 	void DebugAddItemToInventory();

@@ -16,7 +16,8 @@ AMenuItem::AMenuItem()
 void AMenuItem::BeginPlay()
 {
 	Super::BeginPlay();
-	ReadDataTable();
+	FTimerHandle readDataTimer;
+	GetWorld()->GetTimerManager().SetTimer(readDataTimer, this, &AMenuItem::ReadDataTable, 0.1);
 }
 
 
@@ -30,7 +31,7 @@ void AMenuItem::ReadDataTable()
 		UE_LOG(LogTemp, Error, TEXT("MenuItemData not found!"));
 	}
 	dataTableItemRowNames = itemInfo->GetRowNames();
-	FItemMenuAllData* row = itemInfo->FindRow<FItemMenuAllData>(dataTableItemRowNames[dtItemDataRowNumber + 1], TEXT("LookupMenuItemData"));
+	FItemMenuAllData* row = itemInfo->FindRow<FItemMenuAllData>(dataTableItemRowNames[dtItemDataRowNumber], TEXT("LookupMenuItemData"));
 	if (row != nullptr)
 	{
 		currentMenuItemData = row->itemData;
