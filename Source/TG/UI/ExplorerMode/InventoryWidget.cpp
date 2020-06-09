@@ -72,11 +72,12 @@ void UInventoryWidget::CreateInventorySlots()
 	{
 		//dont forget to update the class in WBP with the BP one
 		UInventorySlot* wInvSlot = CreateWidget<UInventorySlot>(GetWorld(), invSlotClass);
-		int32 l_currColumn = i / l_column;
 		int32 l_currRow = i - ((i / l_column) * l_column);
+		int32 l_currColumn =  i / -l_column;
 		refInventoryGridPanel->AddChildToUniformGrid(wInvSlot,
 			l_currColumn, l_currRow);
-		mapRefInventorySlots.Add(FVector2D(l_currColumn, l_currRow), wInvSlot);
+		l_currColumn = FMath::Abs(l_currColumn);
+		mapRefInventorySlots.Add(FVector2D(l_currRow, l_currColumn), wInvSlot);
 		wInvSlot->slotData.inventorySlotState = EInventorySlotState::EMPTY;
 		if (slotOld.IsValidIndex(1)) //TODO !! idk i have no idea how this doesnt or yet hasnt caused a bug
 		{
@@ -157,18 +158,18 @@ void UInventoryWidget::MoveInInventory(EMoveDirections iMoveDir)
 	{
 	case EMoveDirections::UP:
 		UE_LOG(LogTemp, Warning, TEXT("UP"));
-		l_targetDirection.X -= 1;
+		l_targetDirection.Y += 1;
 		break;
 	case EMoveDirections::DOWN:
-		l_targetDirection.X += 1;
+		l_targetDirection.Y -= 1;
 		UE_LOG(LogTemp, Warning, TEXT("DOWN"));
 		break;
 	case EMoveDirections::LEFT:
-		l_targetDirection.Y -= 1;
+		l_targetDirection.X -= 1;
 		UE_LOG(LogTemp, Warning, TEXT("LEFT"));
 		break;
 	case EMoveDirections::RIGHT:
-		l_targetDirection.Y += 1;
+		l_targetDirection.X += 1;
 		UE_LOG(LogTemp, Warning, TEXT("RIGHT"));
 		break;
 	}

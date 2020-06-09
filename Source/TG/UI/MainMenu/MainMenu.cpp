@@ -152,6 +152,14 @@ void UMainMenu::CreateMenuSlots()
 	{
 		return;
 	}
+
+
+	/* ###########################################################
+		FIX THE Y COORDINATEEEEEEEEEEEEEEEEEEEEEEE
+
+		OK THE PROBLEM WITH Y IS JUST THAT THE SLOTS ARE CREATED FROM TOP TO BOTTOM NOT OTHER WAY
+	 ########################################################### */
+	 /* #########################END############################## */
 	TArray<UMainMenuSlot*> slotOld = mainMenuSlotsInventory;
 	int32 l_column = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).columns;
 	int32 l_rows = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).rows;
@@ -165,11 +173,12 @@ void UMainMenu::CreateMenuSlots()
 	{
 		/*dnt forget to update the class in wbp*/
 		UMainMenuSlot* wMenuInvSlot = CreateWidget<UMainMenuSlot>(GetWorld(), menuSlotClass);
-		int32 l_currColumn = i / l_column;
+		int32 l_currColumn = i / -l_column;
 		int32 l_currRow = i - ((i / l_column) * l_column);
 		refMenuUniformGridPanel->AddChildToUniformGrid(wMenuInvSlot, l_currColumn, l_currRow);
-		mapRefMenuSlots.Add(FVector2D(l_currColumn, l_currRow), wMenuInvSlot);
-		wMenuInvSlot->menuSlotData.slotCoords = FVector2D(l_currColumn, l_currRow);
+		l_currColumn = FMath::Abs(l_currColumn);
+		mapRefMenuSlots.Add(FVector2D(l_currRow, l_currColumn), wMenuInvSlot);
+		wMenuInvSlot->menuSlotData.slotCoords = FVector2D(l_currRow, l_currColumn);
 		wMenuInvSlot->menuSlotData.slotIndex = i;
 		wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::EMPTY;
 		wMenuInvSlot->menuSlotData.menuType = EMenuType::MAINMENU;
@@ -197,15 +206,15 @@ void UMainMenu::CreateMenuSlots()
 			}
 		}
 
-		for (auto& e : l_hiddenSlotIndexes)
-		{
-			if (i == e)
-			{
-				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HIDDEN;
-				//set opacity of the slot to 0
-				wMenuInvSlot->SetRenderOpacity(0);
-			}
-		}
+// 		for (auto& e : l_hiddenSlotIndexes)
+// 		{
+// 			if (i == e)
+// 			{
+// 				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HIDDEN;
+// 				//set opacity of the slot to 0
+// 				wMenuInvSlot->SetRenderOpacity(0);
+// 			}
+// 		}
 
 		
 
@@ -337,11 +346,17 @@ void UMainMenu::SelectNeightbourSlot(FVector2D iTarget)
 	//sets the icon back to normal from pressed
 	UMainMenuSlot* l_currMenuSlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
 	//sets the icon to pressed
+	if (l_currMenuSlot->menuSlotData.refMenuItem != nullptr)
+	{
 	FSlateBrush brush;
 	brush.SetResourceObject(l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.itemIcon);
 	//update icon
 	l_currMenuSlot->refSlotItemIcon->SetBrush(brush);
 	l_currMenuSlot->refSlotItemIcon->SetBrushSize(MAINMENU_ICONSIZE);
+
+	//Play sfx
+	UGameplayStatics::PlaySound2D(GetWorld(), l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.sfxHoverItem);
+	}
 
 	lastSelectedSlotCoord = currentlySelectedSlotCoord;
 	currentlySelectedSlotCoord = iTarget;
@@ -349,8 +364,7 @@ void UMainMenu::SelectNeightbourSlot(FVector2D iTarget)
 	HighlightSelectedSlot();
 	UpdateTooltipText();
 
-	//Play sfx
-	UGameplayStatics::PlaySound2D(GetWorld(), l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.sfxHoverItem);
+	
 
 }
 
@@ -478,18 +492,18 @@ void UMainMenu::MoveInMenu(EMoveDirections iMoveDir)
 	{
 	case EMoveDirections::UP:
 		UE_LOG(LogTemp, Warning, TEXT("UP"));
-		l_targetDirection.X -= 1;
+		l_targetDirection.Y += 1;
 		break;
 	case EMoveDirections::DOWN:
-		l_targetDirection.X += 1;
+		l_targetDirection.Y -= 1;
 		UE_LOG(LogTemp, Warning, TEXT("DOWN"));
 		break;
 	case EMoveDirections::LEFT:
-		l_targetDirection.Y -= 1;
+		l_targetDirection.X -= 1;
 		UE_LOG(LogTemp, Warning, TEXT("LEFT"));
 		break;
 	case EMoveDirections::RIGHT:
-		l_targetDirection.Y += 1;
+		l_targetDirection.X += 1;
 		UE_LOG(LogTemp, Warning, TEXT("RIGHT"));
 		break;
 	} 

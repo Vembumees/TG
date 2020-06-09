@@ -38,7 +38,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		float menuInvSize;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere)	
 		TMap<FVector2D, class UMainMenuSlot*> mapRefMenuSlots;
 
 	UPROPERTY(EditAnywhere)
@@ -89,6 +89,7 @@ protected:
 
 	/*unrelated to menu, but really what would be cool i think if you could*/
 	int32 GetFirstEmptyInventorySlotIndex();
+
 	UFUNCTION()
 		void MoveInMenu(EMoveDirections iMoveDir);
 
