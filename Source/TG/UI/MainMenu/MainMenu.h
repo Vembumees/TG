@@ -81,10 +81,18 @@ protected:
 	void SelectNeightbourSlot(FVector2D iTarget);
 	void GetStartingSlot();
 	void GetCurrentSelectedRowIndexes(FVector2D iCurrentlySelectedSlot);
-	void GetCurrentSelectedColumnIndexes(FVector2D iCurrentlySelectedSlot);
+	TArray<FVector2D> GetCurrentSelectedColumnCoords(FVector2D iCurrentlySelectedSlot);
 	void UpdateTooltipText();
+	void SetIndexesVisible();
+	void SetIndexesHidden();
+	//if slotstate is hidden, hides the slot, otherwise sets it visible
+	void SetSlotVisibility(class UMainMenuSlot* iSlot ,EInventorySlotState iSlotState);
 
-
+	UPROPERTY()
+	TArray<int32> hiddenSlotIndexes;
+	//so we can restore
+	UPROPERTY()
+		TArray<int32> oldHiddenSlotIndexes;
 
 
 	/*unrelated to menu, but really what would be cool i think if you could*/
@@ -105,4 +113,6 @@ protected:
 public:
 
 
+private:
+	bool bHasSetIndexesVisible = false;
 };

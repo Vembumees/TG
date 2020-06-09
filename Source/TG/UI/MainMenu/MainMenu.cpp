@@ -23,6 +23,7 @@ void UMainMenu::NativeConstruct()
 	Super::NativeConstruct();
 
 	InitializeBPReferences();
+	hiddenSlotIndexes = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).hiddenIndexes;
 	CreateMenuSlots();
 	AddDelegateBindings();
 	GetStartingSlot();
@@ -119,12 +120,12 @@ void UMainMenu::DebugAction1()
 	
 	/*AddItemToInventory(AMenuItem::SpawnItem(this->GetWorld(), 0));*/
 
-	GetCurrentSelectedRowIndexes(currentlySelectedSlotCoord);
+	SetIndexesVisible();
 }
 
 void UMainMenu::DebugAction2()
 {
-	GetCurrentSelectedColumnIndexes(currentlySelectedSlotCoord);
+	SetIndexesHidden();
 }
 
 void UMainMenu::AddDelegateBindings()
@@ -163,7 +164,6 @@ void UMainMenu::CreateMenuSlots()
 	TArray<UMainMenuSlot*> slotOld = mainMenuSlotsInventory;
 	int32 l_column = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).columns;
 	int32 l_rows = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).rows;
-	TArray<int32> l_hiddenSlotIndexes = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).hiddenIndexes;
 	int32 l_nrOfSlots = (l_rows * l_column) - 1;
 	mapRefMenuSlots.Empty();
 	mainMenuSlotsInventory.Empty();
@@ -206,15 +206,15 @@ void UMainMenu::CreateMenuSlots()
 			}
 		}
 
-// 		for (auto& e : l_hiddenSlotIndexes)
-// 		{
-// 			if (i == e)
-// 			{
-// 				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HIDDEN;
-// 				//set opacity of the slot to 0
-// 				wMenuInvSlot->SetRenderOpacity(0);
-// 			}
-// 		}
+		for (auto& e : hiddenSlotIndexes)
+		{
+			if (i == e)
+			{
+				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HIDDEN;
+				//set opacity of the slot to 0
+				SetSlotVisibility(wMenuInvSlot, EInventorySlotState::HIDDEN);
+			}
+		}
 
 		
 
@@ -411,18 +411,20 @@ void UMainMenu::GetCurrentSelectedRowIndexes(FVector2D iCurrentlySelectedSlot)
 			*l_slots->menuSlotData.slotCoords.ToString(),
 			l_slots->menuSlotData.slotIndex);
 
+
 	}
 }
 
-void UMainMenu::GetCurrentSelectedColumnIndexes(FVector2D iCurrentlySelectedSlot)
+TArray<FVector2D> UMainMenu::GetCurrentSelectedColumnCoords(FVector2D iCurrentlySelectedSlot)
 {
+	TArray<FVector2D> l_coords;
 	//lets find the selected slot data
 	UMainMenuSlot* l_currMenuInventorySlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
 	if (l_currMenuInventorySlot == nullptr)
 	{
 		refMenuTooltipText->SetVisibility(ESlateVisibility::Hidden);
 		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget: l_currInventorySlot == nullptr"));
-		return;
+		return l_coords;
 	}
 
 	//so, for finding row, we just need to +1 or -1 X. For COlumn 
@@ -430,7 +432,9 @@ void UMainMenu::GetCurrentSelectedColumnIndexes(FVector2D iCurrentlySelectedSlot
 	//add +1 to X.
 	//if the coordinate is valid, add the valid slots index to array
 	//if coordinate isn't valid, break loop and do the same loop for -1 to x.
+	
 
+	//searches all valid slots from one side
 	int xCoord = l_currCoord.X;
 	for (int yCoord = l_currCoord.Y; mapRefMenuSlots.Find(FVector2D(xCoord, yCoord)) != nullptr; yCoord++)
 	{
@@ -439,7 +443,20 @@ void UMainMenu::GetCurrentSelectedColumnIndexes(FVector2D iCurrentlySelectedSlot
 			*l_slots->menuSlotData.slotCoords.ToString(),
 			l_slots->menuSlotData.slotIndex);
 
+		l_coords.Add(l_slots->menuSlotData.slotCoords);
 	}
+	//searches all valid slots from other side
+	for (int yCoord = l_currCoord.Y; mapRefMenuSlots.Find(FVector2D(xCoord, yCoord)) != nullptr; yCoord--)
+	{
+		auto& l_slots = *mapRefMenuSlots.Find(FVector2D(xCoord, yCoord));
+		UE_LOG(LogTemp, Warning, TEXT("GetCurrentlySelectedColumnIndexes();  FVector(%s), index %i"),
+			*l_slots->menuSlotData.slotCoords.ToString(),
+			l_slots->menuSlotData.slotIndex);
+
+		l_coords.Add(l_slots->menuSlotData.slotCoords);
+	}
+	return l_coords;
+	
 }
 
 void UMainMenu::UpdateTooltipText()
@@ -465,6 +482,59 @@ void UMainMenu::UpdateTooltipText()
 	//update item name
 	refMenuTooltipText->SetText(FText::FromString(l_selectedMenuItemData.itemName));
 	refMenuTooltipText->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMainMenu::SetIndexesVisible()
+{
+	if (!bHasSetIndexesVisible)
+	{
+		oldHiddenSlotIndexes = hiddenSlotIndexes;
+	}
+	//go through the indexes and find these inside the map and set the map slot visible
+	for (auto& e : GetCurrentSelectedColumnCoords(currentlySelectedSlotCoord))
+	{
+		if (e != currentlySelectedSlotCoord)
+		{
+			UMainMenuSlot* l_menuSlot = *mapRefMenuSlots.Find(e);
+			l_menuSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::EMPTY;
+			SetSlotVisibility(l_menuSlot, EInventorySlotState::EMPTY);
+			
+			hiddenSlotIndexes.Remove(l_menuSlot->menuSlotData.slotIndex);
+		}
+	}
+
+	RefreshMenuSlots();
+	bHasSetIndexesVisible = true;
+}
+
+void UMainMenu::SetIndexesHidden()
+{
+	hiddenSlotIndexes = oldHiddenSlotIndexes;
+	//go through the indexes and find these inside the map and set the map slot visible
+	for (auto& e : GetCurrentSelectedColumnCoords(currentlySelectedSlotCoord))
+	{
+		if (e != currentlySelectedSlotCoord)
+		{
+			UMainMenuSlot* l_menuSlot = *mapRefMenuSlots.Find(e);
+			l_menuSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HIDDEN;
+			SetSlotVisibility(l_menuSlot, EInventorySlotState::HIDDEN);
+			
+		}
+	}
+	RefreshMenuSlots();
+	bHasSetIndexesVisible = false;
+}
+
+void UMainMenu::SetSlotVisibility(class UMainMenuSlot* iSlot, EInventorySlotState iSlotState)
+{
+	if (iSlotState == EInventorySlotState::HIDDEN)
+	{
+		iSlot->SetRenderOpacity(0);
+	}
+	else
+	{
+		iSlot->SetRenderOpacity(1);
+	}
 }
 
 int32 UMainMenu::GetFirstEmptyInventorySlotIndex()
