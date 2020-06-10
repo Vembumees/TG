@@ -28,7 +28,7 @@ struct FMenuItemData
 		class UPaperSprite* itemIconPressed;
 	//item function
 	UPROPERTY(EditAnywhere)
-		EMenuItemFunction itemType;
+		EMenuItemButtonType itemType;
 	UPROPERTY(EditAnywhere)
 		USoundBase* sfxHoverItem;
 	UPROPERTY(EditAnywhere)

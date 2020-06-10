@@ -187,7 +187,7 @@ enum class EMenuType : uint8
 
 //OK THIS IS FIRST DECK THAT IM GONNA MAKE, 5 cards
 UENUM(BlueprintType)
-enum class EMenuItemFunction : uint8
+enum class EMenuItemButtonType : uint8
 {
 	NONE		,
 	STARTGAME	,

@@ -115,4 +115,5 @@ public:
 
 private:
 	bool bHasSetIndexesVisible = false;
+	bool bHasOpenedToolbar = false;
 };

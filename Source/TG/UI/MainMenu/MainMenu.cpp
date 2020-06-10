@@ -119,13 +119,24 @@ void UMainMenu::DebugAction1()
 	//using this just to debug whatever crap i need currently
 	
 	/*AddItemToInventory(AMenuItem::SpawnItem(this->GetWorld(), 0));*/
-
-	SetIndexesVisible();
+	UMainMenuSlot* l_menuSlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
+	if (l_menuSlot->menuSlotData.menuInventorySlotState == EInventorySlotState::HASITEM)
+	{
+		
+		SetIndexesVisible();
+		bHasOpenedToolbar = true;
+	}
 }
 
 void UMainMenu::DebugAction2()
 {
-	SetIndexesHidden();
+	UMainMenuSlot* l_menuSlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
+	if (l_menuSlot->menuSlotData.menuInventorySlotState == EInventorySlotState::HASITEM)
+	{
+		SetIndexesHidden();
+		bHasOpenedToolbar = false;
+	}
+	
 }
 
 void UMainMenu::AddDelegateBindings()
@@ -279,9 +290,9 @@ void UMainMenu::UseSelectedSlot()
 
 	switch (l_currMenuSlot->menuSlotData.refMenuItem->currentMenuItemData.itemType)
 	{
-	case EMenuItemFunction::NONE:
+	case EMenuItemButtonType::NONE:
 		break;
-	case EMenuItemFunction::STARTGAME:
+	case EMenuItemButtonType::STARTGAME:
 		//open quest select
 
 		UGameplayStatics::OpenLevel(
@@ -289,33 +300,33 @@ void UMainMenu::UseSelectedSlot()
 			TEXT("MapDemoLevel"));
 
 		break;
-	case EMenuItemFunction::OPENSETTINGS:
+	case EMenuItemButtonType::OPENSETTINGS:
 		//open settings bars
 		break;
-	case EMenuItemFunction::QUITGAME:
+	case EMenuItemButtonType::QUITGAME:
 
 		UKismetSystemLibrary::QuitGame(GetWorld(), this->GetOwningPlayer(), EQuitPreference::Quit, false);
 
 		break;
-	case EMenuItemFunction::D:
+	case EMenuItemButtonType::D:
 		break;
-	case EMenuItemFunction::E:
+	case EMenuItemButtonType::E:
 		break;
-	case EMenuItemFunction::F:
+	case EMenuItemButtonType::F:
 		break;
-	case EMenuItemFunction::G:
+	case EMenuItemButtonType::G:
 		break;
-	case EMenuItemFunction::H:
+	case EMenuItemButtonType::H:
 		break;
-	case EMenuItemFunction::I:
+	case EMenuItemButtonType::I:
 		break;
-	case EMenuItemFunction::J:
+	case EMenuItemButtonType::J:
 		break;
-	case EMenuItemFunction::K:
+	case EMenuItemButtonType::K:
 		break;
-	case EMenuItemFunction::L:
+	case EMenuItemButtonType::L:
 		break;
-	case EMenuItemFunction::M:
+	case EMenuItemButtonType::M:
 		break;
 	default:
 		break;
@@ -486,6 +497,8 @@ void UMainMenu::UpdateTooltipText()
 
 void UMainMenu::SetIndexesVisible()
 {
+
+
 	if (!bHasSetIndexesVisible)
 	{
 		oldHiddenSlotIndexes = hiddenSlotIndexes;
@@ -570,10 +583,20 @@ void UMainMenu::MoveInMenu(EMoveDirections iMoveDir)
 		break;
 	case EMoveDirections::LEFT:
 		l_targetDirection.X -= 1;
+		//quick hack, if i want to do vertical movement in the menus too then i need to update this a little bit more
+		if (bHasOpenedToolbar)
+		{
+			SetIndexesHidden();
+		}
 		UE_LOG(LogTemp, Warning, TEXT("LEFT"));
 		break;
 	case EMoveDirections::RIGHT:
 		l_targetDirection.X += 1;
+		//quick hack, if i want to do vertical movement in the menus too then i need to update this a little bit more
+		if (bHasOpenedToolbar)
+		{
+			SetIndexesHidden();
+		}
 		UE_LOG(LogTemp, Warning, TEXT("RIGHT"));
 		break;
 	} 
