@@ -86,7 +86,7 @@ protected:
 	void SetIndexesVisible();
 	void SetIndexesHidden();
 	//if slotstate is hidden, hides the slot, otherwise sets it visible
-	void SetSlotVisibility(class UMainMenuSlot* iSlot ,EInventorySlotState iSlotState);
+	void SetSlotVisibility(class UMainMenuSlot* iSlot ,EInventoryVisibilityState iSlotVisibility);
 
 	UPROPERTY()
 	TArray<int32> hiddenSlotIndexes;
@@ -109,6 +109,8 @@ protected:
 	virtual void NativePreConstruct() override;
 	void CreateMenuStartingItems();
 	bool AddItemToInventory(class AMenuItem* iItem);
+	bool AddItemToInventoryCoords(class AMenuItem* iItem, FVector2D iCoords);
+
 
 public:
 
@@ -116,4 +118,5 @@ public:
 private:
 	bool bHasSetIndexesVisible = false;
 	bool bHasOpenedToolbar = false;
+	bool bIsInMainToolbarRow = true;
 };

@@ -162,7 +162,7 @@ enum class ECardListPhysical : uint8
 UENUM(BlueprintType)
 enum class EProjectileAbility : uint8
 {
-	NONE						UMETA(DisplayName = "NONE"),
+	NONE									UMETA(DisplayName = "NONE"),
 	STRAIGHTPROJECTILE						UMETA(DisplayName = "Straight projectile"),
 	BOUNCINGPROJECTILE						UMETA(DisplayName = "Bouncing projectile"),
 	SHOTGUNPROJECTILE						UMETA(DisplayName = "Shotgun projectile"),
@@ -171,10 +171,16 @@ enum class EProjectileAbility : uint8
 UENUM(BlueprintType)
 enum class EInventorySlotState : uint8
 {
-	EMPTY						UMETA(DisplayName = "Empty"),
-	HASITEM						UMETA(DisplayName = "Has Item"),
-	HIDDEN						UMETA(DisplayName = "Is Hidden"),
+	EMPTY							UMETA(DisplayName = "Empty"),
+	HASITEM							UMETA(DisplayName = "Has Item"),
 	DISABLED						UMETA(DisplayName = "Is Disabled"),
+};
+
+UENUM(BlueprintType)
+enum class EInventoryVisibilityState : uint8
+{
+	HIDDEN	,
+	VISIBLE,
 };
 
 UENUM(BlueprintType)
@@ -193,11 +199,11 @@ enum class EMenuItemButtonType : uint8
 	STARTGAME	,
 	OPENSETTINGS,
 	QUITGAME	,
-	D			,
-	E			,
-	F			,
-	G			,
-	H			,
+	EXPANDING	,
+	SELECTMAP1	,
+	SELECTMAP2	,
+	SELECTMAP3	,
+	SELECTMAP4	,
 	I			,
 	J			,
 	K			,

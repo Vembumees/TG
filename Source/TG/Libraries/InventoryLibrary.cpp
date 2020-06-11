@@ -92,21 +92,17 @@ FMenuInventoryGridData UInventoryLibrary::GetMenuInventoryGridData(EMenuType iMe
 	{
 	case EMenuType::MAINMENU:
 		l_menuData.rows = 5;
-		l_menuData.columns = 17;
+		l_menuData.columns = 5;
 		l_totalNrOfSlots = (l_menuData.rows * l_menuData.columns) - 1;
 		
 		//set starting hidden indexes
 
 		//top
-		for (int i = 0; i <= 55; i++)
+		for (int i = 0; i <= 19; i++)
 		{
 			l_menuData.hiddenIndexes.Add(i);
 		}
-		//bottom
-		for (int i = 63; i <= l_totalNrOfSlots; i++)
-		{
-			l_menuData.hiddenIndexes.Add(i);
-		}
+		
 		//set disabled indexes
 		
 

@@ -39,18 +39,29 @@ void UMainMenu::NativePreConstruct()
 
 void UMainMenu::CreateMenuStartingItems()
 {
-	TArray<AMenuItem*> l_items;
-	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 0));
-	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 1));
-	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 2));
-	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 3));
-	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 3));
-	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 3));
-	l_items.Add(AMenuItem::SpawnItem(this->GetWorld(), 3));
-	for (auto& e : l_items)
-	{
-		AddItemToInventory(e);
-	}
+	/*This is pretty bad hardcoded way to make menu, but it's simple. I don't really want to spend a day think of how
+	to make it do it with datatable, I think for stuff like menus that wont get changed almost at all its fine*/
+
+	//spawnItem(World, idx) idx - row-1 in DT_MenuItemData, its confusing but its just number tracking
+
+ 	//toolbar buttons
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 0), FVector2D(0, 4)); //play
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 3), FVector2D(1, 4)); //??
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 3), FVector2D(2, 4)); //??
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 1), FVector2D(3, 4)); //options
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 2), FVector2D(4, 4)); //exit
+
+	//toolbar play
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 4), FVector2D(0, 3)); //select map1
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 5), FVector2D(0, 2)); //select map2
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 6), FVector2D(0, 1)); //select map3
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 7), FVector2D(0, 0)); //select map4
+
+	//toolbar toolbar options
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 8), FVector2D(3, 3)); // setting1
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 9), FVector2D(3, 2)); // setting2
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 10), FVector2D(3, 1)); //setting3
+	AddItemToInventoryCoords(AMenuItem::SpawnItem(this->GetWorld(), 11), FVector2D(3, 0)); //setting4
 
 }
 
@@ -74,6 +85,30 @@ bool UMainMenu::AddItemToInventory(class AMenuItem* iItem)
 	FTimerHandle addItemRefreshSlots;
 	GetWorld()->GetTimerManager().SetTimer(addItemRefreshSlots, this, &UMainMenu::RefreshMenuSlots, 0.15);
 	return true;
+}
+
+bool UMainMenu::AddItemToInventoryCoords(class AMenuItem* iItem, FVector2D iCoords)
+{
+	if (iItem == nullptr)
+	{
+		return false;
+	}
+
+	if (mapRefMenuSlots.Find(iCoords) == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("invalid slot coordinates"));
+		return false;
+	}
+	UMainMenuSlot* l_menuSlot = *mapRefMenuSlots.Find(iCoords);
+	int32 idx = l_menuSlot->menuSlotData.slotIndex;
+	mainMenuSlotsInventory[idx]->menuSlotData.refMenuItem = iItem;
+	mainMenuSlotsInventory[idx]->menuSlotData.menuInventorySlotState = EInventorySlotState::HASITEM;
+	UE_LOG(LogTemp, Error, TEXT("Added menu item with coords successfully."));
+	//if i dont do this with timer and above 0.1 seconds timer icons are for some reason white
+	FTimerHandle addItemRefreshSlots;
+	GetWorld()->GetTimerManager().SetTimer(addItemRefreshSlots, this, &UMainMenu::RefreshMenuSlots, 0.15);
+	return true;
+
 }
 
 int32 UMainMenu::GetCurrentlySelectedSlotIndex()
@@ -119,13 +154,7 @@ void UMainMenu::DebugAction1()
 	//using this just to debug whatever crap i need currently
 	
 	/*AddItemToInventory(AMenuItem::SpawnItem(this->GetWorld(), 0));*/
-	UMainMenuSlot* l_menuSlot = *mapRefMenuSlots.Find(currentlySelectedSlotCoord);
-	if (l_menuSlot->menuSlotData.menuInventorySlotState == EInventorySlotState::HASITEM)
-	{
-		
-		SetIndexesVisible();
-		bHasOpenedToolbar = true;
-	}
+	
 }
 
 void UMainMenu::DebugAction2()
@@ -165,13 +194,6 @@ void UMainMenu::CreateMenuSlots()
 		return;
 	}
 
-
-	/* ###########################################################
-		FIX THE Y COORDINATEEEEEEEEEEEEEEEEEEEEEEE
-
-		OK THE PROBLEM WITH Y IS JUST THAT THE SLOTS ARE CREATED FROM TOP TO BOTTOM NOT OTHER WAY
-	 ########################################################### */
-	 /* #########################END############################## */
 	TArray<UMainMenuSlot*> slotOld = mainMenuSlotsInventory;
 	int32 l_column = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).columns;
 	int32 l_rows = UInventoryLibrary::GetMenuInventoryGridData(EMenuType::MAINMENU).rows;
@@ -192,6 +214,7 @@ void UMainMenu::CreateMenuSlots()
 		wMenuInvSlot->menuSlotData.slotCoords = FVector2D(l_currRow, l_currColumn);
 		wMenuInvSlot->menuSlotData.slotIndex = i;
 		wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::EMPTY;
+		wMenuInvSlot->menuSlotData.menuInventorySlotVisibility = EInventoryVisibilityState::VISIBLE;
 		wMenuInvSlot->menuSlotData.menuType = EMenuType::MAINMENU;
 		wMenuInvSlot->refWSizeBoxSlotSize->SetHeightOverride(menuInvSize);
 		wMenuInvSlot->refWSizeBoxSlotSize->SetWidthOverride(menuInvSize);
@@ -208,9 +231,6 @@ void UMainMenu::CreateMenuSlots()
 				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HASITEM;
 				wMenuInvSlot->menuSlotData.refMenuItem = slotOld[i]->menuSlotData.refMenuItem;
 				break;
-			case EInventorySlotState::HIDDEN:
-				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HIDDEN;
-				break;
 			case EInventorySlotState::DISABLED:
 				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::DISABLED;
 				break;
@@ -221,9 +241,9 @@ void UMainMenu::CreateMenuSlots()
 		{
 			if (i == e)
 			{
-				wMenuInvSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HIDDEN;
+				wMenuInvSlot->menuSlotData.menuInventorySlotVisibility = EInventoryVisibilityState::HIDDEN;
 				//set opacity of the slot to 0
-				SetSlotVisibility(wMenuInvSlot, EInventorySlotState::HIDDEN);
+				SetSlotVisibility(wMenuInvSlot, EInventoryVisibilityState::HIDDEN);
 			}
 		}
 
@@ -308,15 +328,26 @@ void UMainMenu::UseSelectedSlot()
 		UKismetSystemLibrary::QuitGame(GetWorld(), this->GetOwningPlayer(), EQuitPreference::Quit, false);
 
 		break;
-	case EMenuItemButtonType::D:
+	case EMenuItemButtonType::EXPANDING:
+		//menu button that opens a toolbar of other selection
+
+		if (l_currMenuSlot->menuSlotData.menuInventorySlotState == EInventorySlotState::HASITEM)
+		{
+
+			SetIndexesVisible();
+			bHasOpenedToolbar = true;
+		}
 		break;
-	case EMenuItemButtonType::E:
+	case EMenuItemButtonType::SELECTMAP1:
+		UGameplayStatics::OpenLevel(
+			this->GetWorld(),
+			TEXT("MapDemoLevel"));
 		break;
-	case EMenuItemButtonType::F:
+	case EMenuItemButtonType::SELECTMAP2:
 		break;
-	case EMenuItemButtonType::G:
+	case EMenuItemButtonType::SELECTMAP3:
 		break;
-	case EMenuItemButtonType::H:
+	case EMenuItemButtonType::SELECTMAP4:
 		break;
 	case EMenuItemButtonType::I:
 		break;
@@ -383,7 +414,7 @@ void UMainMenu::GetStartingSlot()
 {
 	for (auto& e : mainMenuSlotsInventory)
 	{
-		if (e->menuSlotData.menuInventorySlotState != EInventorySlotState::HIDDEN &&
+		if (e->menuSlotData.menuInventorySlotVisibility != EInventoryVisibilityState::HIDDEN &&
 			e->menuSlotData.menuInventorySlotState != EInventorySlotState::DISABLED)
 		{
 			
@@ -509,9 +540,7 @@ void UMainMenu::SetIndexesVisible()
 		if (e != currentlySelectedSlotCoord)
 		{
 			UMainMenuSlot* l_menuSlot = *mapRefMenuSlots.Find(e);
-			l_menuSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::EMPTY;
-			SetSlotVisibility(l_menuSlot, EInventorySlotState::EMPTY);
-			
+			SetSlotVisibility(l_menuSlot, EInventoryVisibilityState::VISIBLE);
 			hiddenSlotIndexes.Remove(l_menuSlot->menuSlotData.slotIndex);
 		}
 	}
@@ -529,8 +558,8 @@ void UMainMenu::SetIndexesHidden()
 		if (e != currentlySelectedSlotCoord)
 		{
 			UMainMenuSlot* l_menuSlot = *mapRefMenuSlots.Find(e);
-			l_menuSlot->menuSlotData.menuInventorySlotState = EInventorySlotState::HIDDEN;
-			SetSlotVisibility(l_menuSlot, EInventorySlotState::HIDDEN);
+			l_menuSlot->menuSlotData.menuInventorySlotVisibility = EInventoryVisibilityState::HIDDEN;
+			SetSlotVisibility(l_menuSlot, EInventoryVisibilityState::HIDDEN);
 			
 		}
 	}
@@ -538,9 +567,9 @@ void UMainMenu::SetIndexesHidden()
 	bHasSetIndexesVisible = false;
 }
 
-void UMainMenu::SetSlotVisibility(class UMainMenuSlot* iSlot, EInventorySlotState iSlotState)
+void UMainMenu::SetSlotVisibility(class UMainMenuSlot* iSlot, EInventoryVisibilityState iSlotVisibility)
 {
-	if (iSlotState == EInventorySlotState::HIDDEN)
+	if (iSlotVisibility == EInventoryVisibilityState::HIDDEN)
 	{
 		iSlot->SetRenderOpacity(0);
 	}
@@ -582,20 +611,31 @@ void UMainMenu::MoveInMenu(EMoveDirections iMoveDir)
 		UE_LOG(LogTemp, Warning, TEXT("DOWN"));
 		break;
 	case EMoveDirections::LEFT:
-		l_targetDirection.X -= 1;
+		
+		//Hardcoded: I can only move left right if Y == 4
+		if (currentlySelectedSlotCoord.Y == 4)
+		{
+			l_targetDirection.X -= 1;
 		//quick hack, if i want to do vertical movement in the menus too then i need to update this a little bit more
 		if (bHasOpenedToolbar)
 		{
 			SetIndexesHidden();
 		}
+		}
+		
 		UE_LOG(LogTemp, Warning, TEXT("LEFT"));
 		break;
 	case EMoveDirections::RIGHT:
-		l_targetDirection.X += 1;
+		//Hardcoded: I can only move left right if Y == 4
+		if (currentlySelectedSlotCoord.Y == 4)
+		{
+			l_targetDirection.X += 1;
+			
 		//quick hack, if i want to do vertical movement in the menus too then i need to update this a little bit more
 		if (bHasOpenedToolbar)
 		{
 			SetIndexesHidden();
+		}
 		}
 		UE_LOG(LogTemp, Warning, TEXT("RIGHT"));
 		break;
@@ -604,7 +644,7 @@ void UMainMenu::MoveInMenu(EMoveDirections iMoveDir)
 	if (mapRefMenuSlots.Find(l_targetDirection))
 	{
 		UMainMenuSlot* l_slot = *mapRefMenuSlots.Find(l_targetDirection);
-		if (l_slot->menuSlotData.menuInventorySlotState != EInventorySlotState::HIDDEN &&
+		if (l_slot->menuSlotData.menuInventorySlotVisibility != EInventoryVisibilityState::HIDDEN &&
 			l_slot->menuSlotData.menuInventorySlotState != EInventorySlotState::DISABLED)
 		{
 			SelectNeightbourSlot(l_targetDirection);

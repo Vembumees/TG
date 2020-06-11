@@ -35,6 +35,8 @@ struct FMenuSlotData
 	UPROPERTY(EditAnywhere)
 		EInventorySlotState menuInventorySlotState;
 	UPROPERTY(EditAnywhere)
+		EInventoryVisibilityState menuInventorySlotVisibility;
+	UPROPERTY(EditAnywhere)
 		class AMenuItem* refMenuItem;
 
 };

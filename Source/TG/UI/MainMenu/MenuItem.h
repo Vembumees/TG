@@ -11,13 +11,12 @@ struct FMenuItemData
 {
 	GENERATED_BODY()
 		FMenuItemData()
-		: ID(0),
+		:
 		itemName(TEXT("None")),
 		itemDescription(TEXT("Default item, use with caution"))
 		{}
 
-	UPROPERTY(EditAnywhere)
-		int32 ID;
+
 	UPROPERTY(EditAnywhere)
 		FString itemName;
 	UPROPERTY(EditAnywhere)
