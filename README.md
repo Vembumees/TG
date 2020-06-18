@@ -1,5 +1,5 @@
 # TG
-June 18. Currently has a small inventory/equipment/barebones dialogue, weird main menu, started doing another project that involves a little bit less realtime sprites :). But maybe will continue some of the features in this one later. Planned to make it as a small defense game from monster waves :)
+June 18. Currently has a small inventory/equipment/barebones dialogue, weird main menu, very barebones clunky ai and basic movement/attack/cast ability using items, started doing another project that involves a little bit less realtime sprites :). Planned to make it as a small defense game from monster waves, with turn based monster fights with cards. Maybe will finish up some of the features once in a while, right now could be a graveyard project :)
 
 2020 21.may
 small paper2d game developing by just practicing problem solving without any references :)
