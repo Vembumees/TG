@@ -11,6 +11,4 @@ Took from few screenshots, I did some weird stuff after the last screenshot here
 
 
 ![ThePixelprojectsweirdMainMenu](https://user-images.githubusercontent.com/38545913/88108662-e03d8700-cbb1-11ea-9b51-d7990406a41d.png)
-![menutitlesketch](https://user-images.githubusercontent.com/38545913/88108925-54782a80-cbb2-11ea-9a9d-1765942c8e17.png)
-![menuhighqualitysketch](https://user-images.githubusercontent.com/38545913/88108931-55a95780-cbb2-11ea-9af7-010ea414ac37.png)
 ![ThePixelprojectsweirdScreens](https://user-images.githubusercontent.com/38545913/88108967-61951980-cbb2-11ea-876c-9e6ab6910079.png)
